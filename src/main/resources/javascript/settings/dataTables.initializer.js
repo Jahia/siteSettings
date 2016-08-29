@@ -1,4 +1,4 @@
-var dataTablesServerSettings = {
+var dataTablesSettings = {
     init: function(tableID, length, sort, bStateSave, fnDrawCallback) {
         this.tableID = tableID;
         
