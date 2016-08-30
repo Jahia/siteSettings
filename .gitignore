@@ -2,3 +2,6 @@
 /.classpath
 /.project
 /.settings
+repository.xml.generated
+.idea
+*.iml
