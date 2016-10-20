@@ -1,3 +1,10 @@
+<%@ page import="java.security.Principal" %>
+<%@ page import="org.jahia.services.content.decorator.JCRUserNode" %>
+<%@ page import="org.jahia.services.usermanager.JahiaGroup" %>
+<%@ page import="org.jahia.services.render.RenderContext" %>
+<%@ page import="org.jahia.services.usermanager.JahiaUser" %>
+<%@ page import="org.jahia.services.content.JCRSessionFactory" %>
+<%@ page import="javax.jcr.RepositoryException" %>
 <%@ page language="java" contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="template" uri="http://www.jahia.org/tags/templateLib" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -6,6 +13,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="functions" uri="http://www.jahia.org/tags/functions" %>
 <%@ taglib prefix="user" uri="http://www.jahia.org/tags/user" %>
+<%@ taglib prefix="ssf" uri="http://www.jahia.org/site-settings/functions" %>
 <%--@elvariable id="currentNode" type="org.jahia.services.content.JCRNodeWrapper"--%>
 <%--@elvariable id="out" type="java.io.PrintWriter"--%>
 <%--@elvariable id="script" type="org.jahia.services.render.scripting.Script"--%>
@@ -77,7 +85,7 @@
 </form>
 
 <div>
-    <c:set var="principalsCount" value="${fn:length(principals)}"/>
+    <c:set var="principalsCount" value="1000"/>
     <c:set var="principalsFound" value="${principalsCount > 0}"/>
 
     <c:if test="${principalsCount > userDisplayLimit}">
@@ -110,7 +118,7 @@
             <c:otherwise>
                 <c:forEach items="${principals}" var="principal" end="${userDisplayLimit - 1}" varStatus="loopStatus">
                     <tr>
-                        <td><input onchange="selectMember(this)" class="selectedMember" type="checkbox" name="selectedMembers" value="${principal.userKey}" ${functions:contains(members, principal) ? 'checked="checked"' : ''}/> </td>
+                        <td><input onchange="selectMember(this)" class="selectedMember" type="checkbox" name="selectedMembers" value="${principal.userKey}" ${ssf:isUserMemberOf(principal, group, renderContext) ? 'checked="checked"' : ''}/> </td>
                         <td>
                             ${fn:escapeXml(user:displayName(principal))}
                         </td>

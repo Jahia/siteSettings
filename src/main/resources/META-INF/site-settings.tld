@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+                            http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+        version="2.0">
+
+    <description>Site Settings functions library</description>
+    <display-name>Site Settings functions</display-name>
+    <tlib-version>1.0</tlib-version>
+    <short-name>site-settings</short-name>
+    <uri>http://www.jahia.org/site-settings/functions</uri>
+
+    <function>
+        <description>Check if principal is member of a group</description>
+        <name>isUserMemberOf</name>
+        <function-class>org.jahia.modules.sitesettings.taglib.Functions</function-class>
+        <function-signature>java.lang.Boolean isUserMemberOf(java.lang.Object,org.jahia.services.content.decorator.JCRGroupNode,org.jahia.services.render.RenderContext)</function-signature>
+        <example>${site-settings:isUserMemberOf('/form-factory-definitions/text-input', renderContext)}</example>
+    </function>
+</taglib>

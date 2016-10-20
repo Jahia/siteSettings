@@ -93,7 +93,7 @@ $(document).ready(function() {
 </c:if>
 
 <c:if test="${empty memberCount}">
-    <c:set var="memberCount" value="${fn:length(members)}"/>
+    <c:set var="memberCount" value="1000"/>
 </c:if>
 
 <c:set var="membersFound" value="${memberCount > 0}"/>

@@ -8,7 +8,7 @@
 
 <c:set var="multipleProvidersAvailable" value="${fn:length(providers) > 1}"/>
 <c:set var="members" value="${group.members}"/>
-<c:set var="memberCount" value="${fn:length(members)}"/>
+<c:set var="memberCount" value="1000"/>
 <c:set var="membersFound" value="${memberCount > 0}"/>
 <c:set var="isGroupEditable" value="${!group.properties['j:external'].boolean}"/>
 

@@ -56,7 +56,7 @@
 </form>
 
 <div>
-    <c:set var="principalsCount" value="${fn:length(principals)}"/>
+    <c:set var="principalsCount" value="1000"/>
     <c:set var="principalsFound" value="${principalsCount > 0}"/>
 
     <table class="table table-bordered table-striped table-hover" id="groupMemberships">
