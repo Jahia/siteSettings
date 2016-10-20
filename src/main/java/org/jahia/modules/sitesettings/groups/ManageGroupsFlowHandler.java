@@ -480,11 +480,13 @@ public class ManageGroupsFlowHandler implements Serializable {
                 return PrincipalViewHelper.getDisplayName(o1).compareToIgnoreCase(PrincipalViewHelper.getDisplayName(o2));
             }
         });
-        searchResult.addAll(PrincipalViewHelper.getSearchResult(searchCriteria.getSearchIn(),
-                searchCriteria.getSiteKey(), searchCriteria.getSearchString(), searchCriteria.getProperties(), searchCriteria.getStoredOn(),
-                searchCriteria.getProviders()));
+        if(StringUtils.isNotEmpty(searchCriteria.getSearchString())) {
+            searchResult.addAll(PrincipalViewHelper.getSearchResult(searchCriteria.getSearchIn(),
+                    searchCriteria.getSiteKey(), searchCriteria.getSearchString(), searchCriteria.getProperties(), searchCriteria.getStoredOn(),
+                    searchCriteria.getProviders()));
 
-        logger.info("Found {} users in {} ms", new Object[] { searchResult.size(), System.currentTimeMillis() - timer });
+            logger.info("Found {} users in {} ms", new Object[]{searchResult.size(), System.currentTimeMillis() - timer});
+        }
         return searchResult;
     }
 
