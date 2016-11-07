@@ -47,12 +47,15 @@ import java.io.Serializable;
 import java.util.*;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
 
 import org.apache.commons.lang.StringUtils;
 import org.jahia.data.viewhelper.principal.PrincipalViewHelper;
 import org.jahia.services.content.*;
 import org.jahia.services.content.decorator.JCRGroupNode;
 import org.jahia.services.content.decorator.JCRSiteNode;
+import org.jahia.services.content.decorator.JCRUserNode;
 import org.jahia.services.render.RenderContext;
 import org.jahia.services.usermanager.*;
 import org.jahia.utils.i18n.Messages;
@@ -325,6 +328,23 @@ public class ManageGroupsFlowHandler implements Serializable {
     }
 
     /**
+     * Return the count of members for a group, only working on jcr groups
+     * if an external group is used it will return 0
+     * @param group the group to get the members from
+     * @return the count of members for a group, 0 if group is external
+     * @throws RepositoryException
+     */
+    public long lookupGroupMembersCount(JCRGroupNode group) throws RepositoryException {
+        if (!group.getProperty("j:external").getBoolean()) {
+            QueryResult result = group.getSession().getWorkspace().getQueryManager()
+                    .createQuery("select * from [jnt:member] as member where " +
+                    "isdescendantnode(member, ['" + group.getPath() + "'])", Query.JCR_SQL2).execute();
+            return result.getNodes().getSize();
+        }
+        return 0;
+    }
+
+    /**
      * Returns the principal object for the specified key.
      * 
      * @param memberKey
@@ -456,33 +476,43 @@ public class ManageGroupsFlowHandler implements Serializable {
      * Performs the group search with the specified search criteria and returns the list of matching groups.
      * @return the list of groups, matching the specified search criteria
      */
-    public Set<JCRNodeWrapper> searchNewGroupMembers() {
+    public Map<JCRGroupNode, Boolean> searchNewGroupMembers(JCRGroupNode groupNode) {
         long timer = System.currentTimeMillis();
 
-        Set<JCRNodeWrapper> searchResult = new TreeSet<>(new Comparator<JCRNodeWrapper>(){
+        Map<JCRGroupNode, Boolean> searchResult = new TreeMap<>(new Comparator<JCRNodeWrapper>(){
             @Override
             public int compare(JCRNodeWrapper o1, JCRNodeWrapper o2) {
                 return PrincipalViewHelper.getDisplayName(o1).compareToIgnoreCase(PrincipalViewHelper.getDisplayName(o2));
             }
         });
-        searchResult.addAll(PrincipalViewHelper.getGroupSearchResult(null, siteKey, null, null, null, null));
+
+        Set<JCRGroupNode> groups = PrincipalViewHelper.getGroupSearchResult(null, siteKey, null, null, null, null);
+
+        for (JCRGroupNode group : groups) {
+            searchResult.put(group, groupNode.isMember(group));
+        }
 
         logger.info("Found {} groups in {} ms", new Object[] { searchResult.size(), System.currentTimeMillis() - timer });
         return searchResult;
     }
 
-    public Set<JCRNodeWrapper> searchNewUserMembers(SearchCriteria searchCriteria) {
+    public Map<JCRUserNode, Boolean> searchNewUserMembers(JCRGroupNode groupNode, SearchCriteria searchCriteria) {
         long timer = System.currentTimeMillis();
 
-        Set<JCRNodeWrapper> searchResult = new TreeSet<>(new Comparator<JCRNodeWrapper>(){
+        Map<JCRUserNode, Boolean> searchResult = new TreeMap<>(new Comparator<JCRNodeWrapper>(){
             @Override
             public int compare(JCRNodeWrapper o1, JCRNodeWrapper o2) {
                 return PrincipalViewHelper.getDisplayName(o1).compareToIgnoreCase(PrincipalViewHelper.getDisplayName(o2));
             }
         });
-        searchResult.addAll(PrincipalViewHelper.getSearchResult(searchCriteria.getSearchIn(),
+
+        Set<JCRUserNode> users = PrincipalViewHelper.getSearchResult(searchCriteria.getSearchIn(),
                 searchCriteria.getSiteKey(), searchCriteria.getSearchString(), searchCriteria.getProperties(), searchCriteria.getStoredOn(),
-                searchCriteria.getProviders()));
+                searchCriteria.getProviders());
+
+        for (JCRUserNode user : users) {
+            searchResult.put(user, user.isMemberOfGroup(siteKey, groupNode.getName()));
+        }
 
         logger.info("Found {} users in {} ms", new Object[] { searchResult.size(), System.currentTimeMillis() - timer });
         return searchResult;

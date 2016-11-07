@@ -18,6 +18,7 @@
 <%--@elvariable id="flowRequestContext" type="org.springframework.webflow.execution.RequestContext"--%>
 <%--@elvariable id="flowExecutionUrl" type="java.lang.String"--%>
 <%--@elvariable id="memberSearchCriteria" type="org.jahia.services.usermanager.SearchCriteria"--%>
+<%--@elvariable id="principals" type="java.util.Map<org.jahia.services.content.decorator.JCRGroupNode,java.lang.Boolean>"--%>
 
 <c:set var="prefix" value="g:"/>
 <c:set var="displayGroups" value="selected"/>
@@ -79,13 +80,13 @@
             <c:otherwise>
                 <c:forEach items="${principals}" var="principal" varStatus="loopStatus">
                     <tr>
-                        <td><input onchange="selectMember(this)" class="selectedMember" type="checkbox" name="selectedMembers" value="${principal.groupKey}" ${functions:contains(members, principal) ? 'checked="checked"' : ''}/> </td>
+                        <td><input onchange="selectMember(this)" class="selectedMember" type="checkbox" name="selectedMembers" value="${principal.key.groupKey}" ${principal.value ? 'checked="checked"' : ''}/> </td>
                         <td>
-                                ${fn:escapeXml(user:displayName(principal))}
+                                ${fn:escapeXml(user:displayName(principal.key))}
                         </td>
                         <c:if test="${multipleProvidersAvailable}">
-                            <fmt:message var="i18nProviderLabel" key="providers.${principal.providerName}.label"/>
-                            <td>${fn:escapeXml(fn:contains(i18nProviderLabel, '???') ? principal.providerName : i18nProviderLabel)}</td>
+                            <fmt:message var="i18nProviderLabel" key="providers.${principal.key.providerName}.label"/>
+                            <td>${fn:escapeXml(fn:contains(i18nProviderLabel, '???') ? principal.key.providerName : i18nProviderLabel)}</td>
                         </c:if>
                     </tr>
                 </c:forEach>

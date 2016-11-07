@@ -54,6 +54,7 @@
             <evaluate expression="flowHandler.initCriteria(flowRequestContext)" result="flowScope.memberSearchCriteria"/>
             <evaluate expression="flowHandler.getProviders(false, false)" result="requestScope.providers"/>
             <evaluate expression="flowHandler.lookupGroup(flowScope.groupKey)" result="requestScope.group"/>
+            <evaluate expression="flowHandler.lookupGroupMembersCount(requestScope.group)" result="requestScope.memberCount"/>
         </on-render>
         <transition on="editGroupMembers" to="editUsersMembers" validate="false"/>
         <transition on="removeMembers" to="editGroup" validate="false">
@@ -67,9 +68,9 @@
 
     <view-state id="editUsersMembers" model="memberSearchCriteria">
         <on-render>
-            <evaluate expression="flowHandler.searchNewUserMembers(memberSearchCriteria)" result="requestScope.principals"/>
-            <evaluate expression="flowHandler.getProviders(true, true)" result="requestScope.providers"/>
             <evaluate expression="flowHandler.lookupGroup(flowScope.groupKey)" result="requestScope.group"/>
+            <evaluate expression="flowHandler.searchNewUserMembers(requestScope.group, memberSearchCriteria)" result="requestScope.principals"/>
+            <evaluate expression="flowHandler.getProviders(true, true)" result="requestScope.providers"/>
         </on-render>
 
         <transition on="editGroup" to="editGroup"/>
@@ -84,9 +85,9 @@
 
     <view-state id="editGroupsMembers">
         <on-render>
-            <evaluate expression="flowHandler.searchNewGroupMembers()" result="requestScope.principals"/>
-            <evaluate expression="flowHandler.getProviders(false, true)" result="requestScope.providers"/>
             <evaluate expression="flowHandler.lookupGroup(flowScope.groupKey)" result="requestScope.group"/>
+            <evaluate expression="flowHandler.searchNewGroupMembers(requestScope.group)" result="requestScope.principals"/>
+            <evaluate expression="flowHandler.getProviders(false, true)" result="requestScope.providers"/>
         </on-render>
 
         <transition on="editGroup" to="editGroup"/>
