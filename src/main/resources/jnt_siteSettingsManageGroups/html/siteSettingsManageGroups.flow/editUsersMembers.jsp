@@ -18,6 +18,7 @@
 <%--@elvariable id="flowRequestContext" type="org.springframework.webflow.execution.RequestContext"--%>
 <%--@elvariable id="flowExecutionUrl" type="java.lang.String"--%>
 <%--@elvariable id="memberSearchCriteria" type="org.jahia.services.usermanager.SearchCriteria"--%>
+<%--@elvariable id="principals" type="java.util.Map<org.jahia.services.content.decorator.JCRUserNode,java.lang.Boolean>"--%>
 
 <c:set var="prefix" value="u:"/>
 <c:set var="displayUsers" value="selected"/>
@@ -80,15 +81,6 @@
     <c:set var="principalsCount" value="${fn:length(principals)}"/>
     <c:set var="principalsFound" value="${principalsCount > 0}"/>
 
-    <c:if test="${principalsCount > userDisplayLimit}">
-        <div class="alert alert-info">
-            <fmt:message key="siteSettings.users.found">
-                <fmt:param value="${principalsCount}"/>
-                <fmt:param value="${userDisplayLimit}"/>
-            </fmt:message>
-        </div>
-    </c:if>
-
     <table class="table table-bordered table-striped table-hover">
         <thead>
         <tr>
@@ -110,15 +102,15 @@
             <c:otherwise>
                 <c:forEach items="${principals}" var="principal" end="${userDisplayLimit - 1}" varStatus="loopStatus">
                     <tr>
-                        <td><input onchange="selectMember(this)" class="selectedMember" type="checkbox" name="selectedMembers" value="${principal.userKey}" ${functions:contains(members, principal) ? 'checked="checked"' : ''}/> </td>
+                        <td><input onchange="selectMember(this)" class="selectedMember" type="checkbox" name="selectedMembers" value="${principal.key.userKey}" ${principal.value ? 'checked="checked"' : ''}/> </td>
                         <td>
-                            ${fn:escapeXml(user:displayName(principal))}
+                            ${fn:escapeXml(user:displayName(principal.key))}
                         </td>
-                        <td>${user:fullName(principal)}</td>
+                        <td>${user:fullName(principal.key)}</td>
 
                         <c:if test="${multipleProvidersAvailable}">
-                            <fmt:message var="i18nProviderLabel" key="providers.${principal.providerName}.label"/>
-                            <td>${fn:escapeXml(fn:contains(i18nProviderLabel, '???') ? principal.providerName : i18nProviderLabel)}</td>
+                            <fmt:message var="i18nProviderLabel" key="providers.${principal.key.providerName}.label"/>
+                            <td>${fn:escapeXml(fn:contains(i18nProviderLabel, '???') ? principal.key.providerName : i18nProviderLabel)}</td>
                         </c:if>
                     </tr>
                 </c:forEach>

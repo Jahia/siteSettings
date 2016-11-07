@@ -92,10 +92,6 @@ $(document).ready(function() {
     </c:forEach>
 </c:if>
 
-<c:if test="${empty memberCount}">
-    <c:set var="memberCount" value="${fn:length(members)}"/>
-</c:if>
-
 <c:set var="membersFound" value="${memberCount > 0}"/>
 
 <form action="${flowExecutionUrl}" method="POST" style="display: inline;">
