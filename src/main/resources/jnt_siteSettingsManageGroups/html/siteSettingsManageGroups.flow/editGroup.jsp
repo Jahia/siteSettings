@@ -138,7 +138,7 @@ $(document).ready(function() {
     </c:if>
 
     <div>
-        <h2><fmt:message key="members.label"/> <c:if test="${isGroupEditable}">(${memberCount})</c:if></h2>
+        <h2><fmt:message key="members.label"/><c:if test="${isGroupEditable}"> (${memberCount})</c:if></h2>
         <c:if test="${memberCount > memberDisplayLimit}">
             <div class="alert alert-info">
                 <c:if test="${isGroupEditable}">
