@@ -510,8 +510,9 @@ public class ManageGroupsFlowHandler implements Serializable {
                 searchCriteria.getSiteKey(), searchCriteria.getSearchString(), searchCriteria.getProperties(), searchCriteria.getStoredOn(),
                 searchCriteria.getProviders());
 
+        String groupName = groupNode.getName();
         for (JCRUserNode user : users) {
-            searchResult.put(user, user.isMemberOfGroup(siteKey, groupNode.getName()));
+            searchResult.put(user, user.isMemberOfGroup(siteKey, groupName));
         }
 
         logger.info("Found {} users in {} ms", new Object[] { searchResult.size(), System.currentTimeMillis() - timer });
