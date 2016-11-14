@@ -86,9 +86,9 @@ $(document).ready(function() {
 <c:set var="multipleProvidersAvailable" value="${fn:length(providers) > 1}"/>
 <c:set var="members" value="${group.members}"/>
 
-<c:if test="${not isGroupEditable}">
-    <c:forEach items="${members}" var="member" begin="${memberDisplayLimit}" end="${memberDisplayLimit}" varStatus="loopStatus">
-        <c:set var="memberCount" value="${memberDisplayLimit + 1}"/>
+<c:if test="${not isGroupEditable && memberCount == 0}">
+    <c:forEach items="${members}" var="member" end="${memberDisplayLimit}" varStatus="loopStatus">
+        <c:set var="memberCount" value="${memberCount + 1}"/>
     </c:forEach>
 </c:if>
 
