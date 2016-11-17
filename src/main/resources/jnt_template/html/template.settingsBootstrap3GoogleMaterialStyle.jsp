@@ -43,7 +43,7 @@
     </template:addResources>
 </head>
 
-<body id="serverSettings">
+<body id="siteSettings">
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">

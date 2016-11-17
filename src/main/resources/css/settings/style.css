@@ -1,4 +1,4 @@
-#serverSettings .page-header {
+#siteSettings .page-header {
     background: #535E71;
     color: #fff;
     height: 64px;
@@ -7,7 +7,7 @@
     margin-bottom: 30px;
 }
 
-#serverSettings .page-header h2 {
+#siteSettings .page-header h2 {
     line-height: 60px;
     margin: 0;
     padding: 0;
