@@ -151,16 +151,16 @@ function submitGroupForm(act, group) {
                                 <td>${fn:escapeXml(fn:contains(i18nProviderLabel, '???') ? grp.providerName : i18nProviderLabel)}</td>
                             </c:if>
                             <td>
-                                <a style="margin-bottom:0;" class="btn btn-small" title="${i18nEdit}" href="#edit" onclick="submitGroupForm('editGroup', '${grp.groupKey}'); return false;">
+                                <a style="margin-bottom:0;" class="btn btn-small" title="${i18nEdit}" href="#edit" onclick="submitGroupForm('editGroup', '${functions:escapeJavaScript(grp.groupKey)}'); return false;">
                                     <i class="icon-edit"></i>
                                 </a>
                                 <c:if test="${!grp.properties['j:external'].boolean}">
-                                    <a style="margin-bottom:0;" class="btn btn-small" title="${i18nCopy}" href="#copy" onclick="submitGroupForm('copyGroup', '${grp.groupKey}'); return false;">
+                                    <a style="margin-bottom:0;" class="btn btn-small" title="${i18nCopy}" href="#copy" onclick="submitGroupForm('copyGroup', '${functions:escapeJavaScript(grp.groupKey)}'); return false;">
                                         <i class="icon-share"></i>
                                     </a>
                                 </c:if>
                                 <c:if test="${!grp.properties['j:external'].boolean && !functions:contains(systemGroups, grp.groupKey)}">
-                                    <a style="margin-bottom:0;" class="btn btn-danger btn-small" title="${i18nRemove}" href="#delete" onclick="if (confirm('${i18nRemoveConfirm}')) { workInProgress('${i18nWaiting}'); submitGroupForm('removeGroup', '${grp.groupKey}');} return false;">
+                                    <a style="margin-bottom:0;" class="btn btn-danger btn-small" title="${i18nRemove}" href="#delete" onclick="if (confirm('${i18nRemoveConfirm}')) { workInProgress('${i18nWaiting}'); submitGroupForm('removeGroup', '${functions:escapeJavaScript(grp.groupKey)}');} return false;">
                                         <i class="icon-remove icon-white"></i>
                                     </a>
                                 </c:if>
