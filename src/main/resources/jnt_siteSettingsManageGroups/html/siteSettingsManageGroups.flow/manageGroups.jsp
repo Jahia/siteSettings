@@ -33,7 +33,7 @@
 <script type="text/javascript">
 function submitGroupForm(act, group) {
 	$('#groupFormAction').val(act);
-	$('#groupFormSelected').val(group);
+	$('#groupFormSelected').val(encodeURIComponent(group));
 	$('#groupForm').submit();
 }
 </script>
@@ -141,26 +141,27 @@ function submitGroupForm(act, group) {
                     <fmt:message var="i18nContinue" key="label.confirmContinue"/>
                     <c:set var="i18nRemoveConfirm" value="${functions:escapeJavaScript(i18nRemoveNote)} ${functions:escapeJavaScript(i18nContinue)}"/>
                     <c:forEach items="${groups}" var="grp" varStatus="loopStatus">
+                    	<c:set var="escapedGroupKey" value="${fn:escapeXml(functions:escapeJavaScript(grp.groupKey))}"/>
                         <tr>
                             <td>${loopStatus.count}</td>
                             <td>
-                                <a title="${i18nEdit}" href="#edit" onclick="submitGroupForm('editGroup', '${functions:escapeJavaScript(grp.groupKey)}'); return false;">${fn:escapeXml(user:displayName(grp))}</a>
+                                <a title="${i18nEdit}" href="#edit" onclick="submitGroupForm('editGroup', '${escapedGroupKey}'); return false;">${fn:escapeXml(user:displayName(grp))}</a>
                             </td>
                             <c:if test="${multipleProvidersAvailable}">
                                 <fmt:message var="i18nProviderLabel" key="providers.${grp.providerName}.label"/>
                                 <td>${fn:escapeXml(fn:contains(i18nProviderLabel, '???') ? grp.providerName : i18nProviderLabel)}</td>
                             </c:if>
                             <td>
-                                <a style="margin-bottom:0;" class="btn btn-small" title="${i18nEdit}" href="#edit" onclick="submitGroupForm('editGroup', '${functions:escapeJavaScript(grp.groupKey)}'); return false;">
+                                <a style="margin-bottom:0;" class="btn btn-small" title="${i18nEdit}" href="#edit" onclick="submitGroupForm('editGroup', '${escapedGroupKey}'); return false;">
                                     <i class="icon-edit"></i>
                                 </a>
                                 <c:if test="${!grp.properties['j:external'].boolean}">
-                                    <a style="margin-bottom:0;" class="btn btn-small" title="${i18nCopy}" href="#copy" onclick="submitGroupForm('copyGroup', '${functions:escapeJavaScript(grp.groupKey)}'); return false;">
+                                    <a style="margin-bottom:0;" class="btn btn-small" title="${i18nCopy}" href="#copy" onclick="submitGroupForm('copyGroup', '${escapedGroupKey}'); return false;">
                                         <i class="icon-share"></i>
                                     </a>
                                 </c:if>
                                 <c:if test="${!grp.properties['j:external'].boolean && !functions:contains(systemGroups, grp.groupKey)}">
-                                    <a style="margin-bottom:0;" class="btn btn-danger btn-small" title="${i18nRemove}" href="#delete" onclick="if (confirm('${i18nRemoveConfirm}')) { workInProgress('${i18nWaiting}'); submitGroupForm('removeGroup', '${functions:escapeJavaScript(grp.groupKey)}');} return false;">
+                                    <a style="margin-bottom:0;" class="btn btn-danger btn-small" title="${i18nRemove}" href="#delete" onclick="if (confirm('${i18nRemoveConfirm}')) { workInProgress('${i18nWaiting}'); submitGroupForm('removeGroup', '${escapedGroupKey}');} return false;">
                                         <i class="icon-remove icon-white"></i>
                                     </a>
                                 </c:if>

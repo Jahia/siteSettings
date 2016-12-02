@@ -24,15 +24,15 @@
             <set name="flowScope.copyMode" value="false" type="boolean" />
         </transition>
         <transition on="editGroup" to="editGroup" bind="false" validate="false">
-            <set name="flowScope.groupKey" value="requestParameters.selectedGroup" type="java.lang.String" />
+            <set name="flowScope.groupKey" value="T(org.jahia.utils.WebUtils).urlDecode(requestParameters.selectedGroup)" type="java.lang.String" />
         </transition>
         <transition on="copyGroup" to="createGroup" bind="false" validate="false">
             <evaluate expression="flowHandler.initGroup(flowRequestContext)" result="flowScope.group"/>
             <set name="flowScope.copyMode" value="true" type="boolean" />
-            <set name="flowScope.groupToCopyKey" value="requestParameters.selectedGroup" type="java.lang.String" />
+            <set name="flowScope.groupToCopyKey" value="T(org.jahia.utils.WebUtils).urlDecode(requestParameters.selectedGroup)" type="java.lang.String" />
         </transition>
         <transition on="removeGroup" to="manageGroups" validate="false">
-            <evaluate expression="flowHandler.removeGroup(requestParameters.selectedGroup, messageContext)"/>
+            <evaluate expression="flowHandler.removeGroup(T(org.jahia.utils.WebUtils).urlDecode(requestParameters.selectedGroup), messageContext)"/>
         </transition>
     </view-state>
 
