@@ -46,26 +46,26 @@
     </tr>
     </thead>
     <tbody>
-    <jsp:useBean id="pageModelsNodesID" class="java.util.HashMap" type="java.util.HashMap"/>
-    <c:forEach items="${moduleMap.currentList}" var="subchild" begin="${moduleMap.begin}" end="${moduleMap.end}"
+    <c:forEach items="${moduleMap.currentList}" var="pageModel" begin="${moduleMap.begin}" end="${moduleMap.end}"
                varStatus="status">
-        <c:if test="${empty pageModelsNodesID[subchild.identifier]}">
-            <tr class="${status.index % 2 == 0 ? 'evenLine' : 'oddLine'}">
-                <td>
-                    <div class="jahia-template-gxt" jahiatype="module" id="module${subchild.identifier}" type="existingNode"
-                         scriptInfo="" path="${subchild.path}" template="hidden.system" dragdrop="false">
-                        ${subchild.properties["j:pageTemplateTitle"].string}
-                    </div>
-                </td>
-                <td>
-                    <a href="<c:url value='${url.base}${subchild.path}.html'/>">${subchild.displayableName}</a>
-                </td>
-                <td>  <a href="<c:url value='${url.base}${subchild.path}.html'/>">${subchild.path}</a></td>
+        <tr class="${status.index % 2 == 0 ? 'evenLine' : 'oddLine'}">
+            <td>
+                <div class="jahia-template-gxt" jahiatype="module" id="module${pageModel.identifier}" type="existingNode"
+                     scriptInfo="" path="${pageModel.path}" template="hidden.system" dragdrop="false">
+                    <table class="table table-bordered">
+                        <tr>
+                            <td>${pageModel.properties["j:pageTemplateTitle"].string}</td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+            <td>
+                <a href="<c:url value='${url.base}${pageModel.path}.html'/>">${pageModel.displayableName}</a>
+            </td>
+            <td>  <a href="<c:url value='${url.base}${pageModel.path}.html'/>">${pageModel.path}</a></td>
 
-            </tr>
-            <c:set var="isEmpty" value="false"/>
-            <c:set target="${pageModelsNodesID}" property="${subchild.parent.identifier}" value="${subchild.parent.identifier}"/>
-        </c:if>
+        </tr>
+        <c:set var="isEmpty" value="false"/>
     </c:forEach>
     </tbody>
 </table>
