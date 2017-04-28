@@ -40,8 +40,8 @@
 <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="pageModelsTable">
     <thead>
     <tr>
-        <th><fmt:message key='siteSettings.label.pageModelsLSettings.pagemodel.name'/></th>
         <th><fmt:message key='siteSettings.label.pageModelsLSettings.pagename'/></th>
+        <th><fmt:message key='siteSettings.label.pageModelsLSettings.pagemodel.name'/></th>
         <th><fmt:message key='siteSettings.label.pageModelsLSettings.pagepath'/></th>
     </tr>
     </thead>
@@ -54,13 +54,13 @@
                      scriptInfo="" path="${pageModel.path}" template="hidden.system" dragdrop="false">
                     <table class="table table-bordered">
                         <tr>
-                            <td>${pageModel.properties["j:pageTemplateTitle"].string}</td>
+                            <td>${pageModel.displayableName}</td>
                         </tr>
                     </table>
                 </div>
             </td>
             <td>
-                <a href="<c:url value='${url.base}${pageModel.path}.html'/>">${pageModel.displayableName}</a>
+                <a href="<c:url value='${url.base}${pageModel.path}.html'/>">${pageModel.properties["j:pageTemplateTitle"].string}</a>
             </td>
             <td>  <a href="<c:url value='${url.base}${pageModel.path}.html'/>">${pageModel.path}</a></td>
 
