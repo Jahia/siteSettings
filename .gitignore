@@ -1,7 +1,9 @@
+/src/main/import/repository.xml.generated
 /target/
 /.classpath
 /.project
 /.settings
+/*.iml
 repository.xml.generated
 .idea
 *.iml
