@@ -52,7 +52,7 @@
         <version>7.2.1.0-SNAPSHOT</version>
     </parent>
     <artifactId>siteSettings</artifactId>
-    <version>7.1.6-SNAPSHOT</version>
+    <version>7.2.1-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>Jahia Site Settings</name>
     <description>Settings (groups,tools, etc) for site.</description>
