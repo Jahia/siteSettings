@@ -7,6 +7,10 @@
 
   <bean id="messageSource" class="org.jahia.utils.i18n.ModuleMessageSource"/>
 
+    <bean class="org.jahia.modules.sitesettings.languages.LanguagesCountAction">
+        <property name="requiredPermission" value="siteAdminLanguages"/>
+    </bean>
+
   <util:map id="siteSettingsProperties">
         <entry key="userDisplayLimit" value="${jahia.settings.userDisplayLimit:100}"/>
         <entry key="memberDisplayLimit" value="${jahia.settings.memberDisplayLimit:100}"/>
