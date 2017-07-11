@@ -14,138 +14,9 @@
 <%@ taglib prefix="template" uri="http://www.jahia.org/tags/templateLib" %>
 <c:set var="site" value="${renderContext.mainResource.node.resolveSite}"/>
 <c:set var="uiLocale" value="${renderContext.UILocale}"/>
-<c:set var="siteKey" value="${site.name}"/>
-<c:set var="installedModules" value="${site.installedModules}"/>
-<c:set var="templatePackageName" value="${site.templatePackageName}"/>
 
-<template:addResources type="javascript" resources="jquery.min.js"/>
-<template:addResources type="javascript" resources="managesites.js"/>
-<template:addResources type="javascript" resources="jquery.form.min.js"/>
-
-<script type="text/javascript">
-
-    var defaultLang;
-    var mandatoryLanguages;
-    var inactiveLanguages;
-    var inactiveLiveLanguages;
-
-    function removeAll(src, remove) {
-        for (var i = 0; i < remove.length; i++) {
-            if (src.indexOf(remove[i]) >= 0) {
-                src.splice(src.indexOf(remove[i]), 1);
-            }
-        }
-        return src;
-    }
-
-    function updateSite() {
-        showLoading();
-        inactiveLiveLanguages = inactiveLiveLanguages.concat($("#updateSiteForm #language_list").fieldValue());
-        currentLocale = '${currentResource.locale}';
-
-        var data = {
-            'j:languages': $("#updateSiteForm [name='activeLanguages']").fieldValue().concat(defaultLang != currentLocale ? [defaultLang,currentLocale] : defaultLang),
-            'j:mandatoryLanguages': (mandatoryLanguages.length == 0) ? ['jcrClearAllValues'] : mandatoryLanguages,
-            'j:inactiveLanguages': (inactiveLanguages.length == 0) ? ['jcrClearAllValues'] : inactiveLanguages,
-            'j:inactiveLiveLanguages': (inactiveLiveLanguages.length == 0) ? ['jcrClearAllValues'] : inactiveLiveLanguages,
-            'j:mixLanguage': $("#mixLanguages").prop('checked'),
-            'j:allowsUnlistedLanguages': $("#allowsUnlistedLanguages").prop('checked')
-        };
-        $('#updateSiteForm').ajaxSubmit({
-            data: data,
-            dataType: "json",
-            success: function (response) {
-                hideLoading();
-                if (response.warn != undefined) {
-                    alert(response.warn);
-                }
-                // Always reload the full page to reload the language switchers
-                top.location.reload();
-            },
-            error: function (response) {
-                hideLoading();
-            }
-        });
-        return true;
-    }
-
-    function updateBoxes() {
-        console.log("Updating checkboxes.")
-        $("#updateSiteForm input").enable(true);
-
-        defaultLang = $("#updateSiteForm [name='j:defaultLanguage']").fieldValue()[0]
-        $("#updateSiteForm [name='activeLanguages'][value='" + defaultLang + "']").enable(false);
-        $("#updateSiteForm [name='activeLiveLanguages'][value='" + defaultLang + "']").enable(false);
-
-        inactiveLanguages = removeAll($("#updateSiteForm [name='allLanguages']").fieldValue(),
-                $("#updateSiteForm [name='activeLanguages']").fieldValue());
-        inactiveLiveLanguages = removeAll($("#updateSiteForm [name='allLanguages']").fieldValue(),
-                $("#updateSiteForm [name='activeLiveLanguages']").fieldValue());
-        inactiveLanguages = removeAll(inactiveLanguages, [defaultLang]);
-        inactiveLiveLanguages = removeAll(inactiveLiveLanguages, [defaultLang]);
-
-        $.each(inactiveLanguages, function (i, v) {
-//            console.log("disabling checkboxes for "+v);
-            $("#updateSiteForm [type='checkbox'][value='" + v + "']").enable(false);
-            $("#updateSiteForm [name='activeLanguages'][value='" + v + "']").enable(true);
-        })
-        $.each(inactiveLiveLanguages, function (i, v) {
-            $("#updateSiteForm [name='j:defaultLanguage'][value='" + v + "']").enable(false);
-        })
-
-        mandatoryLanguages = $("#updateSiteForm [name='mandatoryLanguages']").fieldValue();
-//
-
-        $("#updateSiteForm [name='activeLanguages'][value='${currentResource.locale}']").enable(false);
-        mix = $("#mixLanguages").prop("checked");
-        $("#allowsUnlistedLanguages").prop("disabled", !mix);
-    }
-
-    function removeLanguage(lang,text){
-        $("#rowlang"+lang).remove();
-        $("#language_list").append($('<option>',{
-            value : lang,
-            text : text
-            }));
-        $("#language_list option").sort(function(a,b){
-            return $(a).html().trim().localeCompare($(b).html().trim());
-        }).appendTo("#language_list");
-    }
-
-    function addLanguage(){
-        $("#language_list option:selected").each(function(i){
-            var locale = $(this).attr("value");
-            var label = $(this).html().trim();
-            console.log("adding " + locale+" html "+ label+" to the list of languages");
-            var code = "<tr id=\"rowlang"+ locale+"\">";
-            var removeLang = "<button class=\"btn btn-mini btn-danger\" type=\"button\" onclick=\"removeLanguage('"+locale+"','"+label+"');\"><i class=\"icon-trash icon-white\"></i></button>";
-            code += "<td>"+removeLang+"&nbsp;&nbsp;<input type=\"hidden\" name=\"allLanguages\" value=\""+locale+"\" class=\"language\"/>"+label+"</td>";
-            code += "<td><input type=\"radio\" name=\"j:defaultLanguage\" value=\""+locale+"\" onchange=\"updateBoxes()\"/></td>";
-            code += "<td><input type=\"checkbox\" name=\"mandatoryLanguages\" value=\""+locale+"\" onchange=\"updateBoxes()\"/></td>";
-            code += "<td><input type=\"checkbox\" name=\"activeLanguages\" value=\""+locale+"\" onchange=\"updateBoxes()\"/></td>";
-            code += "<td><input type=\"checkbox\" name=\"activeLiveLanguages\" value=\""+locale+"\" onchange=\"updateBoxes()\"/></td></tr>";
-            $("#siteLanguagesBody").append(code);
-            $(this).remove();
-            updateBoxes();
-        });
-    }
-
-    $(document).ready(function () {
-        updateBoxes();
-        $("#language_list option").sort(function(a,b){
-            return $(a).html().trim().localeCompare($(b).html().trim());
-        }).appendTo("#language_list");
-    })
-    function warningMandatory(checkbox) {
-        if (checkbox.checked) {
-            $("#warningMandatory").show();
-        }
-        updateBoxes();
-    }
-
-</script>
-
-<h2><fmt:message key="siteSettings.label.manageLanguages"/> - ${fn:escapeXml(site.displayableName)}</h2>
+<template:addResources type="javascript" resources="settings/angular.min.js"/>
+<template:addResources type="javascript" resources="settings/apps/languages.js"/>
 
 <%
     JCRSiteNode site = (JCRSiteNode) pageContext.getAttribute("site");
@@ -160,105 +31,136 @@
     siteLocales.addAll(site.getInactiveLanguagesAsLocales());
 
     request.setAttribute("siteLocales", siteLocales);
-
     request.setAttribute("availableLocales", LanguageCodeConverters.getSortedLocaleList(currentLocale));
 %>
 
-<form id="updateSiteForm" action="<c:url value='${url.base}${renderContext.mainResource.node.resolveSite.path}'/>" method="post">
-    <div class="row-fluid">
-        <div class="span12">
-            <h3 class="text-left"><fmt:message key="siteSettings.locale.availableLanguages"/></h3>
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span4">
-                <select name="language_list" id="language_list" multiple="multiple" size="${fn:length(siteLocales) > 20 ? fn:length(siteLocales):20}">
-                    <c:forEach var="locale" items="${availableLocales}">
-                        <c:set var="langAsString">${locale}</c:set>
-                        <c:if test="${not functions:contains(siteLocales, locale)}">
-                            <option value="${locale}"><%= ((Locale) pageContext.getAttribute("locale")).getDisplayName(
-                                    currentLocale)%> (${locale})
-                            </option>
-                        </c:if>
-                    </c:forEach>
-                </select>
-                <button class="btn btn-primary" type="button" onclick="addLanguage();"><i class="icon-forward icon-white"></i></button>
-        </div>
-        <div class="span7">
-            <input type="hidden" name="jcrMethodToCall" value="put"/>
-            <input type="hidden" name="jcrRedirectTo" value="<c:url value='${url.base}${renderContext.mainResource.node.path}'/>"/>
-            <table class="table table-bordered table-striped table-hover">
-                <thead>
-                <tr>
-                    <th><fmt:message key="siteSettings.label.language"/></th>
-                    <th><fmt:message key="siteSettings.label.language.default"/></th>
-                    <th><fmt:message key="siteSettings.label.language.mandatory"/></th>
-                    <th><fmt:message key="siteSettings.label.language.active.edit"/></th>
-                    <th><fmt:message key="siteSettings.label.language.active.live"/></th>
-                </tr>
-                </thead>
-                <tbody id="siteLanguagesBody">
-                <c:forEach var="locale" items="${siteLocales}" varStatus="status">
-                    <c:set var="langAsString">${locale}</c:set>
-                    <tr>
-                        <td><input type="hidden" name="allLanguages" value="${locale}" class="language"/><%= ((Locale) pageContext.getAttribute("locale")).getDisplayName(currentLocale)%> (${locale})</td>
-                        <td>
-                            <input type="radio" name="j:defaultLanguage" value="${locale}" onchange="updateBoxes()"
-                                   <c:if test="${site.defaultLanguage eq locale}">checked="checked"</c:if> />
-                        </td>
-                        <td>
-                            <input type="checkbox" name="mandatoryLanguages" value="${locale}" onchange="warningMandatory(this)"
-                                   <c:if test="${functions:contains(site.mandatoryLanguages, langAsString)}">checked="checked"</c:if>/>
-                        </td>
-                        <td>
-                            <input type="checkbox" name="activeLanguages" value="${locale}" onchange="updateBoxes()"
-                                   <c:if test="${functions:contains(site.languages, langAsString)}">checked="checked"</c:if>/>
-                        </td>
-                        <td>
-                            <input type="checkbox" name="activeLiveLanguages" value="${locale}" onchange="updateBoxes()"
-                                   <c:if test="${functions:contains(site.activeLiveLanguages, langAsString)}">checked="checked"</c:if>/>
-                        </td>
-                    </tr>
-                </c:forEach>
-                </tbody>
-            </table>
-            <div class="alert hide" id="warningMandatory">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                <fmt:message key="siteSettings.locale.mandatory.warning"/>
+<script type="text/javascript">
+    var mandatoryLanguages = [];
+    var activeDefaultLanguages = [];
+    var activeLiveLanguages = [];
+    var siteLocales = [];
+    var availableLocales = [];
+
+    <c:forEach items="${site.mandatoryLanguages}" var="mandatoryLanguage">
+    mandatoryLanguages.push("${mandatoryLanguage}");
+    </c:forEach>
+    <c:forEach items="${site.languages}" var="language">
+    activeDefaultLanguages.push("${language}");
+    </c:forEach>
+    <c:forEach items="${site.activeLiveLanguages}" var="liveLanguage">
+    activeLiveLanguages.push("${liveLanguage}");
+    </c:forEach>
+    <c:forEach items="${availableLocales}" var="availableLocale">
+    availableLocales.push({"locale" : "${availableLocale}", "displayLocale" : "<%= ((Locale) pageContext.getAttribute("availableLocale")).getDisplayName(currentLocale)%> (${availableLocale})"});
+    </c:forEach>
+    <c:forEach items="${siteLocales}" var="siteLocale">
+    siteLocales.push({"locale" : "${siteLocale}", "displayLocale" : "<%= ((Locale) pageContext.getAttribute("siteLocale")).getDisplayName(currentLocale)%> (${siteLocale})"});
+    </c:forEach>
+
+    angular.module('siteSetting').constant("languagesConstants", {
+        "currentLocale" : "${uiLocale}",
+        "siteRestUrl" : "${url.context}/modules/api/jcr/v1/default/${currentResource.locale}/nodes/${renderContext.mainResource.node.resolveSite.identifier}",
+        "siteUrl" : "<c:url value='${url.base}${renderContext.mainResource.node.resolveSite.path}'/>",
+        "siteDefaultLanguage" : "${site.defaultLanguage}",
+        "mandatoryLanguages" : mandatoryLanguages,
+        "activeDefaultLanguages" : activeDefaultLanguages,
+        "activeLiveLanguages" : activeLiveLanguages,
+        "siteLocales" : siteLocales,
+        "availableLocales" : availableLocales,
+        "mixLanguages" : ${site.mixLanguagesActive},
+        "allowsUnlistedLanguages" : ${site.allowsUnlistedLanguages}
+    });
+</script>
+
+<div ng-app="siteSetting">
+    <div ng-controller="languages">
+
+        <h2><fmt:message key="siteSettings.label.manageLanguages"/> - ${fn:escapeXml(site.displayableName)}</h2>
+
+        <div class="loading" ng-show="displayLoading">
+            <div class="alert alert-info">
+                <strong><fmt:message key="label.workInProgressTitle"/></strong>
             </div>
         </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span12">
-            <label for="mixLanguages" class="checkbox">
-                <input type="checkbox" name="mixLanguage" id="mixLanguages" value="true"${site.mixLanguagesActive ? ' checked="checked"' : ''} onchange="updateBoxes()"/>
-                &nbsp;<fmt:message
-                    key="siteSettings.locale.mixLanguages"/>
-            </label>
+
+        <div>
+            <div class="row-fluid">
+                <div class="span12">
+                    <h3 class="text-left"><fmt:message key="siteSettings.locale.availableLanguages"/></h3>
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div class="span4">
+                    <select ng-model="newLanguages" name="language_list" id="language_list" multiple="multiple" size="${fn:length(siteLocales) > 20 ? fn:length(siteLocales):20}">
+                        <option ng-repeat="availableLocale in site.availableLocales | filter:filterSiteLocales" ng-value="availableLocale">{{availableLocale.displayLocale}}</option>
+                    </select>
+                    <button class="btn btn-primary" type="button" ng-click="addLanguage()" ng-disabled="!newLanguages || newLanguages.length == 0"><i class="icon-forward icon-white"></i></button>
+                </div>
+                <div class="span7">
+                    <table class="table table-bordered table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th><fmt:message key="siteSettings.label.language"/></th>
+                            <th><fmt:message key="siteSettings.label.language.default"/></th>
+                            <th><fmt:message key="siteSettings.label.language.mandatory"/></th>
+                            <th><fmt:message key="siteSettings.label.language.active.edit"/></th>
+                            <th><fmt:message key="siteSettings.label.language.active.live"/></th>
+                            <th><fmt:message key="label.count"/>&nbsp;&#40;<fmt:message key="label.editMode"/>&#41;</th>
+                            <th><fmt:message key="label.actions"/></th>
+                        </tr>
+                        </thead>
+                        <tbody id="siteLanguagesBody">
+                        <tr ng-repeat="siteLocale in site.siteLocales track by $index">
+                            <td>{{siteLocale.displayLocale}}</td>
+                            <td>
+                                <input type="radio" name="j:defaultLanguage" ng-model="site.siteDefaultLanguage" ng-value="siteLocale.locale"/>
+                            </td>
+                            <td>
+                                <input type="checkbox" ng-model="siteLocale.mandatory"/>
+                            </td>
+                            <td>
+                                <input type="checkbox" ng-model="siteLocale.activeEdit" ng-disabled="isEditDisabled(siteLocale)"/>
+                            </td>
+                            <td>
+                                <input type="checkbox" ng-model="siteLocale.activeLive" ng-disabled="isLiveDisabled(siteLocale)"/>
+                            </td>
+                            <td>
+                                <span ng-show="siteLocale.count != undefined" class="label label-success"><span>{{siteLocale.count}}</span></span>
+                            </td>
+                            <td>
+                                <button ng-show="canBeDeleted(siteLocale)" class="btn btn-mini btn-danger" type="button" ng-click="delete($index)">
+                                    <i class="icon-trash icon-white"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div class="span12">
+                    <label for="mixLanguages" class="checkbox">
+                        <input type="checkbox" ng-model="site.mixLanguages" id="mixLanguages"/>
+                        &nbsp;<fmt:message  key="siteSettings.locale.mixLanguages"/>
+                    </label>
 
 
-            <label class="checkbox" for="allowsUnlistedLanguages">
-                <input type="checkbox" name="allowsUnlistedLanguages" id="allowsUnlistedLanguages" value="true"${site.allowsUnlistedLanguages ? ' checked="checked"' : ''} />
-                &nbsp;<fmt:message
-                    key="siteSettings.locale.allowsUnlistedLanguages"/>
-            </label>
+                    <label class="checkbox" for="allowsUnlistedLanguages">
+                        <input type="checkbox" ng-model="site.allowsUnlistedLanguages" id="allowsUnlistedLanguages"/>
+                        &nbsp;<fmt:message key="siteSettings.locale.allowsUnlistedLanguages"/>
+                    </label>
+                </div>
+            </div>
+
+
+            <div class="row-fluid">
+                <div class="span12">
+                    <p class="text-center">
+                        <button class="btn btn-primary" type="button" id="updateSite_button" ng-click="save()">
+                            <i class="icon-plus-sign icon-white"></i> <fmt:message key="label.submit"/></button>
+                    </p>
+                </div>
+            </div>
         </div>
-    </div>
-
-
-    <div class="row-fluid">
-        <div class="span12">
-            <p class="text-center">
-                <button class="btn btn-primary" type="button" id="updateSite_button" onclick="updateSite()">
-                    <i class="icon-plus-sign icon-white"></i> <fmt:message key="label.submit"/></button>
-            </p>
-        </div>
-    </div>
-
-</form>
-
-<div style="display:none;" class="loading">
-    <div class="alert alert-info">
-        <strong><fmt:message key="label.workInProgressTitle"/></strong>
     </div>
 </div>
