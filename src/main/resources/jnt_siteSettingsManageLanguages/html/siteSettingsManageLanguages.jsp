@@ -117,7 +117,6 @@
                             <th><fmt:message key="siteSettings.label.language.mandatory"/></th>
                             <th><fmt:message key="siteSettings.label.language.active.edit"/></th>
                             <th><fmt:message key="siteSettings.label.language.active.live"/></th>
-                            <th><fmt:message key="label.count"/>&nbsp;&#40;<fmt:message key="label.editMode"/>&#41;</th>
                             <th><fmt:message key="label.actions"/></th>
                         </tr>
                         </thead>
@@ -137,12 +136,15 @@
                                 <input type="checkbox" ng-model="siteLocale.activeLive" ng-disabled="isLiveDisabled(siteLocale)"/>
                             </td>
                             <td>
-                                <span ng-show="siteLocale.count != undefined" class="label label-success"><span>{{siteLocale.count}}</span></span>
-                            </td>
-                            <td>
                                 <button ng-show="canBeDeleted(siteLocale)" class="btn btn-mini btn-danger" type="button" ng-click="delete($index)">
                                     <i class="icon-trash icon-white"></i>
                                 </button>
+                                <div ng-if="!canBeDeleted(siteLocale)">
+                                    <span ng-show="getNotDeletableReason(siteLocale) === 'current'"><fmt:message  key="siteSettings.label.language.delete.current"/></span>
+                                    <span ng-show="getNotDeletableReason(siteLocale) === 'default'"><fmt:message  key="siteSettings.label.language.delete.default"/></span>
+                                    <span ng-show="getNotDeletableReason(siteLocale) === 'active'"><fmt:message  key="siteSettings.label.language.delete.active"/></span>
+                                    <span ng-show="getNotDeletableReason(siteLocale) === 'contents'"><fmt:message  key="siteSettings.label.language.delete.contents"/></span>
+                                </div>
                             </td>
                         </tr>
                         </tbody>
