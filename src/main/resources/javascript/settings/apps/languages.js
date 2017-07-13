@@ -17,27 +17,27 @@ angular.module('siteSetting', [])
 
             for (var i = 0; i < $scope.site.siteLocales.length; i++) {
                 var siteLocale = $scope.site.siteLocales[i];
-                const localeName = siteLocale.locale;
 
                 siteLocale.mandatory = languagesConstants.mandatoryLanguages.indexOf(siteLocale.locale) !== -1;
                 siteLocale.activeEdit = languagesConstants.activeDefaultLanguages.indexOf(siteLocale.locale) !== -1;
                 siteLocale.activeLive = languagesConstants.activeLiveLanguages.indexOf(siteLocale.locale) !== -1;
-
-                $http({
-                    method  : 'GET',
-                    url     : languagesConstants.siteUrl + ".languagesCount.do?locale=" + siteLocale.locale,
-                    headers : { 'Content-Type': 'application/json' }
-                }).then(function successCallback(result) {
-                    if (result && result.data && result.status === 200) {
-                        for (var j = 0; j < $scope.site.siteLocales.length; j++) {
-                            var innerSiteLocale = $scope.site.siteLocales[j];
-                            if(innerSiteLocale.locale === localeName) {
-                                innerSiteLocale.count = result.data.count;
-                            }
-                        }
-                    }
-                });
             }
+
+            var getCount = function (siteLocale) {
+                if (!siteLocale.calculatingCount) {
+                    siteLocale.calculatingCount = true;
+                    $http({
+                        method  : 'GET',
+                        url     : languagesConstants.siteUrl + ".languagesCount.do?locale=" + siteLocale.locale,
+                        headers : { 'Content-Type': 'application/json' }
+                    }).then(function successCallback(result) {
+                        if (result && result.data && result.status === 200) {
+                            siteLocale.count = result.data.count;
+                        }
+                        siteLocale.calculatingCount = false;
+                    });
+                }
+            };
 
             /**
              * Watcher on defaultLanguage that set language to active for edit and live when selected as default
@@ -53,13 +53,22 @@ angular.module('siteSetting', [])
             });
 
             /**
-             * Watcher on site locales, automatically set live not active when edit is not active
+             * Watcher on site locales:
+             * - automatically set live not active when edit is not active
+             * - automatically request count of contents for language if necessary
              */
             $scope.$watch("site.siteLocales", function(newValue, oldValue, scope) {
                 for (var i = 0; i < $scope.site.siteLocales.length; i++) {
                     var siteLocale = $scope.site.siteLocales[i];
-                    if(!siteLocale.activeEdit && siteLocale.activeLive) {
+
+                    // automatically disable live if edit is deactivate
+                    if (!siteLocale.activeEdit && siteLocale.activeLive) {
                         siteLocale.activeLive = false;
+                    }
+
+                    // get count if necessary
+                    if (!siteLocale.activeEdit && siteLocale.count === undefined) {
+                        getCount(siteLocale);
                     }
                 }
             }, true);
@@ -130,7 +139,25 @@ angular.module('siteSetting', [])
              * - languages with count > 0
              */
             $scope.canBeDeleted = function(siteLocale) {
-                return siteLocale.locale !== $scope.site.siteDefaultLanguage && siteLocale.locale !== $scope.site.currentLocale && siteLocale.count !== undefined && siteLocale.count === 0;
+                return !siteLocale.activeEdit && siteLocale.locale !== $scope.site.siteDefaultLanguage && siteLocale.locale !== $scope.site.currentLocale && siteLocale.count !== undefined && siteLocale.count === 0;
+            };
+
+            /**
+             * get the reason why the language can't be deleted
+             */
+            $scope.getNotDeletableReason = function(siteLocale) {
+                if (siteLocale.locale === $scope.site.currentLocale) {
+                    return "current";
+                }
+                if (siteLocale.locale === $scope.site.siteDefaultLanguage) {
+                    return "default";
+                }
+                if (siteLocale.activeEdit) {
+                    return "active";
+                }
+                if (siteLocale.count !== undefined && siteLocale.count > 0) {
+                    return "contents"
+                }
             };
 
             /**
