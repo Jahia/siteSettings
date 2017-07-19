@@ -496,7 +496,12 @@ public class ManageGroupsFlowHandler implements Serializable {
         return searchResult;
     }
 
-    public Map<JCRUserNode, Boolean> searchNewUserMembers(JCRGroupNode groupNode, SearchCriteria searchCriteria) {
+    public Map<JCRUserNode, Boolean> searchNewUserMembers(JCRGroupNode groupNode, SearchCriteria searchCriteria, Boolean skipSearch) {
+
+        if (skipSearch != null && skipSearch) {
+            return new HashMap<>();
+        }
+
         long timer = System.currentTimeMillis();
 
         Map<JCRUserNode, Boolean> searchResult = new TreeMap<>(new Comparator<JCRNodeWrapper>(){
