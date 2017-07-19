@@ -63,10 +63,20 @@
 <div>
     <form action="${flowExecutionUrl}" method="post" style="display: inline;">
         <div>
-            <button class="btn" type="submit" name="_eventId_editGroup">
-                <i class="icon-arrow-left"></i>
-                &nbsp;<fmt:message key="siteSettings.label.backToGroup"/>
-            </button>
+            <c:choose>
+                <c:when test="${quickSave}">
+                    <button class="btn" type="submit" name="_eventId_cancel">
+                        <i class="icon-arrow-left"></i>
+                        &nbsp;<fmt:message key="label.backToGroupList"/>
+                    </button>
+                </c:when>
+                <c:otherwise>
+                    <button class="btn" type="submit" name="_eventId_editGroup">
+                        <i class="icon-arrow-left"></i>
+                        &nbsp;<fmt:message key="siteSettings.label.backToGroup"/>
+                    </button>
+                </c:otherwise>
+            </c:choose>
             <button class="btn" type="submit" name="_eventId_editUsers">
                 <img src="<c:url value='/modules/assets/css/img/icon-user-small.png'/>" alt=""/>
                 &nbsp;<fmt:message key="label.users"/>

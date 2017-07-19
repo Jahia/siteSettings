@@ -71,7 +71,7 @@
 <form action="${flowExecutionUrl}" method="post" id="saveForm">
     <input id="addedMembers" type="hidden" name="addedMembers"/>
     <input id="removedMembers" type="hidden" name="removedMembers"/>
-    <button class="btn btn-primary" type="submit" name="_eventId_save" id="saveButton" disabled="disabled">
+    <button class="btn btn-primary" type="submit" name="_eventId_${quickSave ? 'quickSave' : 'save'}" id="saveButton" disabled="disabled">
         <i class="icon-ok icon-white"></i>
         &nbsp;<fmt:message key="label.save"/>
     </button>

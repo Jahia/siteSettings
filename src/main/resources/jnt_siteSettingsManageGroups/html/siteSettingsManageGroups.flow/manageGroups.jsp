@@ -137,6 +137,7 @@ function submitGroupForm(act, group) {
                     <fmt:message var="i18nEdit" key="label.edit"/><c:set var="i18nEdit" value="${fn:escapeXml(i18nEdit)}"/>
                     <fmt:message var="i18nCopy" key="label.copy"/><c:set var="i18nCopy" value="${fn:escapeXml(i18nCopy)}"/>
                     <fmt:message var="i18nRemove" key="label.remove"/><c:set var="i18nRemove" value="${fn:escapeXml(i18nRemove)}"/>
+                    <fmt:message var="i18nAddMembers" key="siteSettings.groups.addMembers"/><c:set var="i18nRemove" value="${fn:escapeXml(i18nAddMembers)}"/>
                     <fmt:message var="i18nRemoveNote" key="siteSettings.groups.remove.confirm"/>
                     <fmt:message var="i18nContinue" key="label.confirmContinue"/>
                     <c:set var="i18nRemoveConfirm" value="${functions:escapeJavaScript(i18nRemoveNote)} ${functions:escapeJavaScript(i18nContinue)}"/>
@@ -156,6 +157,9 @@ function submitGroupForm(act, group) {
                                     <i class="icon-edit"></i>
                                 </a>
                                 <c:if test="${!grp.properties['j:external'].boolean}">
+                                    <a style="margin-bottom:0;" class="btn btn-small" title="${i18nAddMembers}" href="#copy" onclick="submitGroupForm('editGroupMembers', '${escapedGroupKey}'); return false;">
+                                        <i class="icon-user"></i>
+                                    </a>
                                     <a style="margin-bottom:0;" class="btn btn-small" title="${i18nCopy}" href="#copy" onclick="submitGroupForm('copyGroup', '${escapedGroupKey}'); return false;">
                                         <i class="icon-share"></i>
                                     </a>
