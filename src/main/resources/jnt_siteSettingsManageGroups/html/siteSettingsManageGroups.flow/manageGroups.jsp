@@ -157,7 +157,8 @@ function submitGroupForm(act, group) {
                                     <i class="icon-edit"></i>
                                 </a>
                                 <c:if test="${!grp.properties['j:external'].boolean}">
-                                    <a style="margin-bottom:0;" class="btn btn-small" title="${i18nAddMembers}" href="#copy" onclick="submitGroupForm('editGroupMembers', '${escapedGroupKey}'); return false;">
+                                    <a style="margin-bottom:0;" class="btn btn-small" title="${i18nAddMembers}" href="#addMembers"
+                                       onclick="submitGroupForm('editGroupMembers', '${escapedGroupKey}'); return false;">
                                         <i class="icon-user"></i>
                                     </a>
                                     <a style="margin-bottom:0;" class="btn btn-small" title="${i18nCopy}" href="#copy" onclick="submitGroupForm('copyGroup', '${escapedGroupKey}'); return false;">
