@@ -37,8 +37,7 @@
         </transition>
         <transition on="editGroupMembers" to="editUsersMembers" validate="false" bind="false">
             <set name="flowScope.groupKey" value="T(org.jahia.utils.WebUtils).urlDecode(requestParameters.selectedGroup)"/>
-            <set name="flowScope.skipSearch" value="true" type="boolean" />
-            <set name="flowScope.quickSave" value="true" type="boolean" />
+            <set name="flowScope.quickAddMembers" value="true" type="boolean" />
         </transition>
     </view-state>
 
@@ -63,8 +62,8 @@
             <evaluate expression="flowHandler.lookupGroupMembersCount(requestScope.group)" result="requestScope.memberCount"/>
         </on-render>
         <transition on="editGroupMembers" to="editUsersMembers" validate="false">
-            <set name="flowScope.skipSearch" value="false" type="boolean" />
-            <set name="flowScope.quickSave" value="false" type="boolean" />
+            <set name="flowScope.quickAddMembers" value="false" type="boolean" />
+            <evaluate expression="flowHandler.searchNewUserMembers(flowScope.groupKey, memberSearchCriteria)" result="flashScope.principals"/>
         </transition>
         <transition on="removeMembers" to="editGroup" validate="false">
             <evaluate expression="flowHandler.removeMembers(flowScope.groupKey, requestParameters.selectedMembers, messageContext)"/>
@@ -78,30 +77,28 @@
     <view-state id="editUsersMembers" model="memberSearchCriteria">
         <on-render>
             <evaluate expression="flowHandler.lookupGroup(flowScope.groupKey)" result="requestScope.group"/>
-            <evaluate expression="flowHandler.searchNewUserMembers(requestScope.group, memberSearchCriteria, flowScope.skipSearch)"
-                      result="requestScope.principals"/>
             <evaluate expression="flowHandler.getProviders(true, true)" result="requestScope.providers"/>
         </on-render>
 
         <transition on="editGroup" to="editGroup"/>
         <transition on="manageGroups" to="manageGroups"/>
         <transition on="search" to="editUsersMembers">
-            <set name="flowScope.skipSearch" value="false" type="boolean"/>
+            <evaluate expression="flowHandler.searchNewUserMembers(flowScope.groupKey, memberSearchCriteria)" result="flashScope.principals"/>
         </transition>
         <transition on="editUsers" to="editUsersMembers" validate="false">
-            <set name="flowScope.skipSearch" value="false" type="boolean"/>
+            <evaluate expression="flowHandler.searchNewUserMembers(flowScope.groupKey, memberSearchCriteria)" result="flashScope.principals"/>
         </transition>
         <transition on="editGroups" to="editGroupsMembers" validate="false"/>
-        <transition on="save" to="editGroup" validate="false">
-            <evaluate expression="flowHandler.addMembers(flowScope.groupKey, requestParameters.addedMembers, messageContext)"/>
-            <evaluate expression="flowHandler.removeMembers(flowScope.groupKey, requestParameters.removedMembers, messageContext)"/>
-        </transition>
-        <transition on="quickSave" to="manageGroups" validate="false">
+        <transition on="save" to="usersMembersSavedResultDecision" validate="false">
             <evaluate expression="flowHandler.addMembers(flowScope.groupKey, requestParameters.addedMembers, messageContext)"/>
             <evaluate expression="flowHandler.removeMembers(flowScope.groupKey, requestParameters.removedMembers, messageContext)"/>
         </transition>
         <transition on="cancel" to="manageGroups" bind="false" validate="false"/>
     </view-state>
+
+    <decision-state id="usersMembersSavedResultDecision">
+        <if test="flowScope.quickAddMembers" then="manageGroups" else="editGroup" />
+    </decision-state>
 
     <view-state id="editGroupsMembers">
         <on-render>
@@ -112,11 +109,10 @@
 
         <transition on="editGroup" to="editGroup"/>
         <transition on="search" to="editUsersMembers">
-            <set name="flowScope.skipSearch" value="false" type="boolean" />
-            <set name="flowScope.quickSave" value="false" type="boolean" />
+            <evaluate expression="flowHandler.searchNewUserMembers(flowScope.groupKey, memberSearchCriteria)" result="flashScope.principals"/>
         </transition>
         <transition on="editUsers" to="editUsersMembers" validate="false">
-            <set name="flowScope.skipSearch" value="false" type="boolean" />
+            <evaluate expression="flowHandler.searchNewUserMembers(flowScope.groupKey, memberSearchCriteria)" result="flashScope.principals"/>
         </transition>
         <transition on="editGroups" to="editGroupsMembers" validate="false"/>
         <transition on="save" to="editGroup" validate="false">
