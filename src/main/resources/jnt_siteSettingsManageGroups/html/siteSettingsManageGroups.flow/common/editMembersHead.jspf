@@ -9,7 +9,8 @@
 <c:set var="multipleProvidersAvailable" value="${fn:length(providers) > 1}"/>
 <c:set var="isGroupEditable" value="${!group.properties['j:external'].boolean}"/>
 
-<h2><fmt:message key="label.group"/>: ${fn:escapeXml(user:displayName(group))}</h2>
+
+<h2><fmt:message key="${quickAddMembers ? 'siteSettings.label.quickAddMembers.header' : 'label.group'}"/>: ${fn:escapeXml(user:displayName(group))}</h2>
 
 <script type="text/javascript">
     var addedMembers = [];
