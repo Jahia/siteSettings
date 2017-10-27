@@ -256,6 +256,104 @@
                             </pagecontent>
                         </page-models>
                     </site-settings-base>
+                    <site-settings-base-jahia-anthracite j:view="settingsBootstrap3GoogleMaterialStyle"
+                                jcr:mixinTypes="jmix:useUILocale"
+                                jcr:primaryType="jnt:template">
+                        <manageLanguages-jahia-anthracite j:applyOn="jnt:virtualsite"
+                                j:defaultTemplate="false"
+                                j:hiddenTemplate="true"
+                                j:icon="/modules/siteSettings/templates/files/signpost.png"
+                                j:priority="100"
+                                j:requiredPermissionNames="siteAdminLanguages"
+                                j:titleKey="siteSettings.label.manageLanguages"
+                                jcr:mixinTypes="jmix:rbTitle"
+                                jcr:primaryType="jnt:contentTemplate">
+                            <pagecontent jcr:primaryType="jnt:contentList">
+                                <manage-languages jcr:primaryType="jnt:siteSettingsManageLanguages" jcr:mixinTypes="jmix:renderable" j:view="settingsBootstrap3GoogleMaterialStyle"/>
+                            </pagecontent>
+                        </manageLanguages-jahia-anthracite>
+                        <wcagCompliance-jahia-anthracite j:applyOn="jnt:virtualsite"
+                               j:defaultTemplate="false"
+                               j:hiddenTemplate="true"
+                               j:icon="/modules/siteSettings/templates/files/text_rich_colored.png"
+                               j:priority="100"
+                               j:requiredPermissionNames="siteAdminWcagCompliance"
+                               j:titleKey="siteSettings.label.wcagCompliance"
+                               jcr:mixinTypes="jmix:rbTitle"
+                               jcr:primaryType="jnt:contentTemplate">
+                            <pagecontent jcr:primaryType="jnt:contentList">
+                                <wcag-compliance jcr:primaryType="jnt:siteSettingsWcagCompliance" jcr:mixinTypes="jmix:renderable" j:view="settingsBootstrap3GoogleMaterialStyle"/>
+                            </pagecontent>
+                        </wcagCompliance-jahia-anthracite>
+                        <htmlFiltering-jahia-anthracite j:applyOn="jnt:virtualsite"
+                              j:defaultTemplate="false"
+                              j:hiddenTemplate="true"
+                              j:icon="/modules/siteSettings/templates/files/text_rich_colored.png"
+                              j:priority="100"
+                              j:requiredPermissionNames="siteAdminHtmlSettings"
+                              j:titleKey="siteSettings.label.htmlFiltering"
+                              jcr:mixinTypes="jmix:rbTitle"
+                              jcr:primaryType="jnt:contentTemplate">
+                            <pagecontent jcr:primaryType="jnt:contentList">
+                                <html-filtering jcr:primaryType="jnt:siteSettingsHtmlFiltering" jcr:mixinTypes="jmix:renderable" j:view="settingsBootstrap3GoogleMaterialStyle"/>
+                            </pagecontent>
+                        </htmlFiltering-jahia-anthracite>
+                        <vanityURLSetting-jahia-anthracite j:applyOn="jnt:virtualsite"
+                                 j:defaultTemplate="false"
+                                 j:hiddenTemplate="true"
+                                 j:icon="/modules/siteSettings/templates/files/urlmapping.png"
+                                 j:priority="100"
+                                 j:requiredPermissionNames="siteAdminUrlmapping"
+                                 j:titleKey="siteSettings.label.vanityURLSettings"
+                                 jcr:mixinTypes="jmix:rbTitle"
+                                 jcr:primaryType="jnt:contentTemplate">
+                            <pagecontent jcr:primaryType="jnt:contentList">
+                                <vanityurlslist jcr:mixinTypes="jmix:accessControlled jmix:renderable"
+                                     jcr:primaryType="jnt:siteSettingsVanityUrlsList" j:view="settingsBootstrap3GoogleMaterialStyle">
+                                    <j:acl jcr:primaryType="jnt:acl"/>
+                                </vanityurlslist>
+                            </pagecontent>
+                        </vanityURLSetting-jahia-anthracite>
+                        <manageModules-jahia-anthracite j:applyOn="jnt:virtualsite"
+                              j:defaultTemplate="false"
+                              j:hiddenTemplate="true"
+                              j:icon="/modules/siteSettings/templates/files/briefcase_document.png"
+                              j:priority="100"
+                              j:requiredPermissionNames="siteAdminTemplates"
+                              j:titleKey="siteSettings.label.manageModules"
+                              jcr:mixinTypes="jmix:rbTitle"
+                              jcr:primaryType="jnt:contentTemplate">
+                            <pagecontent jcr:primaryType="jnt:contentList">
+                                <manage-modules jcr:primaryType="jnt:siteSettingsManageModules" jcr:mixinTypes="jmix:renderable" j:view="settingsBootstrap3GoogleMaterialStyle"/>
+                            </pagecontent>
+                        </manageModules-jahia-anthracite>
+                        <manageUsers-jahia-anthracite j:applyOn="jnt:virtualsite"
+                            j:defaultTemplate="false"
+                            j:hiddenTemplate="true"
+                            j:icon="/modules/siteSettings/templates/files/manage_users.png"
+                            j:priority="100"
+                            j:requiredPermissionNames="siteAdminUsers"
+                            j:titleKey="siteSettings.manageUsers"
+                            jcr:mixinTypes="jmix:rbTitle"
+                            jcr:primaryType="jnt:contentTemplate">
+                            <pagecontent jcr:primaryType="jnt:contentList">
+                                <manage-users jcr:primaryType="jnt:siteSettingsManageUsers" jcr:mixinTypes="jmix:renderable" j:view="settingsBootstrap3GoogleMaterialStyle"/>
+                            </pagecontent>
+                        </manageUsers-jahia-anthracite>
+                        <manageGroups-jahia-anthracite j:applyOn="jnt:virtualsite"
+                             j:defaultTemplate="false"
+                             j:hiddenTemplate="true"
+                             j:icon="/modules/siteSettings/templates/files/users_into.png"
+                             j:priority="100"
+                             j:requiredPermissionNames="siteAdminGroups"
+                             j:titleKey="siteSettings.label.manageGroups"
+                             jcr:mixinTypes="jmix:rbTitle"
+                             jcr:primaryType="jnt:contentTemplate">
+                            <pagecontent jcr:primaryType="jnt:contentList">
+                                <manage-groups jcr:primaryType="jnt:siteSettingsManageGroups" jcr:mixinTypes="jmix:renderable" j:view="settingsBootstrap3GoogleMaterialStyle"/>
+                            </pagecontent>
+                        </manageGroups-jahia-anthracite>
+                    </site-settings-base-jahia-anthracite>
                 </templates>
                 
             </siteSettings>
