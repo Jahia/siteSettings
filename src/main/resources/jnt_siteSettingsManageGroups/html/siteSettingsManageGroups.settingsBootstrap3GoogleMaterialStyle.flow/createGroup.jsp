@@ -24,7 +24,7 @@
 
 <c:forEach items="${flowRequestContext.messageContext.allMessages}" var="message">
     <c:if test="${message.severity eq 'ERROR'}">
-        <div class="alert alert-error">
+        <div class="alert alert-danger">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
                 ${message.text}
         </div>
@@ -58,15 +58,15 @@
                     </div>
 
                     <div class="container-fluid">
-                        <button class="btn btn-default btn-sm" type="submit" name="_eventId_cancel">
-                            <i class="material-icons">cancel</i>
-                            <fmt:message key="label.cancel"/>
-                        </button>
                         <button class="btn btn-primary btn-sm pull-right" type="submit"
                                 name="_eventId_${copyMode ? 'copy' : 'add'}"
                                 onclick="workInProgress('${i18nWaiting}'); return true;">
                             <i class="material-icons">${copyMode ? 'content_copy' : 'add'}</i>
                             <fmt:message key="label.${copyMode ? 'copy' : 'add'}"/>
+                        </button>
+                        <button class="btn btn-default btn-sm" type="submit" name="_eventId_cancel">
+                            <i class="material-icons">cancel</i>
+                            <fmt:message key="label.cancel"/>
                         </button>
                     </div>
                 </form>
