@@ -132,7 +132,7 @@
                     <fieldset>
                         <div class="row">
                             <div class="col-md-12">
-                                <button class="btn btn-default btn-sm" type="submit" name="_eventId_cancel">
+                                <button class="btn btn-default btn-sm" type="button" name="_eventId_cancel">
                                     <i class="material-icons">cancel</i>
                                     <fmt:message key='label.cancel'/>
                                 </button>
