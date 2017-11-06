@@ -132,13 +132,13 @@
                     <fieldset>
                         <div class="row">
                             <div class="col-md-12">
-                                <button class="btn btn-default btn-sm" type="button" name="_eventId_cancel">
-                                    <i class="material-icons">cancel</i>
-                                    <fmt:message key='label.cancel'/>
-                                </button>
                                 <button class="btn btn-primary btn-sm pull-right" type="submit" name="_eventId_add" onclick="workInProgress('${i18nWaiting}'); return true;">
                                     <i class="material-icons">add</i>
                                     <fmt:message key='label.add'/>
+                                </button>
+                                <button class="btn btn-default btn-sm" type="submit" name="_eventId_cancel">
+                                    <i class="material-icons">cancel</i>
+                                    <fmt:message key='label.cancel'/>
                                 </button>
                             </div>
                         </div>
