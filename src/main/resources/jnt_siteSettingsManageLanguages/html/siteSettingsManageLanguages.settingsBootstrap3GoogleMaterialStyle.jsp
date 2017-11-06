@@ -99,99 +99,108 @@
         <div>
             <div class="row">
                 <div class="col-md-12">
-                    <h3 class="text-left"><fmt:message key="siteSettings.locale.availableLanguages"/></h3>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <select ng-model="newLanguages" name="language_list" id="language_list" multiple="multiple" size="${fn:length(siteLocales) > 20 ? fn:length(siteLocales):20}">
-                        <option ng-repeat="availableLocale in site.availableLocales | filter:filterSiteLocales" ng-value="availableLocale">{{availableLocale.displayLocale}}</option>
-                    </select>
-                    <button class="btn btn-fab btn-fab-mini btn-primary" type="button" ng-click="addLanguage()" ng-disabled="!newLanguages || newLanguages.length == 0"><i class="material-icons">fast_forward</i></button>
-                </div>
-                <div class="col-md-7">
-                    <table class="table table-bordered table-striped table-hover">
-                        <thead>
-                        <tr>
-                            <th><fmt:message key="siteSettings.label.language"/></th>
-                            <th><fmt:message key="siteSettings.label.language.default"/></th>
-                            <th><fmt:message key="siteSettings.label.language.mandatory"/></th>
-                            <th><fmt:message key="siteSettings.label.language.active.edit"/></th>
-                            <th><fmt:message key="siteSettings.label.language.active.live"/></th>
-                            <th><fmt:message key="label.actions"/></th>
-                        </tr>
-                        </thead>
-                        <tbody id="siteLanguagesBody">
-                        <tr ng-repeat="siteLocale in site.siteLocales track by $index">
-                            <td>{{siteLocale.displayLocale}}</td>
-                            <td>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="j:defaultLanguage" ng-model="site.siteDefaultLanguage" ng-value="siteLocale.locale"/>
-                                    </label>
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h3 class="text-left"><fmt:message key="siteSettings.locale.availableLanguages"/></h3>
                                 </div>
-                            </td>
-                            <td>
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" ng-model="siteLocale.mandatory"/>
-                                    </label>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <select ng-model="newLanguages" name="language_list" id="language_list" multiple="multiple" size="${fn:length(siteLocales) > 20 ? fn:length(siteLocales):20}">
+                                        <option ng-repeat="availableLocale in site.availableLocales | filter:filterSiteLocales" ng-value="availableLocale">{{availableLocale.displayLocale}}</option>
+                                    </select>
+                                    <button class="btn btn-fab btn-fab-mini btn-primary" type="button" ng-click="addLanguage()" ng-disabled="!newLanguages || newLanguages.length == 0"><i class="material-icons">fast_forward</i></button>
                                 </div>
-                            </td>
-                            <td>
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" ng-model="siteLocale.activeEdit" ng-disabled="isEditDisabled(siteLocale)"/>
-                                    </label>
+                                <div class="col-md-7">
+                                    <table class="table table-bordered table-striped table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th><fmt:message key="siteSettings.label.language"/></th>
+                                            <th><fmt:message key="siteSettings.label.language.default"/></th>
+                                            <th><fmt:message key="siteSettings.label.language.mandatory"/></th>
+                                            <th><fmt:message key="siteSettings.label.language.active.edit"/></th>
+                                            <th><fmt:message key="siteSettings.label.language.active.live"/></th>
+                                            <th><fmt:message key="label.actions"/></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="siteLanguagesBody">
+                                        <tr ng-repeat="siteLocale in site.siteLocales track by $index">
+                                            <td>{{siteLocale.displayLocale}}</td>
+                                            <td>
+                                                <div class="radio">
+                                                    <label>
+                                                        <input type="radio" name="j:defaultLanguage" ng-model="site.siteDefaultLanguage" ng-value="siteLocale.locale"/>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input type="checkbox" ng-model="siteLocale.mandatory"/>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input type="checkbox" ng-model="siteLocale.activeEdit" ng-disabled="isEditDisabled(siteLocale)"/>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input type="checkbox" ng-model="siteLocale.activeLive" ng-disabled="isLiveDisabled(siteLocale)"/>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <button ng-show="canBeDeleted(siteLocale)" class="btn btn-fab btn-fab-mini btn-danger" type="button" ng-click="delete($index)">
+                                                    <i class="material-icons">delete</i>
+                                                </button>
+                                                <div ng-if="!canBeDeleted(siteLocale)">
+                                                    <span ng-show="getNotDeletableReason(siteLocale) === 'current'"><fmt:message  key="siteSettings.label.language.delete.current"/></span>
+                                                    <span ng-show="getNotDeletableReason(siteLocale) === 'default'"><fmt:message  key="siteSettings.label.language.delete.default"/></span>
+                                                    <span ng-show="getNotDeletableReason(siteLocale) === 'active'"><fmt:message  key="siteSettings.label.language.delete.active"/></span>
+                                                    <span ng-show="getNotDeletableReason(siteLocale) === 'contents'"><fmt:message  key="siteSettings.label.language.delete.contents"/></span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
-                            </td>
-                            <td>
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" ng-model="siteLocale.activeLive" ng-disabled="isLiveDisabled(siteLocale)"/>
-                                    </label>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="checkbox">
+                                        <label for="mixLanguages">
+                                            <input type="checkbox" ng-model="site.mixLanguages" id="mixLanguages" />
+                                            <fmt:message key="siteSettings.locale.mixLanguages"/>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label for="allowsUnlistedLanguages">
+                                            <input type="checkbox" ng-model="site.allowsUnlistedLanguages" id="allowsUnlistedLanguages" />
+                                            <fmt:message key="siteSettings.locale.allowsUnlistedLanguages"/>
+                                        </label>
+                                    </div>
                                 </div>
-                            </td>
-                            <td>
-                                <button ng-show="canBeDeleted(siteLocale)" class="btn btn-fab btn-fab-mini btn-danger" type="button" ng-click="delete($index)">
-                                    <i class="material-icons">delete</i>
-                                </button>
-                                <div ng-if="!canBeDeleted(siteLocale)">
-                                    <span ng-show="getNotDeletableReason(siteLocale) === 'current'"><fmt:message  key="siteSettings.label.language.delete.current"/></span>
-                                    <span ng-show="getNotDeletableReason(siteLocale) === 'default'"><fmt:message  key="siteSettings.label.language.delete.default"/></span>
-                                    <span ng-show="getNotDeletableReason(siteLocale) === 'active'"><fmt:message  key="siteSettings.label.language.delete.active"/></span>
-                                    <span ng-show="getNotDeletableReason(siteLocale) === 'contents'"><fmt:message  key="siteSettings.label.language.delete.contents"/></span>
-                                </div>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="checkbox">
-                        <label for="mixLanguages">
-                            <input type="checkbox" ng-model="site.mixLanguages" id="mixLanguages" />
-                            <fmt:message key="siteSettings.locale.mixLanguages"/>
-                        </label>
-                    </div>
-                    <div class="checkbox">
-                        <label for="allowsUnlistedLanguages">
-                            <input type="checkbox" ng-model="site.allowsUnlistedLanguages" id="allowsUnlistedLanguages" />
-                            <fmt:message key="siteSettings.locale.allowsUnlistedLanguages"/>
-                        </label>
-                    </div>
-                </div>
-            </div>
+                            </div>
 
-            <div class="row">
-                <div class="col-md-12">
-                    <p class="text-center">
-                        <button class="btn btn-primary btn-sm pull-right" type="button" id="updateSite_button" ng-click="save()">
-                            <i class="material-icons">add</i>
-                            <fmt:message key="label.submit"/></button>
-                    </p>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p class="text-center">
+                                        <button class="btn btn-primary btn-sm pull-right" type="button" id="updateSite_button" ng-click="save()">
+                                            <i class="material-icons">add</i>
+                                            <fmt:message key="label.submit"/>
+                                        </button>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
