@@ -17,7 +17,7 @@
 <c:set var="isEmpty" value="true"/>
 <c:set var="site" value="${renderContext.mainResource.node.resolveSite}"/>
 <template:addResources type="javascript" resources="jquery.min.js"/>
-<template:addResources type="javascript" resources="datatables/jquery.dataTables.js,i18n/jquery.dataTables-${currentResource.locale}.js,datatables/dataTables.bootstrap-ext.js,dataTables.initializer.js"/>
+<template:addResources type="javascript" resources="datatables/jquery.dataTables.js,i18n/jquery.dataTables-${currentResource.locale}.js,datatables/dataTables.bootstrap-ext.js,settings/dataTables.initializer.js"/>
 <template:addResources type="css" resources="datatables/css/bootstrap-theme.css"/>
 
 <template:addResources>
