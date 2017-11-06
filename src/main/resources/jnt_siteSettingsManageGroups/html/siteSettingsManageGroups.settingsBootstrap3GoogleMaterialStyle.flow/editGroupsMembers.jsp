@@ -23,7 +23,7 @@
 <c:set var="prefix" value="g:"/>
 <c:set var="displayGroups" value="selected"/>
 
-<template:addResources type="javascript" resources="jquery.min.js,datatables/jquery.dataTables.js,i18n/jquery.dataTables-${currentResource.locale}.js,datatables/dataTables.bootstrap-ext.js,dataTables.initializer.js"/>
+<template:addResources type="javascript" resources="jquery.min.js,datatables/jquery.dataTables.js,i18n/jquery.dataTables-${currentResource.locale}.js,datatables/dataTables.bootstrap-ext.js,settings/dataTables.initializer.js"/>
 <template:addResources type="css" resources="datatables/css/bootstrap-theme.css,tablecloth.css"/>
 
 <template:addResources>
