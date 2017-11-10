@@ -44,7 +44,7 @@
                     <fieldset title="<fmt:message key="siteSettings.user.profile"/>">
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="form-group form-group-sm label-floating">
+                                <div class="form-group label-floating">
                                     <label class="control-label" for="username">
                                         <fmt:message key="label.username"/><strong class="text-danger">*</strong>
                                     </label>
@@ -54,13 +54,13 @@
                         </div>
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group form-group-sm label-floating">
+                                <div class="form-group label-floating">
                                     <label class="control-label" for="firstName"><fmt:message key="label.firstName"/></label>
                                     <input type="text" name="firstName" class="form-control" id="firstName" value="${userProperties.firstName}">
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group form-group-sm label-floating">
+                                <div class="form-group label-floating">
                                     <label class="control-label" for="lastName"><fmt:message key="label.lastName"/></label>
                                     <input type="text" name="lastName" class="form-control" id="lastName" value="${userProperties.lastName}">
                                 </div>
@@ -68,13 +68,13 @@
                         </div>
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group form-group-sm label-floating">
+                                <div class="form-group label-floating">
                                     <label class="control-label" for="email"><fmt:message key="label.email"/></label>
                                     <input type="text" name="email" class="form-control" id="email" value="${userProperties.email}">
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group form-group-sm label-floating">
+                                <div class="form-group label-floating">
                                     <label class="control-label" for="organization"><fmt:message key="label.organization"/></label>
                                     <input type="text" name="organization" class="form-control" id="organization" value="${userProperties.organization}">
                                 </div>
@@ -82,13 +82,13 @@
                         </div>
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group form-group-sm label-floating">
+                                <div class="form-group label-floating">
                                     <label class="control-label" for="password"><fmt:message key="label.password"/><strong class="text-danger">*</strong></label>
                                     <input type="password" name="password" class="form-control" id="password" value="" autocomplete="off">
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group form-group-sm label-floating">
+                                <div class="form-group label-floating">
                                     <label class="control-label" for="passwordConfirm"><fmt:message key="label.confirmPassword"/><strong class="text-danger">*</strong></label>
                                     <input type="password" name="passwordConfirm" class="form-control" id="passwordConfirm" value="" autocomplete="off">
                                 </div>
@@ -133,11 +133,9 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <button class="btn btn-primary btn-sm pull-right" type="submit" name="_eventId_add" onclick="workInProgress('${i18nWaiting}'); return true;">
-                                    <i class="material-icons">add</i>
                                     <fmt:message key='label.add'/>
                                 </button>
                                 <button class="btn btn-default btn-sm" type="submit" name="_eventId_cancel">
-                                    <i class="material-icons">cancel</i>
                                     <fmt:message key='label.cancel'/>
                                 </button>
                             </div>

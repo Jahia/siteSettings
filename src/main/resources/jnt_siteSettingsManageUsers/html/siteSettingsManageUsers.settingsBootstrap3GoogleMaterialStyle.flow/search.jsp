@@ -81,22 +81,19 @@
 
         <div>
             <button class="btn btn-default btn-sm" type="submit" onclick="doUserAction('addUser')">
-                <i class="material-icons">add</i>
                 <fmt:message key='siteSettings.user.create'/>
             </button>
             <button class="btn btn-default btn-sm" type="submit" onclick="doUserAction('bulkAddUser')">
-                <i class="material-icons">group_add</i>
                 <fmt:message key='siteSettings.users.bulk.create'/>
             </button>
             <button class="btn btn-default btn-sm" type="submit" onclick="doUsersAction('bulkDeleteUser')">
-                <i class="material-icons">delete</i>
                 <fmt:message key="siteSettings.user.remove"/>
             </button>
         </div>
 
         <form class="form-inline " action="${flowExecutionUrl}" id="searchForm" method="post">
             <h4><fmt:message key="label.search"/></h4>
-            <div class="form-group form-group-sm label-floating">
+            <div class="form-group label-floating">
                 <label class="control-label" for="searchString">
                     <fmt:message key="label.search"/>
                 </label>

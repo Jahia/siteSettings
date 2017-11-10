@@ -158,7 +158,6 @@
                     </table>
 
                     <button class="btn btn-primary pull-right" type="button" name="save" onclick="updateSiteHtmlFiltering($(this)); return false;">
-                        <i class="material-icons">save</i>
                         <fmt:message key='label.save'/>
                     </button>
                 </form>

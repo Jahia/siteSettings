@@ -56,7 +56,7 @@
                 </div>
 
                 <form action="${flowExecutionUrl}" method="post" enctype="multipart/form-data" autocomplete="off">
-                    <div class="form-group form-group-sm label-floating is-fileinput">
+                    <div class="form-group label-floating is-fileinput">
                         <input type="file" name="csvFile" id="csvFile"/>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="material-icons material-icons-small">touch_app</i></span>
@@ -66,18 +66,16 @@
                         <span class="material-input"></span>
                     </div>
 
-                    <div class="form-group form-group-sm label-floating">
+                    <div class="form-group label-floating">
                         <label class="control-label" for="csvSeparator"><fmt:message key="label.csvSeparator"/></label>
                         <input class="form-control" type="text" name="csvSeparator" value="${csvFile.csvSeparator}" id="csvSeparator"/>
                     </div>
 
                     <div class="form-group form-group-sm">
                         <button class="btn btn-default btn-sm" type="submit" name="_eventId_cancel">
-                            <i class="material-icons">cancel</i>
                             <fmt:message key='label.cancel'/>
                         </button>
                         <button class="btn btn-primary btn-sm pull-right" type="submit" name="_eventId_confirm" id="${currentNode.identifier}-confirm">
-                            <i class="material-icons">group_add</i>
                             <fmt:message key='label.ok'/>
                         </button>
                     </div>

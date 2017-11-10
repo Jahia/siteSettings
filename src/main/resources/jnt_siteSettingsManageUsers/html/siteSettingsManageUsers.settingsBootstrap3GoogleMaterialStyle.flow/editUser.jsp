@@ -42,13 +42,13 @@
                     <fieldset title="<fmt:message key='siteSettings.user.profile'/>">
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group form-group-sm label-floating">
+                                <div class="form-group label-floating">
                                     <label class="control-label" for="firstName"><fmt:message key="label.firstName"/></label>
                                     <input class="form-control" type="text" name="firstName" id="firstName" value="${userProperties.firstName}"${functions:contains(readOnlyProperties, 'j:firstName') ? ' disabled="disabled"' : ''}>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group form-group-sm label-floating">
+                                <div class="form-group label-floating">
                                     <label class="control-label" for="lastName"><fmt:message key="label.lastName"/></label>
                                     <input class="form-control" type="text" name="lastName" id="lastName" value="${userProperties.lastName}"${functions:contains(readOnlyProperties, 'j:lastName') ? ' disabled="disabled"' : ''}>
                                 </div>
@@ -56,13 +56,13 @@
                         </div>
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group form-group-sm label-floating">
+                                <div class="form-group label-floating">
                                     <label class="control-label" for="email"><fmt:message key="label.email"/></label>
                                     <input class="form-control" type="text" name="email" id="email" value="${userProperties.email}"${functions:contains(readOnlyProperties, 'j:email') ? ' disabled="disabled"' : ''}>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group form-group-sm label-floating">
+                                <div class="form-group label-floating">
                                     <label class="control-label" for="organization"><fmt:message key="label.organization"/></label>
                                     <input class="form-control" type="text" name="organization" id="organization" value="${userProperties.organization}"${functions:contains(readOnlyProperties, 'j:organization') ? ' disabled="disabled"' : ''}>
                                 </div>
@@ -73,14 +73,14 @@
                     <fieldset title="<fmt:message key='siteSettings.user.password'/>">
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group form-group-sm label-floating">
+                                <div class="form-group label-floating">
                                     <label class="control-label" for="password"><fmt:message key="label.password"/></label>
                                     <input class="form-control" type="password" name="password" id="password" value=""${userProperties.readOnly or userProperties.external ? ' disabled="disabled"' : ''} autocomplete="off">
                                     <div style="margin-bottom:15px;" class="text-info">&nbsp;(<fmt:message key="siteSettings.user.edit.password.no.change"/>)</div>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group form-group-sm label-floating">
+                                <div class="form-group label-floating">
                                     <label class="control-label" for="passwordConfirm"><fmt:message key="label.confirmPassword"/></label>
                                     <input class="form-control" type="password" name="passwordConfirm" id="passwordConfirm" value=""${userProperties.readOnly or userProperties.external ? ' disabled="disabled"' : ''} autocomplete="off">
                                     <div style="margin-bottom:15px;" class="text-info">&nbsp;(<fmt:message key="siteSettings.user.edit.password.no.change"/>)</div>
@@ -92,7 +92,7 @@
                     <fieldset title="<fmt:message key='label.options'/>">
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group form-group-sm">
+                                <div class="form-group">
                                     <div class="checkbox">
                                         <label for="emailNotificationsDisabled">
                                             <input type="checkbox" name="emailNotificationsDisabled" id="emailNotificationsDisabled"
@@ -149,17 +149,14 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <button class="btn btn-default btn-sm" type="submit" name="_eventId_cancel">
-                                    <i class="material-icons">cancel</i>
                                     <fmt:message key='label.cancel'/>
                                 </button>
                                 <c:if test="${!userProperties.readOnly && !userProperties.external}">
                                     <button class="btn btn-danger btn-sm" type="submit" name="_eventId_removeUser">
-                                        <i class="material-icons">delete</i>
                                         <fmt:message key='siteSettings.user.remove'/>
                                     </button>
                                 </c:if>
                                 <button class="btn btn-primary btn-sm pull-right" type="submit" name="_eventId_update" onclick="workInProgress('${i18nWaiting}'); return true;">
-                                    <i class="material-icons">update</i>
                                     <fmt:message key='label.update'/>
                                 </button>
                             </div>

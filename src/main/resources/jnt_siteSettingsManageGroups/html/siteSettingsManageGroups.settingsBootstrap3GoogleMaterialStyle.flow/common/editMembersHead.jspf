@@ -63,7 +63,6 @@
         <c:choose>
             <c:when test="${quickAddMembers}">
                 <button class="btn btn-default btn-sm" type="submit" name="_eventId_cancel">
-                    <i class="material-icons">arrow_back</i>
                     <fmt:message key="label.backToGroupList"/>
                 </button>
 
@@ -71,17 +70,14 @@
             </c:when>
             <c:otherwise>
                 <button class="btn btn-default btn-sm" type="submit" name="_eventId_editGroup">
-                    <i class="material-icons">arrow_back</i>
                     <fmt:message key="siteSettings.label.backToGroup"/>
                 </button>
 
                 <button class="btn btn-default btn-sm" type="submit" name="_eventId_editUsers">
-                    <i class="material-icons">person</i>
                     <fmt:message key="label.users"/>
                 </button>
 
                 <button class="btn btn-default btn-sm" type="submit" name="_eventId_editGroups">
-                    <i class="material-icons">group</i>
                     <fmt:message key="label.groups"/>
                 </button>
             </c:otherwise>

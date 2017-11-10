@@ -121,19 +121,16 @@
         <form action="${flowExecutionUrl}" method="POST" style="display: inline;">
 
             <button class="btn btn-default btn-sm" type="submit" name="_eventId_cancel">
-                <i class="material-icons">arrow_back</i>
                 <fmt:message key="label.backToGroupList"/>
             </button>
 
             <c:if test="${isGroupEditable}">
                 <button class="btn btn-default btn-sm" type="submit" name="_eventId_editGroupMembers" >
-                    <i class="material-icons">edit</i>
                     <fmt:message key="siteSettings.groups.editMembers"/>
                 </button>
 
                 <c:if test="${membersFound}">
                     <button class="btn btn-danger btn-sm" type="submit" name="_eventId_removeMembers" onclick="return removeMultipleGroupMembers();">
-                        <i class="material-icons">delete</i>
                         <fmt:message key="siteSettings.groups.removeMembers"/>
                     </button>
                 </c:if>
@@ -152,7 +149,6 @@
                     </fmt:message>
                     <input type="hidden" id="memberFormDisplayLimit" name="displayLimit" value="<%= Integer.MAX_VALUE %>" />
                     <button class="btn btn-default btn-sm" type="submit" name="_eventId_refresh">
-                        <i class="material-icons">search</i>
                         <fmt:message key="siteSettings.groups.members.showAll"/>
                     </button>
                     <c:if test="${memberCount > 100}">

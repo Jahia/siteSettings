@@ -70,13 +70,11 @@
             </table>
 
             <button class="btn btn-sm btn-default" type="submit" name="_eventId_cancel">
-                <i class="material-icons">cancel</i>
                 <fmt:message key="label.cancel"/>
             </button>
 
             <c:if test="${!userProperties.readOnly}">
                 <button class="btn btn-danger btn-sm pull-right" type="submit" name="_eventId_confirm" onclick="workInProgress('${i18nWaiting}'); return true;">
-                    <i class="material-icons">delete</i>
                     <fmt:message key="label.remove"/>
                 </button>
             </c:if>

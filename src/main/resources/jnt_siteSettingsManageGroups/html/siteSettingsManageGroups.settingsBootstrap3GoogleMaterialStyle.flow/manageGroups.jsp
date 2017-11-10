@@ -96,7 +96,6 @@ function submitGroupForm(act, group) {
 
         <form action="${flowExecutionUrl}" method="POST" style="display: inline;">
             <button class="btn btn-default btn-sm" type="submit" name="_eventId_createGroup">
-                <i class="material-icons">add</i>
                 <fmt:message key="siteSettings.groups.create"/>
             </button>
         </form>

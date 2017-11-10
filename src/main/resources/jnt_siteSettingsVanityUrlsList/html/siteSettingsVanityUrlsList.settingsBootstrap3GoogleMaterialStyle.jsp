@@ -35,7 +35,7 @@
 <div class="panel panel-default">
     <div class="panel-body">
         <form class="form-inline" action="<c:url value='${url.base}${renderContext.mainResource.node.path}.vanityURLSetting.html'/>">
-            <div class="form-group form-group-sm label-floating">
+            <div class="form-group label-floating">
                 <label class="control-label" for="vanityUrlSearch">
                     <fmt:message key='label.urlmapping.filter'/>
                 </label>
@@ -43,7 +43,6 @@
                     <input class="form-control" type="text" id="vanityUrlSearch" name="vanityUrlSearch" value="${param['vanityUrlSearch']}" />
                     <span class="input-group-btn">
                         <button class="btn btn-primary btn-sm" type="submit">
-                            <i class="material-icons">filter_list</i>
                             <fmt:message key="filters.label"/>
                         </button>
                     </span>

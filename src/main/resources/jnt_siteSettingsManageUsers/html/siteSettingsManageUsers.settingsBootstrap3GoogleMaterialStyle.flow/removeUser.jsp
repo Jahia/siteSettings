@@ -43,7 +43,6 @@
                         <p><fmt:message key="siteSettings.user.definitivelyRemove"/><br/>
                             <fmt:message key="siteSettings.user.definitivelyRemove.files"/></p>
                         <a class="btn btn-primary btn-sm" href="<c:url value='/cms/export/default${userProperties.localPath}.zip?cleanup=simple'/>" target="_blank">
-                            <i class="material-icons">file_download</i>
                             <fmt:message key="label.export"/>
                         </a>
                     </c:if>
@@ -56,13 +55,13 @@
                     <fieldset title="<fmt:message key='siteSettings.user.profile'/>">
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group form-group-sm">
+                                <div class="form-group">
                                     <label class="control-label" for="firstName"><fmt:message key="label.firstName"/></label>
                                     <input class="form-control" type="text" name="firstName" id="firstName" value="${userProperties.firstName}" disabled="disabled">
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group form-group-sm">
+                                <div class="form-group">
                                     <label class="control-label" for="lastName"><fmt:message key="label.lastName"/></label>
                                     <input class="form-control" type="text" name="lastName" id="lastName" value="${userProperties.lastName}" disabled="disabled">
                                 </div>
@@ -70,13 +69,13 @@
                         </div>
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group form-group-sm">
+                                <div class="form-group">
                                     <label class="control-label" for="email"><fmt:message key="label.email"/></label>
                                     <input class="form-control" type="text" name="email" id="email" value="${userProperties.email}" disabled="disabled">
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group form-group-sm">
+                                <div class="form-group">
                                     <label class="control-label" for="organization"><fmt:message key="label.organization"/></label>
                                     <input class="form-control" type="text" name="organization" id="organization" value="${userProperties.organization}" disabled="disabled">
                                 </div>
@@ -139,13 +138,11 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <button class="btn btn-default btn-sm" type="submit" name="_eventId_cancel">
-                                    <i class="material-icons">cancel</i>
                                     <fmt:message key="label.cancel"/>
                                 </button>
 
                                 <c:if test="${!userProperties.readOnly}">
                                     <button class="btn btn-danger btn-sm pull-right" type="submit" name="_eventId_confirm" onclick="workInProgress('${i18nWaiting}'); return true;">
-                                        <i class="material-icons">delete</i>
                                         <fmt:message key="label.delete"/>
                                     </button>
                                 </c:if>

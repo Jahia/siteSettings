@@ -46,7 +46,7 @@
                 </dl>
 
                 <form action="${flowExecutionUrl}" method="post" autocomplete="off">
-                    <div class="form-group form-group-sm label-floating">
+                    <div class="form-group label-floating">
                         <c:choose>
                             <c:when test="${copyMode && empty group.groupname}"><c:set var="groupnameValue" value="${groupToCopy.groupname}-2"/></c:when>
                             <c:otherwise><c:set var="groupnameValue" value="${group.groupname}"/></c:otherwise>
@@ -61,11 +61,9 @@
                         <button class="btn btn-primary btn-sm pull-right" type="submit"
                                 name="_eventId_${copyMode ? 'copy' : 'add'}"
                                 onclick="workInProgress('${i18nWaiting}'); return true;">
-                            <i class="material-icons">${copyMode ? 'content_copy' : 'add'}</i>
                             <fmt:message key="label.${copyMode ? 'copy' : 'add'}"/>
                         </button>
                         <button class="btn btn-default btn-sm" type="submit" name="_eventId_cancel">
-                            <i class="material-icons">cancel</i>
                             <fmt:message key="label.cancel"/>
                         </button>
                     </div>

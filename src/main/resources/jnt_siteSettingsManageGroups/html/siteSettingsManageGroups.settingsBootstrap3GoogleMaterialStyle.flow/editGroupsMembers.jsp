@@ -59,7 +59,6 @@
                     <input id="addedMembers" type="hidden" name="addedMembers"/>
                     <input id="removedMembers" type="hidden" name="removedMembers"/>
                     <button class="btn btn-primary btn-sm pull-right" type="submit" name="_eventId_save" id="saveButton" disabled="disabled">
-                        <i class="material-icons">save</i>
                         <fmt:message key="label.save"/>
                     </button>
                 </form>
