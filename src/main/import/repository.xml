@@ -353,6 +353,19 @@
                                 <manage-groups jcr:primaryType="jnt:siteSettingsManageGroups" jcr:mixinTypes="jmix:renderable" j:view="settingsBootstrap3GoogleMaterialStyle"/>
                             </pagecontent>
                         </manageGroups-jahia-anthracite>
+                        <manageSiteRoles-jahia-anthracite j:applyOn="jnt:virtualsite"
+                                j:defaultTemplate="false"
+                                j:hiddenTemplate="true"
+                                j:icon="/modules/siteSettings/templates/files/users_into.png"
+                                j:priority="100"
+                                j:requiredPermissionNames="siteAdminSiteRoles"
+                                j:titleKey="siteSettings.manageSiteRoles"
+                                jcr:mixinTypes="jmix:rbTitle"
+                                jcr:primaryType="jnt:contentTemplate">
+                            <pagecontent jcr:primaryType="jnt:contentList">
+                                <manage-site-roles jcr:primaryType="jnt:manageRoles" roleGroup="site-role" jcr:mixinTypes="jmix:renderable" j:view="settingsBootstrap3GoogleMaterialStyle"/>
+                            </pagecontent>
+                        </manageSiteRoles-jahia-anthracite>
                     </site-settings-base-jahia-anthracite>
                 </templates>
                 
