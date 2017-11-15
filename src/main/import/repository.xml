@@ -366,6 +366,16 @@
                                 <manage-site-roles jcr:primaryType="jnt:manageRoles" roleGroup="site-role" jcr:mixinTypes="jmix:renderable" j:view="settingsBootstrap3GoogleMaterialStyle"/>
                             </pagecontent>
                         </manageSiteRoles-jahia-anthracite>
+                        <page-models-jahia-anthracite j:applyOn="jnt:virtualsite"
+                            j:icon="/modules/siteSettings/templates/files/page_models.png"
+                            jcr:primaryType="jnt:contentTemplate">
+                            <j:translation_en jcr:language="en"
+                                    jcr:primaryType="jnt:translation"
+                                    jcr:title="Page Models"/>
+                            <pagecontent jcr:primaryType="jnt:contentList">
+                                <sitesettingsmanagepagemodels jcr:primaryType="jnt:siteSettingsManagePageModels" jcr:mixinTypes="jmix:renderable" j:view="settingsBootstrap3GoogleMaterialStyle"/>
+                            </pagecontent>
+                        </page-models-jahia-anthracite>
                     </site-settings-base-jahia-anthracite>
                 </templates>
                 
