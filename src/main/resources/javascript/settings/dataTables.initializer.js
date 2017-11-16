@@ -1,6 +1,6 @@
 var dataTablesSettings = {
-    init: function(tableID, length, sort, bStateSave, fnDrawCallback) {
-        this.tableID = tableID;
+	setOptions: function(tableID, length, sort, columns, bStateSave, fnDrawCallback) {
+		this.tableID = tableID;
         
         var options = {
             "sDom": "<'row'<'col-sm-6 col-md-6'l><'col-sm-6 col-md-6 text-right'f>r>t<'row'<'col-sm-6 col-md-6 text-muted'i><'col-sm-6 col-md-6 text-right'p>>",
@@ -9,15 +9,22 @@ var dataTablesSettings = {
             "aaSorting": sort //this option disable sort by default, the user steal can use column names to sort the table
         };
 
-        if (fnDrawCallback != null) {
+        if (fnDrawCallback) {
             options.fnDrawCallback = fnDrawCallback
         }
 
-        if (bStateSave != null) {
+        if (bStateSave) {
             options.bStateSave = bStateSave
+        }
+        
+        if (columns) {
+        	options.aoColumns = columns;
         }
 
         $('#' + this.tableID).dataTable(options);
+	},
+    init: function(tableID, length, sort, bStateSave, fnDrawCallback, columns) {
+    	this.setOptions(tableID, length, sort, columns, bStateSave, fnDrawCallback);
 
         this.bootstrap3LookAndFeel();
     },
