@@ -3,7 +3,7 @@ var dataTablesSettings = {
         this.tableID = tableID;
         
         var options = {
-            "sDom": "<'row'<'col-md-6'l><'col-md-6 text-right'f>r>t<'row'<'col-md-6 text-muted'i><'col-md-6 text-right'p>>",
+            "sDom": "<'row'<'col-sm-6 col-md-6'l><'col-sm-6 col-md-6 text-right'f>r>t<'row'<'col-sm-6 col-md-6 text-muted'i><'col-sm-6 col-md-6 text-right'p>>",
             "iDisplayLength": length,
             "sPaginationType": "bootstrap",
             "aaSorting": sort //this option disable sort by default, the user steal can use column names to sort the table

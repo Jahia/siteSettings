@@ -1,3 +1,12 @@
+html {
+    background-color: #fff;
+    height: 100%;
+}
+
+body {
+    height: 100%;
+}
+
 .dataTables-pagination {
     margin: 0;
 }
