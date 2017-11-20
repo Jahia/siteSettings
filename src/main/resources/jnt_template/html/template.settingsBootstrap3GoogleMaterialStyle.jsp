@@ -26,7 +26,7 @@
     <template:addResources type="css" resources="settings/bootstrap3.min.css"/>
     <template:addResources type="css" resources="settings/bootstrap-material-design.css"/>
     <template:addResources type="css" resources="settings/ripples.css"/>
-    <template:addResources type="css" resources="settings/roboto-fonts.css"/>
+    <template:addResources type="css" resources="settings/nunito-sans.css"/>
     <template:addResources type="css" resources="settings/material-icons.css"/>
     <template:addResources type="css" resources="settings/style.css"/>
     <template:addResources type="css" resources="settings/snackbar.css"/>
