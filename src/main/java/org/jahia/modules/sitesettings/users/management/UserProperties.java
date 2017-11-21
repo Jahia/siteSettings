@@ -52,13 +52,17 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.jahia.api.Constants;
 import org.jahia.data.viewhelper.principal.PrincipalViewHelper;
+import org.jahia.exceptions.JahiaRuntimeException;
 import org.jahia.registries.ServicesRegistry;
 import org.jahia.services.content.JCRContentUtils;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionFactory;
 import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRUserNode;
+import org.jahia.services.content.nodetypes.ExtendedPropertyDefinition;
+import org.jahia.services.content.nodetypes.NodeTypeRegistry;
 import org.jahia.services.preferences.user.UserPreferencesHelper;
 import org.jahia.services.pwdpolicy.JahiaPasswordPolicyService;
 import org.jahia.services.pwdpolicy.PolicyEnforcementResult;
@@ -73,6 +77,7 @@ import org.springframework.binding.validation.ValidationContext;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.query.Query;
 
 /**
@@ -80,8 +85,7 @@ import javax.jcr.query.Query;
  */
 public class UserProperties implements Serializable {
     private static Logger logger = LoggerFactory.getLogger(UserProperties.class);
-    private static final Pattern EMAIL_PATTERN = Pattern
-            .compile("^$|^[A-Za-z0-9!#$%&\'*+/=?^_`{|}~-]+(\\.[A-Za-z0-9!#$%&\'*+/=?^_`{|}~-]+)*@([A-Za-z0-9!#$%&\'*+/=?^_`{|}~-]+(\\.[A-Za-z0-9!#$%&\'*+/=?^_`{|}~-]+)*|\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])$");
+    private static Pattern EMAIL_PATTERN;
     private static final long serialVersionUID = -817961657416283232L;
     private static final String[] BASIC_USER_PROPERTIES = new String[]{"j:firstName", "j:lastName", "j:email", "j:organization", "emailNotificationsDisabled", "j:accountLocked", "preferredLanguage"};
 
@@ -136,6 +140,23 @@ public class UserProperties implements Serializable {
     }
 
     public static void validateEmail(String email, MessageContext messages) {
+        // initialize regexp
+        if (EMAIL_PATTERN == null) {
+            ExtendedPropertyDefinition emailPropertyDefinition;
+            try {
+                emailPropertyDefinition = NodeTypeRegistry.getInstance().getNodeType(Constants.JAHIANT_USER).getPropertyDefinition("j:email");
+            } catch (NoSuchNodeTypeException e) {
+                throw new JahiaRuntimeException("Unable to retrieve jnt:user node type in order to extract email validation regexp", e);
+            }
+
+            String[] constraints = emailPropertyDefinition.getValueConstraints();
+            if (constraints != null && constraints.length == 1) {
+                EMAIL_PATTERN = Pattern.compile(constraints[0]);
+            } else {
+                throw new JahiaRuntimeException("Fail to load email constraint from property definition in order to validate user's email");
+            }
+        }
+
         if (StringUtils.isNotEmpty(email) && !EMAIL_PATTERN.matcher(email).matches()) {
             messages.addMessage(new MessageBuilder()
                     .error()
