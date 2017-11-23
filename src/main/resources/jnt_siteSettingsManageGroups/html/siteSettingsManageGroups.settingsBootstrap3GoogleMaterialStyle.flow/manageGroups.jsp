@@ -51,7 +51,7 @@ function submitGroupForm(act, group) {
         }
 
         $(document).ready(function () {
-            dataTablesSettings.init('manageGroups', 25, [], null, fnDrawCallback);
+            dataTablesSettings.init('manageGroups', 25, null, fnDrawCallback);
         });
     </script>
 </c:if>

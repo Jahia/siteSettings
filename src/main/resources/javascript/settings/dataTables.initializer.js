@@ -1,33 +1,24 @@
 var dataTablesSettings = {
-	setOptions: function(tableID, length, sort, columns, bStateSave, fnDrawCallback) {
-		this.tableID = tableID;
-        
-        var options = {
+    init: function(tableID, length, sort, bStateSave, fnDrawCallback, customOptions) {
+        this.tableID = tableID;
+
+        var dtOptions = {
             "sDom": "<'row'<'col-sm-6 col-md-6'l><'col-sm-6 col-md-6 text-right'f>r>t<'row'<'col-sm-6 col-md-6 text-muted'i><'col-sm-6 col-md-6 text-right'p>>",
             "iDisplayLength": length,
             "sPaginationType": "bootstrap"
         };
 
-        if (sort) {
-            options.aaSorting = sort; //this option disable sort by default, the user steal can use column names to sort the table
+        var options = $.extend({}, dtOptions, customOptions);
+
+        if (fnDrawCallback != null) {
+            options.fnDrawCallback = fnDrawCallback
         }
 
-        if (fnDrawCallback) {
-            options.fnDrawCallback = fnDrawCallback;
+        if (bStateSave != null) {
+            options.bStateSave = bStateSave
         }
 
-        if (bStateSave) {
-            options.bStateSave = bStateSave;
-        }
-        
-        if (columns) {
-        	options.aoColumns = columns;
-        }
-
-        $('#' + this.tableID).dataTable(options);
-	},
-    init: function(tableID, length, sort, bStateSave, fnDrawCallback, columns) {
-    	this.setOptions(tableID, length, sort, columns, bStateSave, fnDrawCallback);
+        $('#' + this.tableID).dataTable(dtOptions);
 
         this.bootstrap3LookAndFeel();
     },
@@ -37,7 +28,7 @@ var dataTablesSettings = {
         $('#' + this.tableID + '_filter input').addClass('form-control');
         $('#' + this.tableID + '_length').addClass('form-group form-group-sm');
         $('#' + this.tableID + '_filter').addClass('form-group form-group-sm');
-        
+
         // fix pagination
         $('.dataTables_paginate.paging_bootstrap').removeClass('pagination');
         $('.dataTables_paginate.paging_bootstrap ul').addClass('pagination pagination-sm dataTables-pagination');
