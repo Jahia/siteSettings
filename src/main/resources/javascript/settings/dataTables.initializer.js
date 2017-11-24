@@ -10,6 +10,10 @@ var dataTablesSettings = {
 
         var options = $.extend({}, dtOptions, customOptions);
 
+        if (sort) {
+            options.aaSorting = sort; //this option disable sort by default, the user steal can use column names to sort the table
+        }
+
         if (fnDrawCallback != null) {
             options.fnDrawCallback = fnDrawCallback
         }
