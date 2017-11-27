@@ -22,7 +22,7 @@ var dataTablesSettings = {
             options.bStateSave = bStateSave
         }
 
-        $('#' + this.tableID).dataTable(dtOptions);
+        $('#' + this.tableID).dataTable(options);
 
         this.bootstrap3LookAndFeel();
     },
