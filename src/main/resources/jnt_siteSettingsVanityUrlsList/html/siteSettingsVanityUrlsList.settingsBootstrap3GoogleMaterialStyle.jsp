@@ -23,7 +23,7 @@
 <template:addResources>
     <script type="text/javascript">
         $(document).ready(function () {
-            dataTablesSettings.init('vanityUrlTable', 25, true, null);
+            dataTablesSettings.init('vanityUrlTable', 25, [], true, null);
          });
     </script>
 </template:addResources>

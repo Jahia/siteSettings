@@ -39,7 +39,7 @@
         }
 
         $(document).ready(function () {
-            dataTablesSettings.init('groupMemberships', 25, null, fnDrawCallback);
+            dataTablesSettings.init('groupMemberships', 25, [], null, fnDrawCallback);
         });
     </script>
 </template:addResources>
