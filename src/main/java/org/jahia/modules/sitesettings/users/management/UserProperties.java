@@ -135,16 +135,18 @@ public class UserProperties implements Serializable {
     }
 
     public static void validateEmail(String email, MessageContext messages) {
-        try {
-            ExtendedNodeType userNodeTypeDef = NodeTypeRegistry.getInstance().getNodeType(Constants.JAHIANT_USER);
-            if (!userNodeTypeDef.canSetProperty("j:email", JCRValueFactoryImpl.getInstance().createValue(email))) {
-                messages.addMessage(new MessageBuilder()
-                        .error()
-                        .source("email")
-                        .code("siteSettings.user.errors.email").build());
+        if (StringUtils.isNotEmpty(email)) {
+            try {
+                ExtendedNodeType userNodeTypeDef = NodeTypeRegistry.getInstance().getNodeType(Constants.JAHIANT_USER);
+                if (!userNodeTypeDef.canSetProperty("j:email", JCRValueFactoryImpl.getInstance().createValue(email))) {
+                    messages.addMessage(new MessageBuilder()
+                            .error()
+                            .source("email")
+                            .code("siteSettings.user.errors.email").build());
+                }
+            } catch (NoSuchNodeTypeException e) {
+                throw new JahiaRuntimeException("Validation of the user email failed", e);
             }
-        } catch (NoSuchNodeTypeException e) {
-            throw new JahiaRuntimeException("Validation of the user email failed", e);
         }
     }
 
