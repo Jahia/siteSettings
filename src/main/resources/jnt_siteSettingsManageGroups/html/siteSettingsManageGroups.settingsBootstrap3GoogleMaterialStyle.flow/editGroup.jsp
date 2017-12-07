@@ -136,7 +136,7 @@
                 </c:if>
             </c:if>
 
-            <h4><fmt:message key="members.label"/> <c:if test="${isGroupEditable}">(${memberCount})</c:if></h4>
+            <h4><fmt:message key="members.label"/>&nbsp;<c:if test="${isGroupEditable}">(${memberCount})</c:if></h4>
             <c:if test="${memberCount > memberDisplayLimit}">
                 <div class="alert alert-info">
                     <c:if test="${isGroupEditable}">
