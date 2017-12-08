@@ -58,7 +58,7 @@
                 <div class="form-group form-group-sm">
                     <span><fmt:message key="label.on"/></span>
                     <div class="radio">
-                        <label for="storedOn" class="radio-inline">
+                        <label class="radio-inline">
                             <input type="radio" name="storedOn" value="everywhere"
                                 ${empty memberSearchCriteria.storedOn || memberSearchCriteria.storedOn == 'everywhere' ? ' checked="checked" ' : ''}
                                    onclick="$('.provCheck').attr('disabled',true);">
@@ -67,7 +67,7 @@
                     </div>
 
                     <div class="radio">
-                        <label for="storedOn" class="radio-inline">
+                        <label class="radio-inline">
                             <input type="radio" name="storedOn" value="providers"
                                 ${memberSearchCriteria.storedOn == 'providers' ? 'checked="checked"' : ''}
                                    onclick="$('.provCheck').removeAttr('disabled');"/>
