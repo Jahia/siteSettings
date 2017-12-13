@@ -1,6 +1,6 @@
 #snackbar-container {
   position: fixed;
-  right: 20px;
+  left: 20px;
   bottom: 0;
   z-index: 99999;
 }

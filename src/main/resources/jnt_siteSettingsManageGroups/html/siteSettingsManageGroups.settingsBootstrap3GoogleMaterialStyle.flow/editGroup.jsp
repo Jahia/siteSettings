@@ -120,17 +120,17 @@
     <div class="panel-body">
         <form action="${flowExecutionUrl}" method="POST" style="display: inline;">
 
-            <button class="btn btn-default btn-sm" type="submit" name="_eventId_cancel">
+            <button class="btn btn-default" type="submit" name="_eventId_cancel">
                 <fmt:message key="label.backToGroupList"/>
             </button>
 
             <c:if test="${isGroupEditable}">
-                <button class="btn btn-default btn-sm" type="submit" name="_eventId_editGroupMembers" >
+                <button class="btn btn-default" type="submit" name="_eventId_editGroupMembers" >
                     <fmt:message key="siteSettings.groups.editMembers"/>
                 </button>
 
                 <c:if test="${membersFound}">
-                    <button class="btn btn-danger btn-sm" type="submit" name="_eventId_removeMembers" onclick="return removeMultipleGroupMembers();">
+                    <button class="btn btn-danger" type="submit" name="_eventId_removeMembers" onclick="return removeMultipleGroupMembers();">
                         <fmt:message key="siteSettings.groups.removeMembers"/>
                     </button>
                 </c:if>
@@ -192,7 +192,7 @@
                         <fmt:message var="i18nRemove" key="label.remove"/><c:set var="i18nRemove" value="${fn:escapeXml(i18nRemove)}"/>
                         <c:forEach items="${members}" var="member" end="${memberDisplayLimit - 1}" varStatus="loopStatus">
                             <c:set var="principalType" value="${jcr:isNodeType(member,'jnt:user')?'u':'g'}"/>
-                            <c:set var="principalIcon" value="${principalType == 'u' ? 'usersmall' : 'group-icon'}"/>
+                            <c:set var="principalIcon" value="${principalType == 'u' ? 'person' : 'people'}"/>
                             <c:set var="principalKey" value="${principalType}:${principalType == 'u' ? member.userKey : member.groupKey}"/>
                             <tr>
                                 <c:if test="${isGroupEditable}">
@@ -208,7 +208,7 @@
                                     ${loopStatus.count}
                                 </td>
                                 <td>
-                                    <img src="<c:url value='/modules/default/images/${principalIcon}.png'/>" alt="${principalType}" width="16" height="16"/>
+                                  <i class="material-icons" style="vertical-align:middle">${principalIcon}</i>
                                 </td>
                                 <td>
                                     ${fn:escapeXml(user:displayName(member))}

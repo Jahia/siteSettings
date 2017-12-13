@@ -62,22 +62,22 @@
     <div>
         <c:choose>
             <c:when test="${quickAddMembers}">
-                <button class="btn btn-default btn-sm" type="submit" name="_eventId_cancel">
+                <button class="btn btn-default" type="submit" name="_eventId_cancel">
                     <fmt:message key="label.backToGroupList"/>
                 </button>
 
                 <div class="alert alert-info"><fmt:message key="siteSettings.label.quickAddMembers"/></div>
             </c:when>
             <c:otherwise>
-                <button class="btn btn-default btn-sm" type="submit" name="_eventId_editGroup">
+                <button class="btn btn-default" type="submit" name="_eventId_editGroup">
                     <fmt:message key="siteSettings.label.backToGroup"/>
                 </button>
 
-                <button class="btn btn-default btn-sm" type="submit" name="_eventId_editUsers">
+                <button class="btn btn-default" type="submit" name="_eventId_editUsers">
                     <fmt:message key="label.users"/>
                 </button>
 
-                <button class="btn btn-default btn-sm" type="submit" name="_eventId_editGroups">
+                <button class="btn btn-default" type="submit" name="_eventId_editGroups">
                     <fmt:message key="label.groups"/>
                 </button>
             </c:otherwise>

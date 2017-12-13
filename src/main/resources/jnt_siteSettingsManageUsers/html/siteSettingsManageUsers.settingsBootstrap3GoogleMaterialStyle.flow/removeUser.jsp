@@ -42,7 +42,7 @@
                     <c:if test="${!userProperties.readOnly}">
                         <p><fmt:message key="siteSettings.user.definitivelyRemove"/><br/>
                             <fmt:message key="siteSettings.user.definitivelyRemove.files"/></p>
-                        <a class="btn btn-primary btn-sm" href="<c:url value='/cms/export/default${userProperties.localPath}.zip?cleanup=simple'/>" target="_blank">
+                        <a class="btn btn-default" href="<c:url value='/cms/export/default${userProperties.localPath}.zip?cleanup=simple'/>" target="_blank">
                             <fmt:message key="label.export"/>
                         </a>
                     </c:if>
@@ -86,7 +86,7 @@
                     <fieldset title="<fmt:message key='label.options'/>">
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group form-group-sm">
+                                <div class="form-group">
                                     <div class="checkbox">
                                         <label for="emailNotificationsDisabled">
                                             <input type="checkbox" name="emailNotificationsDisabled" id="emailNotificationsDisabled"
@@ -104,7 +104,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group form-group-sm">
+                                <div class="form-group">
                                     <label class="control-label" for="preferredLanguage"><fmt:message key="siteSettings.user.preferredLanguage"/></label>
                                     <select class="form-control" id="preferredLanguage" name="preferredLanguage" disabled="disabled">
                                         <c:forEach items="${functions:availableAdminBundleLocale(renderContext.UILocale)}" var="uiLanguage">
@@ -137,15 +137,14 @@
                     <fieldset>
                         <div class="row">
                             <div class="col-md-12">
-                                <button class="btn btn-default btn-sm" type="submit" name="_eventId_cancel">
-                                    <fmt:message key="label.cancel"/>
-                                </button>
-
                                 <c:if test="${!userProperties.readOnly}">
-                                    <button class="btn btn-danger btn-sm pull-right" type="submit" name="_eventId_confirm" onclick="workInProgress('${i18nWaiting}'); return true;">
+                                    <button class="btn btn-danger pull-right" type="submit" name="_eventId_confirm" onclick="workInProgress('${i18nWaiting}'); return true;">
                                         <fmt:message key="label.delete"/>
                                     </button>
                                 </c:if>
+                                <button class="btn btn-default pull-right" type="submit" name="_eventId_cancel">
+                                    <fmt:message key="label.cancel"/>
+                                </button>
                             </div>
                         </div>
                     </fieldset>

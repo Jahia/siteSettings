@@ -95,12 +95,12 @@
                             </div>
                         </div>
                     </fieldset>
-                    
+
                     <fieldset title="<fmt:message key='label.options'/>">
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="form-group form-group-sm label-floating">
+                                    <div class="form-group">
                                         <div class="checkbox">
                                             <label for="emailNotificationsDisabled">
                                                 <input type="checkbox" name="emailNotificationsDisabled" id="emailNotificationsDisabled" <c:if test="${userProperties.emailNotificationsDisabled}">checked="checked"</c:if>>
@@ -116,7 +116,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="form-group form-group-sm label-floating">
+                                    <div class="form-group label-floating">
                                         <label class="control-label" for="preferredLanguage"><fmt:message key="siteSettings.user.preferredLanguage"/></label>
                                         <select class="form-control" id="preferredLanguage" name="preferredLanguage">
                                             <c:forEach items="${functions:availableAdminBundleLocale(renderContext.UILocale)}" var="uiLanguage">
@@ -128,14 +128,14 @@
                             </div>
                         </div>
                     </fieldset>
-                    
+
                     <fieldset>
                         <div class="row">
                             <div class="col-md-12">
-                                <button class="btn btn-primary btn-sm pull-right" type="submit" name="_eventId_add" onclick="workInProgress('${i18nWaiting}'); return true;">
+                                <button class="btn btn-primary pull-right" type="submit" name="_eventId_add" onclick="workInProgress('${i18nWaiting}'); return true;">
                                     <fmt:message key='label.add'/>
                                 </button>
-                                <button class="btn btn-default btn-sm" type="submit" name="_eventId_cancel">
+                                <button class="btn btn-default pull-right" type="submit" name="_eventId_cancel">
                                     <fmt:message key='label.cancel'/>
                                 </button>
                             </div>

@@ -95,7 +95,7 @@ function submitGroupForm(act, group) {
         </div>
 
         <form action="${flowExecutionUrl}" method="POST" style="display: inline;">
-            <button class="btn btn-default btn-sm" type="submit" name="_eventId_createGroup">
+            <button class="btn btn-default" type="submit" name="_eventId_createGroup">
                 <fmt:message key="siteSettings.groups.create"/>
             </button>
         </form>
@@ -131,7 +131,7 @@ function submitGroupForm(act, group) {
                         <fmt:message var="i18nEdit" key="label.edit"/><c:set var="i18nEdit" value="${fn:escapeXml(i18nEdit)}"/>
                         <fmt:message var="i18nCopy" key="label.copy"/><c:set var="i18nCopy" value="${fn:escapeXml(i18nCopy)}"/>
                         <fmt:message var="i18nRemove" key="label.remove"/><c:set var="i18nRemove" value="${fn:escapeXml(i18nRemove)}"/>
-                        <fmt:message var="i18nAddMembers" key="siteSettings.groups.addMembers"/><c:set var="i18nRemove" value="${fn:escapeXml(i18nAddMembers)}"/>
+                        <fmt:message var="i18nAddMembers" key="siteSettings.groups.addMembers"/><c:set var="i18nAddMembers" value="${fn:escapeXml(i18nAddMembers)}"/>
                         <fmt:message var="i18nRemoveNote" key="siteSettings.groups.remove.confirm"/>
                         <fmt:message var="i18nContinue" key="label.confirmContinue"/>
                         <c:set var="i18nRemoveConfirm" value="${functions:escapeJavaScript(i18nRemoveNote)} ${functions:escapeJavaScript(i18nContinue)}"/>

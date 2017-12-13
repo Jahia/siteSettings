@@ -57,16 +57,14 @@
                         <input class="form-control" type="text" name="groupname" id="groupname" value="${fn:escapeXml(groupnameValue)}"/>
                     </div>
 
-                    <div class="container-fluid">
-                        <button class="btn btn-primary btn-sm pull-right" type="submit"
+                        <button class="btn btn-primary pull-right" type="submit"
                                 name="_eventId_${copyMode ? 'copy' : 'add'}"
                                 onclick="workInProgress('${i18nWaiting}'); return true;">
                             <fmt:message key="label.${copyMode ? 'copy' : 'add'}"/>
                         </button>
-                        <button class="btn btn-default btn-sm" type="submit" name="_eventId_cancel">
+                        <button class="btn btn-default pull-right" type="submit" name="_eventId_cancel">
                             <fmt:message key="label.cancel"/>
                         </button>
-                    </div>
                 </form>
             </div>
         </div>

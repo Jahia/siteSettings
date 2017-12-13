@@ -71,12 +71,12 @@
                         <input class="form-control" type="text" name="csvSeparator" value="${csvFile.csvSeparator}" id="csvSeparator"/>
                     </div>
 
-                    <div class="form-group form-group-sm">
-                        <button class="btn btn-default btn-sm" type="submit" name="_eventId_cancel">
-                            <fmt:message key='label.cancel'/>
-                        </button>
-                        <button class="btn btn-primary btn-sm pull-right" type="submit" name="_eventId_confirm" id="${currentNode.identifier}-confirm">
+                    <div class="form-group">
+                        <button class="btn btn-primary pull-right" type="submit" name="_eventId_confirm" id="${currentNode.identifier}-confirm">
                             <fmt:message key='label.ok'/>
+                        </button>
+                        <button class="btn btn-default pull-right" type="submit" name="_eventId_cancel">
+                            <fmt:message key='label.cancel'/>
                         </button>
                     </div>
                 </form>

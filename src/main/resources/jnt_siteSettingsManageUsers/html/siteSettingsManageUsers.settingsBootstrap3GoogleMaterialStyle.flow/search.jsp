@@ -80,13 +80,13 @@
     <div class="panel-body">
 
         <div>
-            <button class="btn btn-default btn-sm" type="submit" onclick="doUserAction('addUser')">
+            <button class="btn btn-default" type="submit" onclick="doUserAction('addUser')">
                 <fmt:message key='siteSettings.user.create'/>
             </button>
-            <button class="btn btn-default btn-sm" type="submit" onclick="doUserAction('bulkAddUser')">
+            <button class="btn btn-default" type="submit" onclick="doUserAction('bulkAddUser')">
                 <fmt:message key='siteSettings.users.bulk.create'/>
             </button>
-            <button class="btn btn-default btn-sm" type="submit" onclick="doUsersAction('bulkDeleteUser')">
+            <button class="btn btn-default" type="submit" onclick="doUsersAction('bulkDeleteUser')">
                 <fmt:message key="siteSettings.user.remove"/>
             </button>
         </div>
@@ -110,7 +110,7 @@
             </div>
 
             <br />
-            <div class="form-group form-group-sm">
+            <div class="form-group">
                 <span><fmt:message key="label.in"/></span>
                 <div class="radio">
                     <label class="radio-inline" for="searchIn">
@@ -130,7 +130,7 @@
                 </div>
             </div>
 
-            <div class="form-group form-group-sm">
+            <div class="form-group">
                 <div class="checkbox">
                     <label for="propsUsersname">
                         <input type="checkbox" class="propCheck" name="properties" value="username" id="propsUsersname"
@@ -141,7 +141,7 @@
                 </div>
             </div>
 
-            <div class="form-group form-group-sm">
+            <div class="form-group">
                 <div class="checkbox">
                     <label for="propsFirstName">
                         <input type="checkbox" class="propCheck" name="properties" value="j:firstName" id="propsFirstName"
@@ -152,7 +152,7 @@
                 </div>
             </div>
 
-            <div class="form-group form-group-sm">
+            <div class="form-group">
                 <div class="checkbox">
                     <label for="propsLastName">
                         <input type="checkbox" class="propCheck" name="properties" value="j:lastName" id="propsLastName"
@@ -163,7 +163,7 @@
                 </div>
             </div>
 
-            <div class="form-group form-group-sm">
+            <div class="form-group">
                 <div class="checkbox">
                     <label for="propsEmail">
                         <input type="checkbox" class="propCheck" name="properties" value="j:email" id="propsEmail"
@@ -174,7 +174,7 @@
                 </div>
             </div>
 
-            <div class="form-group form-group-sm">
+            <div class="form-group">
                 <div class="checkbox">
                     <label for="propsOrganization">
                         <input type="checkbox" class="propCheck" name="properties" value="j:organization" id="propsOrganization"
@@ -186,11 +186,11 @@
             </div>
 
             <c:if test="${multipleProvidersAvailable}">
-                <br />
-                <div class="form-group form-group-sm">
+                <br>
+                <div class="form-group">
                     <span><fmt:message key="label.on"/></span>
                     <div class="radio">
-                        <label for="storeOnEverywhere">
+                        <label for="storeOnEverywhere" class="radio-inline">
                             <input type="radio" name="storedOn" id="storeOnEverywhere" value="everywhere"
                                    <c:if test="${empty searchCriteria.storedOn or searchCriteria.storedOn eq 'everywhere'}">checked</c:if>
                                    onclick="$('.provCheck').attr('disabled',true);">
@@ -199,7 +199,7 @@
                     </div>
 
                     <div class="radio">
-                        <label for="storedOn">
+                        <label for="storedOn" class="radio-inline">
                             <input type="radio" id="storedOn" name="storedOn" value="providers"
                                     <c:if test="${searchCriteria.storedOn eq 'providers'}"> checked </c:if>
                                     onclick="$('.provCheck').removeAttr('disabled');">
@@ -209,7 +209,7 @@
                 </div>
 
                 <c:forEach items="${providersList}" var="curProvider">
-                    <div class="form-group form-group-sm">
+                    <div class="form-group">
                         <div class="checkbox">
                             <label for="provider-${curProvider}">
                                 <input type="checkbox" class="provCheck" name="providers" id="provider-${curProvider}" value="${curProvider}"

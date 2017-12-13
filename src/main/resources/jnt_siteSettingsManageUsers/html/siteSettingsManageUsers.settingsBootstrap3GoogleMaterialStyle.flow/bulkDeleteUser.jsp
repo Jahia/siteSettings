@@ -69,15 +69,14 @@
                 </tbody>
             </table>
 
-            <button class="btn btn-sm btn-default" type="submit" name="_eventId_cancel">
-                <fmt:message key="label.cancel"/>
-            </button>
-
             <c:if test="${!userProperties.readOnly}">
-                <button class="btn btn-danger btn-sm pull-right" type="submit" name="_eventId_confirm" onclick="workInProgress('${i18nWaiting}'); return true;">
+                <button class="btn btn-danger pull-right" type="submit" name="_eventId_confirm" onclick="workInProgress('${i18nWaiting}'); return true;">
                     <fmt:message key="label.remove"/>
                 </button>
             </c:if>
+            <button class="btn pull-right btn-default" type="submit" name="_eventId_cancel">
+                <fmt:message key="label.cancel"/>
+            </button>
         </form>
     </div>
 </div>
