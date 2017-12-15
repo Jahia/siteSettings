@@ -111,9 +111,11 @@
                                     <select ng-model="newLanguages" name="language_list" id="language_list" multiple="multiple" size="${fn:length(siteLocales) > 20 ? fn:length(siteLocales):20}">
                                         <option ng-repeat="availableLocale in site.availableLocales | filter:filterSiteLocales" ng-value="availableLocale">{{availableLocale.displayLocale}}</option>
                                     </select>
-                                    <button class="btn btn-fab btn-fab-mini btn-primary" type="button" ng-click="addLanguage()" ng-disabled="!newLanguages || newLanguages.length == 0"><i class="material-icons">fast_forward</i></button>
+                                    <button class="btn btn-fab btn-fab-mini btn-primary" type="button" ng-click="addLanguage()" ng-disabled="!newLanguages || newLanguages.length == 0">
+                                        <i class="material-icons">fast_forward</i>
+                                    </button>
                                 </div>
-                                <div class="col-md-7">
+                                <div class="col-md-8">
                                     <table class="table table-bordered table-striped table-hover">
                                         <thead>
                                         <tr>
@@ -192,8 +194,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <p class="text-center">
-                                        <button class="btn btn-primary btn-sm pull-right" type="button" id="updateSite_button" ng-click="save()">
-                                            <i class="material-icons">add</i>
+                                        <button class="btn btn-primary pull-right" type="button" id="updateSite_button" ng-click="save()">
                                             <fmt:message key="label.submit"/>
                                         </button>
                                     </p>

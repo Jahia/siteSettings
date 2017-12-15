@@ -42,7 +42,7 @@
                 <div class="input-group">
                     <input class="form-control" type="text" id="vanityUrlSearch" name="vanityUrlSearch" value="${param['vanityUrlSearch']}" />
                     <span class="input-group-btn">
-                        <button class="btn btn-primary btn-sm" type="submit">
+                        <button class="btn btn-primary" type="submit">
                             <fmt:message key="filters.label"/>
                         </button>
                     </span>
