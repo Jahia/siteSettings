@@ -10,6 +10,11 @@ var dataTablesSettings = {
 
         var options = $.extend({}, dtOptions, customOptions);
 
+        if(options.placeHolder != null && options.placeHolder != ""){
+            options.sDom = "<'row'<'col-sm-6 col-md-6'l><'col-sm-6 col-md-6 text-right'<'"+options.placeHolder+"'>f>r>t<'row'<'col-sm-6" +
+                " col-md-6 text-muted'i><'col-sm-6 col-md-6 text-right'p>>";
+        }
+
         if (sort) {
             options.aaSorting = sort; //this option disable sort by default, the user steal can use column names to sort the table
         }
