@@ -6,7 +6,6 @@
         <siteAdminGroups jcr:primaryType="jnt:permission" />
         <siteAdminLanguages jcr:primaryType="jnt:permission" />
         <siteAdminHtmlSettings jcr:primaryType="jnt:permission" />
-        <siteAdminUrlmapping jcr:primaryType="jnt:permission" />
         <siteAdminTemplates jcr:primaryType="jnt:permission" />
         <siteAdminWcagCompliance jcr:primaryType="jnt:permission" />
         <siteAdminSiteRoles jcr:primaryType="jnt:permission" />

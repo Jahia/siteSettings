@@ -45,14 +45,6 @@
                             <thumbnail jcr:mimeType="image/png" jcr:primaryType="jnt:resource"/>
                             <thumbnail2 jcr:mimeType="image/png" jcr:primaryType="jnt:resource"/>
                         </signpost.png>
-                        <urlmapping_large.png j:height="32"
-                                     j:width="32"
-                                     jcr:mixinTypes="jmix:image"
-                                     jcr:primaryType="jnt:file">
-                            <jcr:content jcr:mimeType="image/png" jcr:primaryType="jnt:resource"/>
-                            <thumbnail jcr:mimeType="image/png" jcr:primaryType="jnt:resource"/>
-                            <thumbnail2 jcr:mimeType="image/png" jcr:primaryType="jnt:resource"/>
-                        </urlmapping_large.png>
                         <users_into.png j:height="16"
                                j:width="16"
                                jcr:mixinTypes="jmix:image"
@@ -101,14 +93,6 @@
                             <thumbnail jcr:mimeType="image/png" jcr:primaryType="jnt:resource"/>
                             <thumbnail2 jcr:mimeType="image/png" jcr:primaryType="jnt:resource"/>
                         </users_into_large.png>
-                        <urlmapping.png j:height="16"
-                               j:width="16"
-                               jcr:mixinTypes="jmix:image"
-                               jcr:primaryType="jnt:file">
-                            <jcr:content jcr:mimeType="image/png" jcr:primaryType="jnt:resource"/>
-                            <thumbnail jcr:mimeType="image/png" jcr:primaryType="jnt:resource"/>
-                            <thumbnail2 jcr:mimeType="image/png" jcr:primaryType="jnt:resource"/>
-                        </urlmapping.png>
                         <manage_users.png j:height="16"
                                  j:width="16"
                                  jcr:mixinTypes="jmix:image"
@@ -177,22 +161,6 @@
                                 <html-filtering jcr:primaryType="jnt:siteSettingsHtmlFiltering"/>
                             </pagecontent>
                         </htmlFiltering>
-                        <vanityURLSetting j:applyOn="jnt:virtualsite"
-                                 j:defaultTemplate="false"
-                                 j:hiddenTemplate="true"
-                                 j:icon="/modules/siteSettings/templates/files/urlmapping.png"
-                                 j:priority="100"
-                                 j:requiredPermissionNames="siteAdminUrlmapping"
-                                 j:titleKey="siteSettings.label.vanityURLSettings"
-                                 jcr:mixinTypes="jmix:rbTitle"
-                                 jcr:primaryType="jnt:contentTemplate">
-                            <pagecontent jcr:primaryType="jnt:contentList">
-                                <vanityurlslist jcr:mixinTypes="jmix:accessControlled"
-                                     jcr:primaryType="jnt:siteSettingsVanityUrlsList">
-                                    <j:acl jcr:primaryType="jnt:acl"/>
-                                </vanityurlslist>
-                            </pagecontent>
-                        </vanityURLSetting>
                         <manageModules j:applyOn="jnt:virtualsite"
                               j:defaultTemplate="false"
                               j:hiddenTemplate="true"
@@ -298,22 +266,6 @@
                                 <html-filtering jcr:primaryType="jnt:siteSettingsHtmlFiltering" jcr:mixinTypes="jmix:renderable" j:view="settingsBootstrap3GoogleMaterialStyle"/>
                             </pagecontent>
                         </htmlFiltering-jahia-anthracite>
-                        <vanityURLSetting-jahia-anthracite j:applyOn="jnt:virtualsite"
-                                 j:defaultTemplate="false"
-                                 j:hiddenTemplate="true"
-                                 j:icon="/modules/siteSettings/templates/files/urlmapping.png"
-                                 j:priority="100"
-                                 j:requiredPermissionNames="siteAdminUrlmapping"
-                                 j:titleKey="siteSettings.label.vanityURLSettings"
-                                 jcr:mixinTypes="jmix:rbTitle"
-                                 jcr:primaryType="jnt:contentTemplate">
-                            <pagecontent jcr:primaryType="jnt:contentList">
-                                <vanityurlslist jcr:mixinTypes="jmix:accessControlled jmix:renderable"
-                                     jcr:primaryType="jnt:siteSettingsVanityUrlsList" j:view="settingsBootstrap3GoogleMaterialStyle">
-                                    <j:acl jcr:primaryType="jnt:acl"/>
-                                </vanityurlslist>
-                            </pagecontent>
-                        </vanityURLSetting-jahia-anthracite>
                         <manageModules-jahia-anthracite j:applyOn="jnt:virtualsite"
                               j:defaultTemplate="false"
                               j:hiddenTemplate="true"
