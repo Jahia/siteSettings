@@ -158,7 +158,11 @@ public class UsersFlowHandler implements Serializable {
                         Properties properties = buildProperties(headerElementList, lineElementList);
                         String userName = lineElementList.get(userNamePos);
                         String password = lineElementList.get(passwordPos);
-                        if (userManagerService.isUsernameSyntaxCorrect(userName)) {
+                        if (userManagerService.userExists(userName, siteKey)) {
+                             context.addMessage(new MessageBuilder().error().code(
+                                   "siteSettings.users.bulk.errors.user.already.exists").arg(userName).build());
+                             hasErrors = true;                        
+                        } else if (userManagerService.isUsernameSyntaxCorrect(userName)) {
                             PolicyEnforcementResult evalResult = pwdPolicyService.enforcePolicyOnUserCreate(userName, password);
                             if (evalResult.isSuccess()) {
                                 JCRUserNode jahiaUser = userManagerService.createUser(userName, siteKey, password, properties, session);
