@@ -28,7 +28,7 @@
         GNU General Public License for more details.
 
         You should have received a copy of the GNU General Public License
-        along with this program. If not, see <http://www.gnu.org/licenses/>.
+        along with this program. If not, see <http://www.gnu.org/licenses />.
 
 
         2/ JSEL - Commercial and Supported Versions of the program
@@ -52,7 +52,7 @@
         <version>7.2.1.0</version>
     </parent>
     <artifactId>siteSettings</artifactId>
-    <version>7.2.7-SNAPSHOT</version>
+    <version>7.2.7</version>
     <packaging>bundle</packaging>
     <name>Jahia Site Settings</name>
     <description>Settings (groups,tools, etc) for site.</description>
@@ -60,7 +60,7 @@
         <connection>scm:git:git@github.com:Jahia/siteSettings.git</connection>
         <developerConnection>scm:git:git@github.com:Jahia/siteSettings.git</developerConnection>
         <url>scm:git:git@github.com:Jahia/siteSettings.git</url>
-      <tag>HEAD</tag>
+      <tag>7_2_7</tag>
   </scm>
 
     <properties>
