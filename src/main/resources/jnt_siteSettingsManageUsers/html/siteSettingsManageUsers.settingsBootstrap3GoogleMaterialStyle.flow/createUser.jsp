@@ -37,7 +37,6 @@
     <div class="col-md-offset-2 col-md-8">
         <div class="panel panel-default">
             <div class="panel-body">
-
                 <p><fmt:message key="label.noteThat"/>:&nbsp;<fmt:message key="siteSettings.user.errors.username.syntax"/></p>
 
                 <form action="${flowExecutionUrl}" method="post" autocomplete="off">
@@ -129,18 +128,15 @@
                         </div>
                     </fieldset>
 
-                    <fieldset>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <button class="btn btn-primary pull-right" type="submit" name="_eventId_add" onclick="workInProgress('${i18nWaiting}'); return true;">
-                                    <fmt:message key='label.add'/>
-                                </button>
-                                <button class="btn btn-default pull-right" type="submit" name="_eventId_cancel">
-                                    <fmt:message key='label.cancel'/>
-                                </button>
-                            </div>
-                        </div>
-                    </fieldset>
+                    <div class="form-group form-group-sm">
+                        <button class="btn btn-raised btn-primary pull-right"
+                                type="submit" name="_eventId_add" onclick="workInProgress('${i18nWaiting}'); return true;">
+                            <fmt:message key='label.add'/>
+                        </button>
+                        <button class="btn btn-default pull-right" type="submit" name="_eventId_cancel">
+                            <fmt:message key='label.cancel'/>
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>

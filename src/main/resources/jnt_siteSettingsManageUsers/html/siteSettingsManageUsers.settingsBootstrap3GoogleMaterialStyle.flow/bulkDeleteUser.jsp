@@ -26,12 +26,12 @@
 <div class="panel panel-default">
     <div class="panel-body">
         <form action="${flowExecutionUrl}" method="post">
-            <table class="table table-bordered table-striped table-hover">
+            <table class="table table-bordered table-striped">
                 <thead>
                 <tr>
                     <th class="{sorter: false}" width="5%">&nbsp;</th>
-                    <th class="sortable"><fmt:message key="label.name"/></th>
-                    <th width="45%" class="sortable"><fmt:message key="label.properties"/></th>
+                    <th class="sortable"><fmt:message key="label.username"/></th>
+                    <th width="45%" class="sortable"><fmt:message key="label.name"/></th>
                     <c:if test="${multipleProvidersAvailable}">
                         <th width="10%"><fmt:message key="column.provider.label"/></th>
                     </c:if>
@@ -69,14 +69,17 @@
                 </tbody>
             </table>
 
-            <c:if test="${!userProperties.readOnly}">
-                <button class="btn btn-danger pull-right" type="submit" name="_eventId_confirm" onclick="workInProgress('${i18nWaiting}'); return true;">
-                    <fmt:message key="label.remove"/>
+            <div class="form-group form-group-sm">
+                <c:if test="${!userProperties.readOnly}">
+                    <button class="btn btn-danger btn-raised pull-right" type="submit" name="_eventId_confirm"
+                            onclick="workInProgress('${i18nWaiting}'); return true;">
+                        <fmt:message key="label.remove"/>
+                    </button>
+                </c:if>
+                <button class="btn pull-right btn-default" type="submit" name="_eventId_cancel">
+                    <fmt:message key="label.cancel"/>
                 </button>
-            </c:if>
-            <button class="btn pull-right btn-default" type="submit" name="_eventId_cancel">
-                <fmt:message key="label.cancel"/>
-            </button>
+            </div>
         </form>
     </div>
 </div>

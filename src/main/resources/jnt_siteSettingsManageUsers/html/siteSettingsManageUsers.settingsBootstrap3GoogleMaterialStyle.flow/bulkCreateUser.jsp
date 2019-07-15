@@ -51,9 +51,7 @@
         <div class="panel panel-default">
             <div class="panel-body">
 
-                <div class="alert alert-info">
-                    <fmt:message key="siteSettings.users.batch.file.format"/>
-                </div>
+                <p><fmt:message key="siteSettings.users.batch.file.format"/></p>
 
                 <form action="${flowExecutionUrl}" method="post" enctype="multipart/form-data" autocomplete="off">
                     <div class="form-group label-floating is-fileinput">
@@ -72,11 +70,11 @@
                     </div>
 
                     <div class="form-group">
-                        <button class="btn btn-primary pull-right" type="submit" name="_eventId_confirm" id="${currentNode.identifier}-confirm">
-                            <fmt:message key='label.ok'/>
+                        <button class="btn btn-primary btn-raised pull-right" type="submit" name="_eventId_confirm" id="${currentNode.identifier}-confirm">
+                            <fmt:message key="label.import"/>
                         </button>
                         <button class="btn btn-default pull-right" type="submit" name="_eventId_cancel">
-                            <fmt:message key='label.cancel'/>
+                            <fmt:message key="label.cancel"/>
                         </button>
                     </div>
                 </form>

@@ -8,34 +8,40 @@
 <c:set var="multipleProvidersAvailable" value="${fn:length(providers) > 1}"/>
 <c:set var="isGroupEditable" value="${!group.properties['j:external'].boolean}"/>
 
-<h2><fmt:message key="${quickAddMembers ? 'siteSettings.label.quickAddMembers.header' : 'label.group'}"/>: ${fn:escapeXml(user:displayName(group))}</h2>
-
 <script type="text/javascript">
-    var addedMembers = [];
-    var removedMembers = [];
+    editMembers = {
+        addedMembers: [],
+        removedMembers: [],
+        submitChanges: function () {
+            workInProgress('${i18nWaiting}');
+            $("#addedMembers").val(editMembers.addedMembers);
+            $("#removedMembers").val(editMembers.removedMembers);
+            $("#saveForm").submit();
+        }
+    };
 
     function selectMember(input) {
         var $input = $(input);
 
         var name = '${prefix}' + $input.attr('value');
         if ($input.is(':checked')) {
-            if (removedMembers.indexOf(name) > -1) {
-                removedMembers.splice(removedMembers.indexOf(name),1)
+            if (editMembers.removedMembers.indexOf(name) > -1) {
+                editMembers.removedMembers.splice(editMembers.removedMembers.indexOf(name), 1);
             } else {
-                addedMembers[addedMembers.length] = name
+                editMembers.addedMembers[editMembers.addedMembers.length] = name;
             }
         } else {
-            if (addedMembers.indexOf(name) > -1) {
-                addedMembers.splice(addedMembers.indexOf(name),1)
+            if (editMembers.addedMembers.indexOf(name) > -1) {
+                editMembers.addedMembers.splice(editMembers.addedMembers.indexOf(name), 1);
             } else {
-                removedMembers[removedMembers.length] = name
+                editMembers.removedMembers[editMembers.removedMembers.length] = name;
             }
         }
 
-        if (addedMembers.length == 0 && removedMembers.length == 0) {
-            $('#saveButton').attr('disabled', 'disabled')
+        if (editMembers.addedMembers.length === 0 && editMembers.removedMembers.length === 0) {
+            $('#saveButton').attr('disabled', 'disabled');
         } else {
-            $('#saveButton').removeAttr("disabled")
+            $('#saveButton').removeAttr("disabled");
         }
     }
 
@@ -45,42 +51,77 @@
             $.each($(':checkbox[name="selectedMembers"]'), function() {
                 if (this.checked != state) {
                     this.checked = state;
-                    $(this).change()
+                    $(this).change();
                 }
             });
         });
-
-        $("#saveForm").submit(function() {
-            workInProgress('${i18nWaiting}');
-            $("#addedMembers").val(addedMembers)
-            $("#removedMembers").val(removedMembers)
-        })
-    })
+    });
 </script>
 
-<form action="${flowExecutionUrl}" method="post" style="display: inline;">
-    <div>
-        <c:choose>
-            <c:when test="${quickAddMembers}">
-                <button class="btn btn-default" type="submit" name="_eventId_cancel">
-                    <fmt:message key="label.backToGroupList"/>
-                </button>
+<div>
+    <c:choose>
+        <c:when test="${quickAddMembers}">
+            <h4>
+                <form action="${flowExecutionUrl}" method="post" style="display: inline;">
+                    <button class="btn btn-default btn-fab btn-fab-mini" type="submit" name="_eventId_cancel"
+                            data-placement="top" data-container="body"
+                            data-toggle="tooltip" data-title="<fmt:message key='label.backToGroupList'/>">
+                        <i class="material-icons">arrow_back</i>
+                    </button>
+                </form>
+                <fmt:message key="siteSettings.label.quickAddMembers.header"/>: ${fn:escapeXml(user:displayName(group))}
+            </h4>
 
-                <div class="alert alert-info"><fmt:message key="siteSettings.label.quickAddMembers"/></div>
-            </c:when>
-            <c:otherwise>
-                <button class="btn btn-default" type="submit" name="_eventId_editGroup">
-                    <fmt:message key="siteSettings.label.backToGroup"/>
-                </button>
+            <p><fmt:message key="siteSettings.label.quickAddMembers"/></p>
+        </c:when>
+        <c:otherwise>
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>
+                        <form action="${flowExecutionUrl}" method="post" style="display: inline;">
+                            <button class="btn btn-default btn-fab btn-fab-mini" type="submit" name="_eventId_editGroup"
+                                    data-placement="top" data-container="body"
+                                    data-toggle="tooltip" data-title="<fmt:message key='siteSettings.label.backToGroup'/>">
+                                <i class="material-icons">arrow_back</i>
+                            </button>
+                        </form>
+                        <c:choose>
+                            <c:when test="${flowRequestContext.currentState.id eq 'editUsersMembers'}">
+                                Select users
+                            </c:when>
+                            <c:otherwise>
+                                Select groups
+                            </c:otherwise>
+                        </c:choose>
+                    </h4>
+                </div>
+                <div class="col-md-6 text-right">
+                    <form action="${flowExecutionUrl}" method="post" style="display: inline;">
+                        <c:choose>
+                            <c:when test="${flowRequestContext.currentState.id eq 'editUsersMembers'}">
+                                <button class="btn btn-default" type="submit" name="_eventId_editGroups">
+                                    <fmt:message key="label.groups"/>
+                                </button>
+                            </c:when>
+                            <c:otherwise>
+                                <button class="btn btn-default" type="submit" name="_eventId_editUsers">
+                                    <fmt:message key="label.users"/>
+                                </button>
+                            </c:otherwise>
+                        </c:choose>
+                    </form>
 
-                <button class="btn btn-default" type="submit" name="_eventId_editUsers">
-                    <fmt:message key="label.users"/>
-                </button>
-
-                <button class="btn btn-default" type="submit" name="_eventId_editGroups">
-                    <fmt:message key="label.groups"/>
-                </button>
-            </c:otherwise>
-        </c:choose>
-    </div>
-</form>
+                    <form action="${flowExecutionUrl}" method="post" id="saveForm" class="form-inline pull-right">
+                        <input id="addedMembers" type="hidden" name="addedMembers"/>
+                        <input id="removedMembers" type="hidden" name="removedMembers"/>
+                        <input id="eventId" type="hidden" name="_eventId_save" value="on"/>
+                        <button class="btn btn-raised btn-primary" type="button" id="saveButton"
+                                onclick="editMembers.submitChanges()" disabled="disabled">
+                            <fmt:message key="label.save"/>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </c:otherwise>
+    </c:choose>
+</div>

@@ -15,12 +15,6 @@ td .form-group.form-group-sm {
     margin-top: 3px;
 }
 
-.btn.btn-fab.btn-fab-xs {
-    height: 30px;
-    min-width: 30px;
-    width: 30px;
-}
-
 table .checkbox,
 table .radio {
     margin: 0;
@@ -60,56 +54,14 @@ table .radio {
     user-select: none;
 }
 
-button.btn.btn-raised {
-    box-shadow: 0 2px 5px 0 rgba(0,0,0,.26) !important;
-    height: 36px !important;
-    padding: 0 16px;
-    line-height: 37px;
-    color: rgb(33,33,33) !important;
-    font-size: 13px !important;
-}
-
 .panel > .panel-heading,
 .panel.panel-default > .panel-heading {
     background-color: transparent !important;
     font-weight: 400;
 }
 
-
-/* FAB butons to Icon buttons */
-
-a.btn.btn-fab.btn-fab-xs,
-a.btn.btn-fab.btn-fab-ms {
-    background: none !important;
-    color: rgba(0, 0, 0, 0.64) !important;
-    margin-bottom: 1px !important;
-}
-
-a.btn.btn-fab.btn-fab-xs.btn-danger {
-    color: #F44336 !important;
-}
-
-.btn-fab {
-    background: none !important;
-    color: rgba(0, 0, 0, 0.64) !important;
-}
-
-.btn-danger.btn-fab {
-  color: #f44336 !important
-}
-
-.btn-success.btn-fab {
-  color: #4caf50 !important
-}
-
-
-
 .panel-body {
     padding-bottom: 4px !important;
-}
-
-.table-striped>tbody>tr:nth-of-type(odd) {
-    background-color: #ffffff !important;
 }
 
 div.dataTables_info {
@@ -117,11 +69,4 @@ div.dataTables_info {
     font-weight: 400;
     color: rgba(0, 0, 0, 0.4);
     padding-top: 0;
-}
-
-.checkbox .checkbox-material,
-label.checkbox-inline .checkbox-material {
-    top: 5px;
-    margin-left: 4px;
-    margin-right: 4px;
 }

@@ -32,6 +32,10 @@
     <h2><fmt:message key="siteSettings.label.pageModelsLSettings"/> - ${fn:escapeXml(site.displayableName)}</h2>
 </div>
 
+<c:if test="${not empty moduleMap.emptyListMessage and (renderContext.editMode or moduleMap.forceEmptyListMessageDisplay) and isEmpty}">
+    <div class="alert alert-info">${moduleMap.emptyListMessage}</div>
+</c:if>
+
 <div class="panel panel-default">
     <div class="panel-body">
         <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="pageModelsTable">
@@ -59,8 +63,9 @@
                     <td>
                         <a href="<c:url value='${url.base}${pageModel.path}.html'/>">${pageModel.properties["j:pageTemplateTitle"].string}</a>
                     </td>
-                    <td>  <a href="<c:url value='${url.base}${pageModel.path}.html'/>">${pageModel.path}</a></td>
-        
+                    <td>
+                        <a href="<c:url value='${url.base}${pageModel.path}.html'/>">${pageModel.path}</a>
+                    </td>
                 </tr>
                 <c:set var="isEmpty" value="false"/>
             </c:forEach>
@@ -69,7 +74,4 @@
     </div>
 </div>
 
-<c:if test="${not empty moduleMap.emptyListMessage and (renderContext.editMode or moduleMap.forceEmptyListMessageDisplay) and isEmpty}">
-    <div class="alert alert-info">${moduleMap.emptyListMessage}</div>
-</c:if>
 <template:include view="hidden.footer"/>
