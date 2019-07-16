@@ -34,7 +34,8 @@
         <%@include file="common/editMembersHead.jspf" %>
 
         <c:if test="${not quickAddMembers}">
-            <p>Add/Remove users as members of your group.</p>
+            <br />
+            <p><fmt:message key="siteSettings.message.addRemoveUsers"/></p>
         </c:if>
 
         <form class="form-inline " action="${flowExecutionUrl}" id="searchForm" method="post">

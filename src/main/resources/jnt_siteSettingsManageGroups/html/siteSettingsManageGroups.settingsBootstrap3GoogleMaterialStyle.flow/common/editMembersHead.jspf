@@ -77,40 +77,15 @@
         <c:otherwise>
             <div class="row">
                 <div class="col-md-6">
-                    <h4>
-                        <form action="${flowExecutionUrl}" method="post" style="display: inline;">
-                            <button class="btn btn-default btn-fab btn-fab-mini" type="submit" name="_eventId_editGroup"
-                                    data-placement="top" data-container="body"
-                                    data-toggle="tooltip" data-title="<fmt:message key='siteSettings.label.backToGroup'/>">
-                                <i class="material-icons">arrow_back</i>
-                            </button>
-                        </form>
-                        <c:choose>
-                            <c:when test="${flowRequestContext.currentState.id eq 'editUsersMembers'}">
-                                Select users
-                            </c:when>
-                            <c:otherwise>
-                                Select groups
-                            </c:otherwise>
-                        </c:choose>
-                    </h4>
+                    <form action="${flowExecutionUrl}" method="post" style="display: inline;">
+                        <button class="btn btn-default btn-fab btn-fab-mini" type="submit" name="_eventId_editGroup"
+                                data-placement="top" data-container="body"
+                                data-toggle="tooltip" data-title="<fmt:message key='siteSettings.label.backToGroup'/>">
+                            <i class="material-icons">arrow_back</i>
+                        </button>
+                    </form>
                 </div>
                 <div class="col-md-6 text-right">
-                    <form action="${flowExecutionUrl}" method="post" style="display: inline;">
-                        <c:choose>
-                            <c:when test="${flowRequestContext.currentState.id eq 'editUsersMembers'}">
-                                <button class="btn btn-default" type="submit" name="_eventId_editGroups">
-                                    <fmt:message key="label.groups"/>
-                                </button>
-                            </c:when>
-                            <c:otherwise>
-                                <button class="btn btn-default" type="submit" name="_eventId_editUsers">
-                                    <fmt:message key="label.users"/>
-                                </button>
-                            </c:otherwise>
-                        </c:choose>
-                    </form>
-
                     <form action="${flowExecutionUrl}" method="post" id="saveForm" class="form-inline pull-right">
                         <input id="addedMembers" type="hidden" name="addedMembers"/>
                         <input id="removedMembers" type="hidden" name="removedMembers"/>
@@ -122,6 +97,33 @@
                     </form>
                 </div>
             </div>
+
+            <form id="switchToSelectUsersForm" action="${flowExecutionUrl}"
+                  method="post" style="display: none">
+                <input type="hidden" name="_eventId_editUsers" value="on"/>
+            </form>
+
+            <form id="switchToSelectGroupsForm" action="${flowExecutionUrl}"
+                  method="post" style="display: none">
+                <input type="hidden" name="_eventId_editGroups" value="on"/>
+            </form>
+
+            <ul class="nav nav-tabs">
+                <li role="presentation" <c:if test="${flowRequestContext.currentState.id eq 'editUsersMembers'}"> class="active" </c:if> >
+                    <a href="#" aria-controls="selectUsers"
+                       onclick="$('#switchToSelectUsersForm').submit();return false;"
+                       role="tab" data-toggle="tab">
+                        <fmt:message key="label.users"/>
+                    </a>
+                </li>
+                <li role="presentation" <c:if test="${flowRequestContext.currentState.id eq 'editGroupsMembers'}"> class="active" </c:if> >
+                    <a href="#selectGroups" aria-controls="selectGroups"
+                       onclick="$('#switchToSelectGroupsForm').submit();return false;"
+                       role="tab">
+                        <fmt:message key="label.groups"/>
+                    </a>
+                </li>
+            </ul>
         </c:otherwise>
     </c:choose>
 </div>

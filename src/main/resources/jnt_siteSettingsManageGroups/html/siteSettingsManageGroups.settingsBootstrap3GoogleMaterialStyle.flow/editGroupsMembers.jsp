@@ -53,7 +53,8 @@
 
         <%@include file="common/editMembersHead.jspf" %>
 
-        <p>Add/Remove groups as subgroups of your group.</p>
+        <br />
+        <p><fmt:message key="siteSettings.message.addRemoveGroups"/></p>
 
         <c:set var="principalsCount" value="${fn:length(principals)}"/>
         <c:set var="principalsFound" value="${principalsCount > 0}"/>
