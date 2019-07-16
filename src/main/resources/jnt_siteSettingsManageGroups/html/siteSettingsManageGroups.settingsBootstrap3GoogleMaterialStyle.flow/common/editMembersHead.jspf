@@ -61,18 +61,33 @@
 <div>
     <c:choose>
         <c:when test="${quickAddMembers}">
-            <h4>
-                <form action="${flowExecutionUrl}" method="post" style="display: inline;">
-                    <button class="btn btn-default btn-fab btn-fab-mini" type="submit" name="_eventId_cancel"
-                            data-placement="top" data-container="body"
-                            data-toggle="tooltip" data-title="<fmt:message key='label.backToGroupList'/>">
-                        <i class="material-icons">arrow_back</i>
-                    </button>
-                </form>
-                <fmt:message key="siteSettings.label.quickAddMembers.header"/>: ${fn:escapeXml(user:displayName(group))}
-            </h4>
+            <div class="row">
+                <div class="col-md-9">
+                    <h4>
+                        <form action="${flowExecutionUrl}" method="post" style="display: inline;">
+                            <button class="btn btn-default btn-fab btn-fab-mini" type="submit" name="_eventId_cancel"
+                                    data-placement="top" data-container="body"
+                                    data-toggle="tooltip" data-title="<fmt:message key='label.backToGroupList'/>">
+                                <i class="material-icons">arrow_back</i>
+                            </button>
+                        </form>
+                        <fmt:message key="siteSettings.label.quickAddMembers.header"/>: ${fn:escapeXml(user:displayName(group))}
+                    </h4>
 
-            <p><fmt:message key="siteSettings.label.quickAddMembers"/></p>
+                    <p><fmt:message key="siteSettings.label.quickAddMembers"/></p>
+                </div>
+                <div class="col-md-3 text-right">
+                    <form action="${flowExecutionUrl}" method="post" id="saveForm" class="form-inline pull-right">
+                        <input id="addedMembers" type="hidden" name="addedMembers"/>
+                        <input id="removedMembers" type="hidden" name="removedMembers"/>
+                        <input id="eventId" type="hidden" name="_eventId_save" value="on"/>
+                        <button class="btn btn-raised btn-primary" type="button" id="saveButton"
+                                onclick="editMembers.submitChanges()" disabled="disabled">
+                            <fmt:message key="label.save"/>
+                        </button>
+                    </form>
+                </div>
+            </div>
         </c:when>
         <c:otherwise>
             <div class="row">
