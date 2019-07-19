@@ -117,23 +117,25 @@
 </c:if>
 
 <c:if test="${memberCount > memberDisplayLimit}">
-    <div class="alert alert-info">
-        <c:if test="${isGroupEditable}">
-            <fmt:message key="siteSettings.groups.members.found">
-                <fmt:param value="${memberCount}"/>
+    <form action="${flowExecutionUrl}" method="POST" style="display: inline;" onsubmit="workInProgress('${i18nWaiting}');">
+        <div class="alert alert-info">
+            <c:if test="${isGroupEditable}">
+                <fmt:message key="siteSettings.groups.members.found">
+                    <fmt:param value="${memberCount}"/>
+                </fmt:message>
+            </c:if>
+            <fmt:message key="siteSettings.groups.first.shown">
+                <fmt:param value="${memberDisplayLimit}"/>
             </fmt:message>
-        </c:if>
-        <fmt:message key="siteSettings.groups.first.shown">
-            <fmt:param value="${memberDisplayLimit}"/>
-        </fmt:message>
-        <input type="hidden" id="memberFormDisplayLimit" name="displayLimit" value="<%= Integer.MAX_VALUE %>" />
-        <button class="btn btn-default btn-sm" type="submit" name="_eventId_refresh">
-            <fmt:message key="siteSettings.groups.members.showAll"/>
-        </button>
-        <c:if test="${memberCount > 100}">
-            - <fmt:message key="siteSettings.groups.members.showAll.notice"/>
-        </c:if>
-    </div>
+            <input type="hidden" id="memberFormDisplayLimit" name="displayLimit" value="<%= Integer.MAX_VALUE %>" />
+            <button class="btn btn-default btn-raised" type="submit" name="_eventId_refresh" data-sel-role="showAll">
+                <fmt:message key="siteSettings.groups.members.showAll"/>
+            </button>
+            <c:if test="${memberCount > 100}">
+                - <fmt:message key="siteSettings.groups.members.showAll.notice"/>
+            </c:if>
+        </div>
+    </form>
 </c:if>
 
 <div class="panel panel-default">

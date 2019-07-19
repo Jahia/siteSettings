@@ -248,13 +248,13 @@
                 </c:choose>
             </p>
 
-            <table class="table table-bordered table-striped table-hover">
+            <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
                         <th class="sortable" width="5%">#</th>
                         <th class="{sorter: false}" width="5%">&nbsp;</th>
-                        <th class="sortable"><fmt:message key="label.name"/></th>
-                        <th width="43%" class="sortable"><fmt:message key="label.properties"/></th>
+                        <th class="sortable"><fmt:message key="label.username"/></th>
+                        <th width="43%" class="sortable"><fmt:message key="label.name"/></th>
                         <c:if test="${multipleProvidersAvailable}">
                             <th width="10%"><fmt:message key="column.provider.label"/></th>
                         </c:if>

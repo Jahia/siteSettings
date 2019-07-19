@@ -125,14 +125,14 @@
 
             <ul class="nav nav-tabs">
                 <li role="presentation" <c:if test="${flowRequestContext.currentState.id eq 'editUsersMembers'}"> class="active" </c:if> >
-                    <a href="#" aria-controls="selectUsers"
+                    <a href="#" aria-controls="selectUsers" data-sel-role="switchToUsersView"
                        onclick="$('#switchToSelectUsersForm').submit();return false;"
                        role="tab" data-toggle="tab">
                         <fmt:message key="label.users"/>
                     </a>
                 </li>
                 <li role="presentation" <c:if test="${flowRequestContext.currentState.id eq 'editGroupsMembers'}"> class="active" </c:if> >
-                    <a href="#selectGroups" aria-controls="selectGroups"
+                    <a href="#selectGroups" aria-controls="selectGroups" data-sel-role="switchToGroupsView"
                        onclick="$('#switchToSelectGroupsForm').submit();return false;"
                        role="tab">
                         <fmt:message key="label.groups"/>
