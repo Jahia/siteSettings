@@ -22,7 +22,7 @@
 <c:set var="readOnlyProperties" value="${userProperties.readOnlyProperties}"/>
 
 <div class="page-header">
-  <h2><fmt:message key="label.edit"/>&nbsp;${userProperties.displayName}</h2>
+  <h2><fmt:message key="label.edit"/></h2>
 </div>
 
 <c:forEach items="${flowRequestContext.messageContext.allMessages}" var="message">
@@ -37,6 +37,9 @@
 <div class="row">
   <div class="col-md-offset-2 col-md-8">
       <div class="panel panel-default">
+          <div class="panel-heading">
+              <h4><fmt:message key="label.username"/>: <strong>${userProperties.displayName}</strong></h4>
+          </div>
           <div class="panel-body">
               <form action="${flowExecutionUrl}" method="post" id="editUser" autocomplete="off">
                   <fieldset title="<fmt:message key='siteSettings.user.profile'/>">
@@ -74,16 +77,28 @@
                       <div class="row">
                           <div class="col-md-6">
                               <div class="form-group label-floating">
-                                  <label class="control-label" for="password"><fmt:message key="label.password"/></label>
-                                  <input class="form-control" type="password" name="password" id="password" value=""${userProperties.readOnly or userProperties.external ? ' disabled="disabled"' : ''} autocomplete="off">
-                                  <div style="margin-bottom:15px;" class="text-info">&nbsp;(<fmt:message key="siteSettings.user.edit.password.no.change"/>)</div>
+                                  <div class="input-group">
+                                      <label class="control-label" for="password"><fmt:message key="label.password"/></label>
+                                      <input class="form-control" type="password" name="password" id="password" value=""${userProperties.readOnly or userProperties.external ? ' disabled="disabled"' : ''} autocomplete="off">
+                                      <span class="input-group-btn">
+                                          <i class="material-icons text-info" data-toggle="tooltip" data-placement="left"
+                                             title="<fmt:message key='siteSettings.user.edit.password.no.change'/>"
+                                             style="cursor: default;" data-container="body">info_outline</i>
+                                      </span>
+                                  </div>
                               </div>
                           </div>
                           <div class="col-md-6">
                               <div class="form-group label-floating">
-                                  <label class="control-label" for="passwordConfirm"><fmt:message key="label.confirmPassword"/></label>
-                                  <input class="form-control" type="password" name="passwordConfirm" id="passwordConfirm" value=""${userProperties.readOnly or userProperties.external ? ' disabled="disabled"' : ''} autocomplete="off">
-                                  <div style="margin-bottom:15px;" class="text-info">&nbsp;(<fmt:message key="siteSettings.user.edit.password.no.change"/>)</div>
+                                  <div class="input-group">
+                                      <label class="control-label" for="passwordConfirm"><fmt:message key="label.confirmPassword"/></label>
+                                      <input class="form-control" type="password" name="passwordConfirm" id="passwordConfirm" value=""${userProperties.readOnly or userProperties.external ? ' disabled="disabled"' : ''} autocomplete="off">
+                                      <span class="input-group-btn">
+                                          <i class="material-icons text-info" data-toggle="tooltip" data-placement="left"
+                                             title="<fmt:message key='siteSettings.user.edit.password.no.change'/>"
+                                             style="cursor: default;" data-container="body">info_outline</i>
+                                      </span>
+                                  </div>
                               </div>
                           </div>
                       </div>
@@ -148,14 +163,10 @@
                   <fieldset>
                       <div class="row">
                           <div class="col-md-12">
-                            <button class="btn btn-primary pull-right" type="submit" name="_eventId_update" onclick="workInProgress('${i18nWaiting}'); return true;">
-                                <fmt:message key='label.update'/>
-                            </button>
-                              <c:if test="${!userProperties.readOnly && !userProperties.external}">
-                                  <button class="btn btn-danger pull-right" type="submit" name="_eventId_removeUser">
-                                      <fmt:message key='siteSettings.user.remove'/>
-                                  </button>
-                              </c:if>
+                              <button class="btn btn-primary btn-raised pull-right" type="submit" name="_eventId_update"
+                                      onclick="workInProgress('${i18nWaiting}'); return true;">
+                                  <fmt:message key='label.update'/>
+                              </button>
                               <button class="btn btn-default pull-right" type="submit" name="_eventId_cancel">
                                   <fmt:message key='label.cancel'/>
                               </button>

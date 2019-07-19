@@ -33,10 +33,13 @@
 
         <%@include file="common/editMembersHead.jspf" %>
 
+        <c:if test="${not quickAddMembers}">
+            <br />
+            <p><fmt:message key="siteSettings.message.addRemoveUsers"/></p>
+        </c:if>
+
         <form class="form-inline " action="${flowExecutionUrl}" id="searchForm" method="post">
             <input type="hidden" id="searchIn" name="searchIn" value="allProps"/>
-
-            <h4><fmt:message key="label.search"/></h4>
 
             <div class="form-group label-floating">
                 <label class="control-label" for="searchString">
@@ -92,16 +95,8 @@
             </c:if>
         </form>
 
-        <form action="${flowExecutionUrl}" method="post" id="saveForm">
-            <input id="addedMembers" type="hidden" name="addedMembers"/>
-            <input id="removedMembers" type="hidden" name="removedMembers"/>
-            <button class="btn btn-primary pull-right" type="submit" name="_eventId_save" id="saveButton" disabled="disabled">
-                <fmt:message key="label.save"/>
-            </button>
-        </form>
         <c:set var="principalsCount" value="${fn:length(principals)}"/>
         <c:set var="principalsFound" value="${principalsCount > 0}"/>
-
         <c:if test="${principalsCount > userDisplayLimit}">
             <div class="alert alert-info">
                 <fmt:message key="siteSettings.users.found">
@@ -111,7 +106,7 @@
             </div>
         </c:if>
 
-        <table class="table table-bordered table-striped table-hover">
+        <table class="table table-bordered table-striped">
             <thead>
             <tr>
                 <th width="2%">
@@ -121,8 +116,8 @@
                         </label>
                     </div>
                 </th>
-                <th><fmt:message key="label.name"/></th>
-                <th width="43%" class="sortable"><fmt:message key="label.properties"/></th>
+                <th><fmt:message key="label.username"/></th>
+                <th width="43%" class="sortable"><fmt:message key="label.name"/></th>
                 <c:if test="${multipleProvidersAvailable}">
                     <th width="10%"><fmt:message key="column.provider.label"/></th>
                 </c:if>

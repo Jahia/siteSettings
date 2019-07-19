@@ -28,10 +28,9 @@
 <div class="panel panel-default">
     <div class="panel-body">
         <p>
-            <strong><fmt:message key="siteSettings.manageWebProjects.webProject.templateSet"/>:&nbsp;</strong>
-            ${fn:escapeXml(templatePackageName)}&nbsp;(${templateSetPackage.version})
+            <h4><fmt:message key="siteSettings.manageWebProjects.webProject.templateSet"/>:&nbsp;<strong>${fn:escapeXml(templatePackageName)}&nbsp;(${templateSetPackage.version})</strong></h4>
         </p>
-        <table class="table table-bordered table-striped table-hover" >
+        <table class="table table-bordered table-striped">
             <thead>
             <tr>
                 <th width="4%">#</th>

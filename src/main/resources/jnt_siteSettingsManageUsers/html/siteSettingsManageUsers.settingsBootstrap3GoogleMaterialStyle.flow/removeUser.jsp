@@ -17,12 +17,12 @@
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
 <%--@elvariable id="mailSettings" type="org.jahia.services.mail.MailSettings"--%>
 <%--@elvariable id="flowRequestContext" type="org.springframework.webflow.execution.RequestContext"--%>
-<template:addResources type="javascript" resources="jquery.min.js,jquery-ui.min.js,jquery.blockUI.js,workInProgress.js,admin-bootstrap.js"/>
+<template:addResources type="javascript" resources="jquery.min.js,jquery-ui.min.js,jquery.blockUI.js,workInProgress.js"/>
 <template:addResources type="css" resources="jquery-ui.smoothness.css,jquery-ui.smoothness-jahia.css"/>
 <fmt:message key="label.workInProgressTitle" var="i18nWaiting"/><c:set var="i18nWaiting" value="${functions:escapeJavaScript(i18nWaiting)}"/>
 
 <div class="page-header">
-    <h2><fmt:message key="label.delete"/>&nbsp;${userProperties.displayName}</h2>
+    <h2><fmt:message key="label.user"/></h2>
 </div>
 
 <c:forEach items="${flowRequestContext.messageContext.allMessages}" var="message">
@@ -37,20 +37,10 @@
 <div class="row">
     <div class="col-md-offset-2 col-md-8">
         <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4><fmt:message key="label.username"/>: <strong>${userProperties.displayName}</strong></h4>
+            </div>
             <div class="panel-body">
-                <div class="alert alert-warning">
-                    <c:if test="${!userProperties.readOnly}">
-                        <p><fmt:message key="siteSettings.user.definitivelyRemove"/><br/>
-                            <fmt:message key="siteSettings.user.definitivelyRemove.files"/></p>
-                        <a class="btn btn-default" href="<c:url value='/cms/export/default${userProperties.localPath}.zip?cleanup=simple'/>" target="_blank">
-                            <fmt:message key="label.export"/>
-                        </a>
-                    </c:if>
-                    <c:if test="${userProperties.readOnly}">
-                        <p><fmt:message key="siteSettings.user.definitivelyRemove.readOnly"/></p>
-                    </c:if>
-                </div>
-
                 <form action="${flowExecutionUrl}" method="post" id="editUser">
                     <fieldset title="<fmt:message key='siteSettings.user.profile'/>">
                         <div class="row">
@@ -134,20 +124,55 @@
                         </div>
                     </fieldset>
 
-                    <fieldset>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <c:if test="${!userProperties.readOnly}">
-                                    <button class="btn btn-danger pull-right" type="submit" name="_eventId_confirm" onclick="workInProgress('${i18nWaiting}'); return true;">
-                                        <fmt:message key="label.delete"/>
+                    <div class="form-group form-group-sm">
+                        <c:if test="${!userProperties.readOnly}">
+                            <button class="btn btn-danger btn-raised pull-right" type="button"
+                                    data-toggle="modal" data-target="#confirmDeleteModal">
+                                <fmt:message key="label.delete"/>
+                            </button>
+                        </c:if>
+                        <a class="btn btn-default pull-right"
+                           href="<c:url value='/cms/export/default${userProperties.localPath}.zip?cleanup=simple'/>" target="_blank">
+                            <fmt:message key="label.export"/>
+                        </a>
+                        <button class="btn btn-default pull-right" type="submit" name="_eventId_cancel">
+                            <fmt:message key="label.cancel"/>
+                        </button>
+                    </div>
+
+                    <div id="confirmDeleteModal" class="modal fade" tabindex="-1" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title"><fmt:message key="siteSettings.modal.title.confirmDeletetion"/></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <c:choose>
+                                        <c:when test="${userProperties.readOnly}">
+                                            <p><fmt:message key="siteSettings.user.definitivelyRemove.readOnly"/></p>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <p><fmt:message key="siteSettings.user.definitivelyRemove"/></p>
+                                            <p><fmt:message key="siteSettings.user.definitivelyRemove.files"/></p>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                                        <fmt:message key="label.cancel"/>
                                     </button>
-                                </c:if>
-                                <button class="btn btn-default pull-right" type="submit" name="_eventId_cancel">
-                                    <fmt:message key="label.cancel"/>
-                                </button>
+                                    <c:if test="${not userProperties.readOnly}">
+                                        <button type="submit" class="btn btn-raised btn-danger"
+                                                name="_eventId_confirm" onclick="workInProgress('${i18nWaiting}'); return true;">
+                                            <fmt:message key="label.delete"/>
+                                        </button>
+                                    </c:if>
+                                </div>
                             </div>
                         </div>
-                    </fieldset>
+                    </div>
+
                 </form>
             </div>
         </div>

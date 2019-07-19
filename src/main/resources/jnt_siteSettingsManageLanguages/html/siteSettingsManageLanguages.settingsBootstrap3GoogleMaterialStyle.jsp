@@ -100,23 +100,27 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="text-left"><fmt:message key="siteSettings.locale.availableLanguages"/></h4>
+                        </div>
                         <div class="panel-body">
                             <div class="row">
-                                <div class="col-md-12">
-                                    <h3 class="text-left"><fmt:message key="siteSettings.locale.availableLanguages"/></h3>
-                                </div>
-                            </div>
-                            <div class="row">
                                 <div class="col-md-4">
-                                    <select ng-model="newLanguages" name="language_list" id="language_list" multiple="multiple" size="${fn:length(siteLocales) > 20 ? fn:length(siteLocales):20}">
-                                        <option ng-repeat="availableLocale in site.availableLocales | filter:filterSiteLocales" ng-value="availableLocale">{{availableLocale.displayLocale}}</option>
-                                    </select>
-                                    <button class="btn btn-fab btn-fab-mini btn-primary" type="button" ng-click="addLanguage()" ng-disabled="!newLanguages || newLanguages.length == 0">
-                                        <i class="material-icons">fast_forward</i>
-                                    </button>
+                                    <div class="input-group">
+                                        <select class="form-control" ng-model="newLanguages" name="language_list"
+                                                id="language_list" multiple="multiple" style="height: 350px;"
+                                                size="${fn:length(siteLocales) > 20 ? fn:length(siteLocales):20}">
+                                            <option ng-repeat="availableLocale in site.availableLocales | filter:filterSiteLocales" ng-value="availableLocale">{{availableLocale.displayLocale}}</option>
+                                        </select>
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-fab btn-fab-mini btn-primary" type="button" ng-click="addLanguage()" ng-disabled="!newLanguages || newLanguages.length == 0">
+                                                <i class="material-icons">fast_forward</i>
+                                            </button>
+                                        </span>
+                                    </div>
                                 </div>
                                 <div class="col-md-8">
-                                    <table class="table table-bordered table-striped table-hover">
+                                    <table class="table table-bordered table-striped">
                                         <thead>
                                         <tr>
                                             <th><fmt:message key="siteSettings.label.language"/></th>
@@ -159,7 +163,7 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <button ng-show="canBeDeleted(siteLocale)" class="btn btn-fab btn-fab-mini btn-danger" type="button" ng-click="delete($index)">
+                                                <button ng-show="canBeDeleted(siteLocale)" class="btn btn-fab btn-fab-xs btn-danger" type="button" ng-click="delete($index)">
                                                     <i class="material-icons">delete</i>
                                                 </button>
                                                 <div ng-if="!canBeDeleted(siteLocale)">
@@ -191,14 +195,10 @@
                                 </div>
                             </div>
 
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <p class="text-center">
-                                        <button class="btn btn-primary pull-right" type="button" id="updateSite_button" ng-click="save()">
-                                            <fmt:message key="label.submit"/>
-                                        </button>
-                                    </p>
-                                </div>
+                            <div class="form-group form-group-sm">
+                                <button class="btn btn-primary btn-raised pull-right" type="button" id="updateSite_button" ng-click="save()">
+                                    <fmt:message key="label.submit"/>
+                                </button>
                             </div>
                         </div>
                     </div>

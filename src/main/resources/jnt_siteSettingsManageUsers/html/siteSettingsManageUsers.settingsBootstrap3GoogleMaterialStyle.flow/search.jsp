@@ -79,20 +79,21 @@
 <div class="panel panel-default">
     <div class="panel-body">
 
-        <div>
-            <button class="btn btn-default" type="submit" onclick="doUserAction('addUser')">
-                <fmt:message key='siteSettings.user.create'/>
-            </button>
-            <button class="btn btn-default" type="submit" onclick="doUserAction('bulkAddUser')">
-                <fmt:message key='siteSettings.users.bulk.create'/>
-            </button>
-            <button class="btn btn-default" type="submit" onclick="doUsersAction('bulkDeleteUser')">
-                <fmt:message key="siteSettings.user.remove"/>
-            </button>
+        <div class="row">
+            <div class="col-md-12">
+                <button class="btn btn-primary btn-raised pull-right" type="submit" onclick="doUserAction('addUser')">
+                    <fmt:message key='siteSettings.user.create'/>
+                </button>
+                <button class="btn btn-default pull-right" type="submit" onclick="doUserAction('bulkAddUser')">
+                    <fmt:message key='siteSettings.users.bulk.create'/>
+                </button>
+                <button class="btn btn-danger pull-right" type="submit" onclick="doUsersAction('bulkDeleteUser')">
+                    <fmt:message key="siteSettings.user.remove"/>
+                </button>
+            </div>
         </div>
 
         <form class="form-inline " action="${flowExecutionUrl}" id="searchForm" method="post">
-            <h4><fmt:message key="label.search"/></h4>
             <div class="form-group label-floating">
                 <label class="control-label" for="searchString">
                     <fmt:message key="label.search"/>
@@ -109,7 +110,6 @@
                 </div>
             </div>
 
-            <br />
             <div class="form-group">
                 <span><fmt:message key="label.in"/></span>
                 <div class="radio">
@@ -227,7 +227,7 @@
         <c:set var="userCount" value="${fn:length(users)}"/>
         <div>
             <h4><fmt:message key="siteSettings.user.search.result"/></h4>
-            <div class="alert alert-info">
+            <p>
                 <c:if test="${(userCount + searchCriteria.numberOfRemovedJahiaAdministrators) lt userDisplayLimit || jcrUserCountLimit lt 0}">
                     <fmt:message key="siteSettings.user.search.found">
                         <fmt:param value="${userCount}"/>
@@ -246,15 +246,15 @@
                         <fmt:param value="${searchCriteria.numberOfRemovedJahiaAdministrators}"/>
                     </fmt:message></c:when>
                 </c:choose>
-            </div>
+            </p>
 
-            <table class="table table-bordered table-striped table-hover">
+            <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
                         <th class="sortable" width="5%">#</th>
                         <th class="{sorter: false}" width="5%">&nbsp;</th>
-                        <th class="sortable"><fmt:message key="label.name"/></th>
-                        <th width="43%" class="sortable"><fmt:message key="label.properties"/></th>
+                        <th class="sortable"><fmt:message key="label.username"/></th>
+                        <th width="43%" class="sortable"><fmt:message key="label.name"/></th>
                         <c:if test="${multipleProvidersAvailable}">
                             <th width="10%"><fmt:message key="column.provider.label"/></th>
                         </c:if>
@@ -301,9 +301,9 @@
                                         <i class="material-icons">edit</i>
                                     </a>
                                     <c:if test="${curUser.name != 'guest' && !curUser.properties['j:external'].boolean}">
-                                        <a class="btn btn-danger btn-fab btn-fab-xs" title="${i18nRemove}"
+                                        <a class="btn btn-default btn-fab btn-fab-xs" title="${i18nRemove}"
                                            href="#delete" onclick="doUserAction('removeUser', '${fn:escapeXml(curUser.path)}')">
-                                            <i class="material-icons">delete</i>
+                                            <i class="material-icons">notes</i>
                                         </a>
                                     </c:if>
                                 </td>

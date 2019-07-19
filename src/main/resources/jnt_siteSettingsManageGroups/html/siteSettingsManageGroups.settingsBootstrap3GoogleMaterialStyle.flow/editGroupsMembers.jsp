@@ -53,22 +53,13 @@
 
         <%@include file="common/editMembersHead.jspf" %>
 
-        <div class="row">
-            <div class="col-md-12">
-                <form action="${flowExecutionUrl}" method="post" id="saveForm">
-                    <input id="addedMembers" type="hidden" name="addedMembers"/>
-                    <input id="removedMembers" type="hidden" name="removedMembers"/>
-                    <button class="btn btn-primary pull-right" type="submit" name="_eventId_save" id="saveButton" disabled="disabled">
-                        <fmt:message key="label.save"/>
-                    </button>
-                </form>
-            </div>
-        </div>
+        <br />
+        <p><fmt:message key="siteSettings.message.addRemoveGroups"/></p>
 
         <c:set var="principalsCount" value="${fn:length(principals)}"/>
         <c:set var="principalsFound" value="${principalsCount > 0}"/>
 
-        <table class="table table-bordered table-striped table-hover" id="groupMemberships">
+        <table class="table table-bordered table-striped" id="groupMemberships">
             <thead>
                 <tr>
                     <th width="2%" class="{sorter: false}">

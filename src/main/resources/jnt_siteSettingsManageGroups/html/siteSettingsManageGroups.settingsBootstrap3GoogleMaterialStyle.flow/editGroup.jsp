@@ -116,48 +116,57 @@
     </c:forEach>
 </c:if>
 
+<c:if test="${memberCount > memberDisplayLimit}">
+    <form action="${flowExecutionUrl}" method="POST" style="display: inline;" onsubmit="workInProgress('${i18nWaiting}');">
+        <div class="alert alert-info">
+            <c:if test="${isGroupEditable}">
+                <fmt:message key="siteSettings.groups.members.found">
+                    <fmt:param value="${memberCount}"/>
+                </fmt:message>
+            </c:if>
+            <fmt:message key="siteSettings.groups.first.shown">
+                <fmt:param value="${memberDisplayLimit}"/>
+            </fmt:message>
+            <input type="hidden" id="memberFormDisplayLimit" name="displayLimit" value="<%= Integer.MAX_VALUE %>" />
+            <button class="btn btn-default btn-raised" type="submit" name="_eventId_refresh" data-sel-role="showAll">
+                <fmt:message key="siteSettings.groups.members.showAll"/>
+            </button>
+            <c:if test="${memberCount > 100}">
+                - <fmt:message key="siteSettings.groups.members.showAll.notice"/>
+            </c:if>
+        </div>
+    </form>
+</c:if>
+
 <div class="panel panel-default">
     <div class="panel-body">
-        <form action="${flowExecutionUrl}" method="POST" style="display: inline;">
+        <form action="${flowExecutionUrl}" method="POST" class="form-inline">
 
-            <button class="btn btn-default" type="submit" name="_eventId_cancel">
-                <fmt:message key="label.backToGroupList"/>
-            </button>
-
-            <c:if test="${isGroupEditable}">
-                <button class="btn btn-default" type="submit" name="_eventId_editGroupMembers" >
-                    <fmt:message key="siteSettings.groups.editMembers"/>
-                </button>
-
-                <c:if test="${membersFound}">
-                    <button class="btn btn-danger" type="submit" name="_eventId_removeMembers" onclick="return removeMultipleGroupMembers();">
-                        <fmt:message key="siteSettings.groups.removeMembers"/>
-                    </button>
-                </c:if>
-            </c:if>
-
-            <h4><fmt:message key="members.label"/>&nbsp;<c:if test="${isGroupEditable}">(${memberCount})</c:if></h4>
-            <c:if test="${memberCount > memberDisplayLimit}">
-                <div class="alert alert-info">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>
+                        <button class="btn btn-default btn-fab btn-fab-mini" type="submit" name="_eventId_cancel"
+                                data-placement="top" data-container="body"
+                                data-toggle="tooltip" data-title="<fmt:message key='label.backToGroupList'/>">
+                            <i class="material-icons">arrow_back</i>
+                        </button>
+                        <fmt:message key="members.label"/>&nbsp;<c:if test="${isGroupEditable}">(${memberCount})</c:if>
+                    </h4></div>
+                <div class="col-md-6 text-right">
                     <c:if test="${isGroupEditable}">
-                        <fmt:message key="siteSettings.groups.members.found">
-                            <fmt:param value="${memberCount}"/>
-                        </fmt:message>
-                    </c:if>
-                    <fmt:message key="siteSettings.groups.first.shown">
-                        <fmt:param value="${memberDisplayLimit}"/>
-                    </fmt:message>
-                    <input type="hidden" id="memberFormDisplayLimit" name="displayLimit" value="<%= Integer.MAX_VALUE %>" />
-                    <button class="btn btn-default btn-sm" type="submit" name="_eventId_refresh">
-                        <fmt:message key="siteSettings.groups.members.showAll"/>
-                    </button>
-                    <c:if test="${memberCount > 100}">
-                        - <fmt:message key="siteSettings.groups.members.showAll.notice"/>
+                        <c:if test="${membersFound}">
+                            <button class="btn btn-danger" type="submit" name="_eventId_removeMembers" onclick="return removeMultipleGroupMembers();">
+                                <fmt:message key="siteSettings.groups.removeMembers"/>
+                            </button>
+                        </c:if>
+                        <button class="btn btn-primary btn-raised" type="submit" name="_eventId_editGroupMembers" >
+                            <fmt:message key="siteSettings.groups.editMembers"/>
+                        </button>
                     </c:if>
                 </div>
-            </c:if>
+            </div>
 
-            <table class="table table-bordered table-striped table-hover">
+            <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
                         <c:if test="${isGroupEditable}">
@@ -171,8 +180,8 @@
                         </c:if>
                         <th width="3%">#</th>
                         <th width="3%">&nbsp;</th>
+                        <th><fmt:message key="label.username"/></th>
                         <th><fmt:message key="label.name"/></th>
-                        <th><fmt:message key="label.properties"/></th>
                         <c:if test="${multipleProvidersAvailable}">
                             <th width="10%"><fmt:message key="column.provider.label"/></th>
                         </c:if>

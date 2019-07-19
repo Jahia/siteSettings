@@ -100,10 +100,8 @@
 <div class="row">
     <div class="col-md-offset-2 col-md-8">
         <div class="panel panel-default">
-            <div class="panel-heading">
-                <fmt:message key="label.htmlFiltering.description"/>
-            </div>
             <div class="panel-body">
+                <p><fmt:message key="label.htmlFiltering.description"/></p>
                 <form id="updateSiteForm" action="<c:url value='${url.base}${renderContext.mainResource.node.resolveSite.path}'/>" method="post">
                     <input type="hidden" name="jcrMethodToCall" value="put"/>
                     <input type="hidden" name="jcr:mixinTypes" value="jmix:htmlSettings"/>
@@ -128,7 +126,7 @@
                         </div>
                     </div>
 
-                    <table id="tblHtmlTags" class="table table-striped table-hover" >
+                    <table id="tblHtmlTags" class="table table-striped table-bordered" >
                         <thead>
                         <tr>
                             <th>
@@ -157,9 +155,11 @@
                         </tbody>
                     </table>
 
-                    <button class="btn btn-primary pull-right" type="button" name="save" onclick="updateSiteHtmlFiltering($(this)); return false;">
-                        <fmt:message key='label.save'/>
-                    </button>
+                    <div class="form-group form-group-sm">
+                        <button class="btn btn-primary btn-raised pull-right" type="button" name="save" onclick="updateSiteHtmlFiltering($(this)); return false;">
+                            <fmt:message key='label.save'/>
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>

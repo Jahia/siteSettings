@@ -87,18 +87,22 @@ function submitGroupForm(act, group) {
 
 <div class="panel panel-default">
     <div class="panel-body">
-        <div class="alert alert-info">
-            <button type="button" class="close" data-dismiss="alert">&times;</button>
-            <fmt:message key="siteSettings.groups.found">
-                <fmt:param value="${groupCount}"/>
-            </fmt:message>
+        <div class="row">
+            <div class="col-md-6">
+                <h4>
+                    <fmt:message key="siteSettings.groups.found">
+                        <fmt:param value="${groupCount}"/>
+                    </fmt:message>
+                </h4>
+            </div>
+            <div class="col-md-6">
+                <form action="${flowExecutionUrl}" method="POST" class="pull-right form-inline">
+                    <button class="btn btn-default btn-primary btn-raised" type="submit" name="_eventId_createGroup">
+                        <fmt:message key="siteSettings.groups.create"/>
+                    </button>
+                </form>
+            </div>
         </div>
-
-        <form action="${flowExecutionUrl}" method="POST" style="display: inline;">
-            <button class="btn btn-default" type="submit" name="_eventId_createGroup">
-                <fmt:message key="siteSettings.groups.create"/>
-            </button>
-        </form>
 
         <c:if test="${groupsFound}">
             <form action="${flowExecutionUrl}" method="post" style="display: inline;" id="groupForm">
@@ -106,7 +110,7 @@ function submitGroupForm(act, group) {
                 <input type="hidden" id="groupFormAction" name="_eventId" value="" />
             </form>
         </c:if>
-        <table class="table table-bordered table-striped table-hover" id="manageGroups">
+        <table class="table table-bordered table-striped" id="manageGroups">
             <thead>
                 <tr>
                     <th width="4%">#</th>
@@ -148,7 +152,7 @@ function submitGroupForm(act, group) {
                                 </c:if>
                                 <td>
                                     <a class="btn btn-fab btn-fab-xs btn-default" title="${i18nEdit}" href="#edit" onclick="submitGroupForm('editGroup', '${escapedGroupKey}'); return false;">
-                                        <i class="material-icons">edit</i>
+                                        <i class="material-icons">notes</i>
                                 </a>
                                     <c:if test="${!grp.properties['j:external'].boolean}">
                                         <a style="margin-bottom:0;" class="btn btn-fab btn-fab-xs btn-default" title="${i18nAddMembers}" href="#addMembers"
