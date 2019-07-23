@@ -113,7 +113,8 @@
                                             <option ng-repeat="availableLocale in site.availableLocales | filter:filterSiteLocales" ng-value="availableLocale">{{availableLocale.displayLocale}}</option>
                                         </select>
                                         <span class="input-group-btn">
-                                            <button class="btn btn-fab btn-fab-mini btn-primary" type="button" ng-click="addLanguage()" ng-disabled="!newLanguages || newLanguages.length == 0">
+                                            <button class="btn btn-fab btn-fab-mini btn-primary" type="button" data-sel-role="addSelectedLanguages"
+                                                    ng-click="addLanguage()" ng-disabled="!newLanguages || newLanguages.length == 0">
                                                 <i class="material-icons">fast_forward</i>
                                             </button>
                                         </span>
