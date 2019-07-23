@@ -106,7 +106,10 @@
                     <select ng-model="newLanguages" name="language_list" id="language_list" multiple="multiple" size="${fn:length(siteLocales) > 20 ? fn:length(siteLocales):20}">
                         <option ng-repeat="availableLocale in site.availableLocales | filter:filterSiteLocales" ng-value="availableLocale">{{availableLocale.displayLocale}}</option>
                     </select>
-                    <button class="btn btn-primary" type="button" ng-click="addLanguage()" ng-disabled="!newLanguages || newLanguages.length == 0"><i class="icon-forward icon-white"></i></button>
+                    <button class="btn btn-primary" type="button" data-sel-role="addSelectedLanguages"
+                            ng-click="addLanguage()" ng-disabled="!newLanguages || newLanguages.length == 0">
+                        <i class="icon-forward icon-white"></i>
+                    </button>
                 </div>
                 <div class="span7">
                     <table class="table table-bordered table-striped table-hover">
