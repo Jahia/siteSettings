@@ -263,7 +263,7 @@
                 </thead>
                 <tbody>
                 <fmt:message var="i18nEdit" key="label.edit"/><c:set var="i18nEdit" value="${fn:escapeXml(i18nEdit)}"/>
-                <fmt:message var="i18nRemove" key="label.remove"/><c:set var="i18nRemove" value="${fn:escapeXml(i18nRemove)}"/>
+                <fmt:message var="i18nRemove" key="siteSettings.users.export.or.remove"/><c:set var="i18nRemove" value="${fn:escapeXml(i18nRemove)}"/>
                 <c:choose>
                     <%--@elvariable id="users" type="java.util.List"--%>
                     <c:when test="${userCount eq 0}">
