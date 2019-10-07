@@ -55,7 +55,7 @@
     </parent>
 
     <artifactId>siteSettings</artifactId>
-    <version>7.3.0-SNAPSHOT</version>
+    <version>7.4.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>Jahia Site Settings</name>
     <description>Settings (groups,tools, etc) for site.</description>
