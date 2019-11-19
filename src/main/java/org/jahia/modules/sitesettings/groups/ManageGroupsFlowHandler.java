@@ -43,13 +43,6 @@
  */
 package org.jahia.modules.sitesettings.groups;
 
-import java.io.Serializable;
-import java.util.*;
-
-import javax.jcr.RepositoryException;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryResult;
-
 import org.apache.commons.lang.StringUtils;
 import org.jahia.data.viewhelper.principal.PrincipalViewHelper;
 import org.jahia.services.content.*;
@@ -66,6 +59,12 @@ import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.webflow.execution.RequestContext;
+
+import javax.jcr.RepositoryException;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * Web flow handler for group management actions.
@@ -476,10 +475,10 @@ public class ManageGroupsFlowHandler implements Serializable {
      * Performs the group search with the specified search criteria and returns the list of matching groups.
      * @return the list of groups, matching the specified search criteria
      */
-    public Map<JCRGroupNode, Boolean> searchNewGroupMembers(JCRGroupNode groupNode) {
+    public Map<JahiaGroup, Boolean> searchNewGroupMembers(JCRGroupNode groupNode) {
         long timer = System.currentTimeMillis();
 
-        Map<JCRGroupNode, Boolean> searchResult = new TreeMap<>(new Comparator<JCRNodeWrapper>(){
+        Map<JCRGroupNode, Boolean> sortedResults = new TreeMap<>(new Comparator<JCRNodeWrapper>() {
             @Override
             public int compare(JCRNodeWrapper o1, JCRNodeWrapper o2) {
                 return PrincipalViewHelper.getDisplayName(o1).compareToIgnoreCase(PrincipalViewHelper.getDisplayName(o2));
@@ -489,20 +488,25 @@ public class ManageGroupsFlowHandler implements Serializable {
         Set<JCRGroupNode> groups = PrincipalViewHelper.getGroupSearchResult(null, siteKey, null, null, null, null);
 
         for (JCRGroupNode group : groups) {
-            searchResult.put(group, groupNode.isMember(group));
+            sortedResults.put(group, groupNode.isMember(group));
         }
 
-        logger.info("Found {} groups in {} ms", new Object[] { searchResult.size(), System.currentTimeMillis() - timer });
-        return searchResult;
+        LinkedHashMap<JahiaGroup, Boolean> results = new LinkedHashMap<>();
+        for (Map.Entry<JCRGroupNode, Boolean> entry : sortedResults.entrySet()) {
+            results.put(entry.getKey().getJahiaGroup(), entry.getValue());
+        }
+
+        logger.info("Found {} groups in {} ms", new Object[] { results.size(), System.currentTimeMillis() - timer });
+        return results;
     }
 
-    public Map<JCRUserNode, Boolean> searchNewUserMembers(String groupKey, SearchCriteria searchCriteria) {
+    public Map<JahiaUser, Boolean> searchNewUserMembers(String groupKey, SearchCriteria searchCriteria) {
 
         long timer = System.currentTimeMillis();
 
         JCRGroupNode groupNode = lookupGroup(groupKey);
 
-        Map<JCRUserNode, Boolean> searchResult = new TreeMap<>(new Comparator<JCRNodeWrapper>(){
+        Map<JCRUserNode, Boolean> sortedResults = new TreeMap<>(new Comparator<JCRNodeWrapper>(){
             @Override
             public int compare(JCRNodeWrapper o1, JCRNodeWrapper o2) {
                 return PrincipalViewHelper.getDisplayName(o1).compareToIgnoreCase(PrincipalViewHelper.getDisplayName(o2));
@@ -515,11 +519,16 @@ public class ManageGroupsFlowHandler implements Serializable {
 
         String groupName = groupNode.getName();
         for (JCRUserNode user : users) {
-            searchResult.put(user, user.isMemberOfGroup(siteKey, groupName));
+            sortedResults.put(user, user.isMemberOfGroup(siteKey, groupName));
         }
 
-        logger.info("Found {} users in {} ms", new Object[] { searchResult.size(), System.currentTimeMillis() - timer });
-        return searchResult;
+        LinkedHashMap<JahiaUser, Boolean> results = new LinkedHashMap<>();
+        for (Map.Entry<JCRUserNode, Boolean> entry : sortedResults.entrySet()) {
+            results.put(entry.getKey().getJahiaUser(), entry.getValue());
+        }
+
+        logger.info("Found {} users in {} ms", new Object[] { sortedResults.size(), System.currentTimeMillis() - timer });
+        return results;
     }
 
     @Autowired
