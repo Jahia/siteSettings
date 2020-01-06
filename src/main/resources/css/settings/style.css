@@ -29,21 +29,20 @@ table .radio {
 
 
 #siteSettings .page-header {
-    color: #fff;
+    color: #393B3C;
     height: 64px;
     line-height: 64px;
     margin: 0 -15px;
     margin-bottom: 16px;
     padding-bottom: 0;
-    /*background: #546E7A;*/
-    background: #3B3D40;
+    background: #fff;
 }
 
 #siteSettings .page-header h2 {
     margin: 0;
     padding: 0;
     margin-left: 25px;
-    font-size: 20px;
+    font-size: 25px;
     line-height: 64px;
     width: 80%;
     white-space: nowrap;
