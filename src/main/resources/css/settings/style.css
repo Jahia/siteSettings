@@ -30,12 +30,13 @@ table .radio {
 
 #siteSettings .page-header {
     color: #393B3C;
-    height: 64px;
-    line-height: 64px;
+    height: 85px;
+    line-height: 85px;
     margin: 0 -15px;
     margin-bottom: 16px;
     padding-bottom: 0;
     background: #fff;
+    box-shadow: 0px 4px 4px rgba(59, 61, 64, 0.3);
 }
 
 #siteSettings .page-header h2 {
@@ -43,7 +44,7 @@ table .radio {
     padding: 0;
     margin-left: 25px;
     font-size: 25px;
-    line-height: 64px;
+    line-height: 85px;
     width: 80%;
     white-space: nowrap;
     overflow: hidden;
