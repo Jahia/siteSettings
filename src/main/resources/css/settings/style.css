@@ -36,6 +36,7 @@ table .radio {
     margin-bottom: 16px;
     padding-bottom: 0;
     background: #fff;
+    box-shadow: 0 4px 4px rgba(59, 61, 64, 0.3);
 }
 
 #siteSettings .page-header h2 {
