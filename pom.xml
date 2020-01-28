@@ -51,7 +51,7 @@
     <parent>
         <groupId>org.jahia.modules</groupId>
         <artifactId>jahia-modules</artifactId>
-        <version>7.2.1.0</version>
+        <version>7.5.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>siteSettings</artifactId>
@@ -71,6 +71,7 @@
         <export-package>org.jahia.modules.sitesettings.users.management</export-package>
         <jahia-module-type>system</jahia-module-type>
         <jahia-deploy-on-site>all</jahia-deploy-on-site>
+        <jahia-module-signature>MCwCFBrj7KTQD8x8Luu2e0Yg3uMd/+ziAhQs9a5JzIs5c3nIT9jXv/uDGfVF2w==</jahia-module-signature>
     </properties>
 
     <repositories>
