@@ -1,5 +1,8 @@
 {
   "groups": {
     "label": "Groups"
+  },
+  "users": {
+    "label": "Gestisci utenti"
   }
 }

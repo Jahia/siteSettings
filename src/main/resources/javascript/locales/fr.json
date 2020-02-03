@@ -1,5 +1,8 @@
 {
   "groups": {
     "label": "Groupes"
+  },
+  "users": {
+    "label": "Utilisateurs"
   }
 }
