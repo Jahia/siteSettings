@@ -6,7 +6,7 @@ export const registerRoutes = function (t) {
 
     const path = '/administration/manageUsers';
     const route = 'manageUsers';
-    registry.addOrReplace('adminRoute', `${level}-${path.toLowerCase()}`, {
+    registry.add('adminRoute', `${level}-${path.toLowerCase()}`, {
         id: route,
         targets: [`${parentTarget}-usersandroles:4`],
         path: path,
