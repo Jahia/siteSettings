@@ -12,6 +12,7 @@ export const registerRoutes = function () {
         path: path,
         route: route,
         defaultPath: path,
+        requiredPermission: 'adminUsers',
         icon: null,
         label: 'siteSettings:users.label',
         childrenTarget: 'usersandroles',
