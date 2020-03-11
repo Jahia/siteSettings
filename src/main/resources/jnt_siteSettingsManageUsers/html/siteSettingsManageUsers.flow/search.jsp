@@ -138,7 +138,15 @@
         </fieldset>
     </form>
 </div>
-<h2><fmt:message key="label.manageUsers"/></h2>
+<c:set var="mainNode" value="${renderContext.mainResource.node}"/>
+<c:choose>
+    <c:when test="${fn:startsWith(mainNode.path, '/sites/')}">
+        <h2><fmt:message key="label.manageUsers"/> - ${fn:escapeXml(mainNode.displayableName)}</h2>
+    </c:when>
+    <c:otherwise>
+        <h2><fmt:message key="label.manageUsers"/></h2>
+    </c:otherwise>
+</c:choose>
 
 
 <form style="display: none" action="${flowExecutionUrl}" id="usersForm" method="post">
@@ -202,7 +210,7 @@
             </c:choose>
 
         </div>
-        
+
         <table class="table table-bordered table-striped table-hover">
             <thead>
             <tr>

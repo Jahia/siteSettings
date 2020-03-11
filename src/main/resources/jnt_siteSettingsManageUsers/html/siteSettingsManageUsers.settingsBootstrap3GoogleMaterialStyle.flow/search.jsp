@@ -58,7 +58,15 @@
 <c:set var="multipleProvidersAvailable" value="${fn:length(providersList) > 1}"/>
 
 <div class="page-header">
-    <h2><fmt:message key="label.manageUsers"/></h2>
+    <c:set var="mainNode" value="${renderContext.mainResource.node}"/>
+    <c:choose>
+        <c:when test="${fn:startsWith(mainNode.path, '/sites/')}">
+            <h2><fmt:message key="label.manageUsers"/> - ${fn:escapeXml(mainNode.displayableName)}</h2>
+        </c:when>
+        <c:otherwise>
+            <h2><fmt:message key="label.manageUsers"/></h2>
+        </c:otherwise>
+    </c:choose>
 </div>
 
 <c:forEach items="${flowRequestContext.messageContext.allMessages}" var="message">
