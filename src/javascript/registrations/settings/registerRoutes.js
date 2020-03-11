@@ -41,7 +41,7 @@ export const registerRoutes = function () {
         route: 'wcagCompliance',
         defaultPath: `${path}/wcag`,
         requiredPermission: 'siteAdminWcagCompliance',
-        icon:  null,
+        icon: null,
         label: 'siteSettings:wcag.label',
         isSelectable: true,
         level: level
@@ -54,7 +54,7 @@ export const registerRoutes = function () {
         route: 'page-models',
         defaultPath: `${path}/models`,
         requiredPermission: 'siteAdminTemplates',
-        icon:  null,
+        icon: null,
         label: 'siteSettings:models.label',
         isSelectable: true,
         level: level
@@ -67,7 +67,7 @@ export const registerRoutes = function () {
         route: 'manageSiteRoles',
         defaultPath: `${path}/roles`,
         requiredPermission: 'siteAdminSiteRoles',
-        icon:  null,
+        icon: null,
         label: 'siteSettings:roles.label',
         isSelectable: true,
         level: level
@@ -80,7 +80,7 @@ export const registerRoutes = function () {
         route: 'manageModules',
         defaultPath: `${path}/modules`,
         requiredPermission: 'siteAdminTemplates',
-        icon:  null,
+        icon: null,
         label: 'siteSettings:modules.label',
         isSelectable: true,
         level: level
