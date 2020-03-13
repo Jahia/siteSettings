@@ -4,5 +4,23 @@
   },
   "users": {
     "label": "Utilisateurs"
+  },
+  "languages": {
+    "label": "Langues"
+  },
+  "filtering": {
+    "label": "HTML Filtering"
+  },
+  "wcag": {
+    "label": "Conformité WCAG"
+  },
+  "models": {
+    "label": "Modèles de pages"
+  },
+  "roles": {
+    "label": "Rôles de site"
+  },
+  "modules": {
+    "label": "Modules"
   }
 }

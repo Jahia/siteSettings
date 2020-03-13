@@ -4,5 +4,23 @@
   },
   "users": {
     "label": "Benutzer verwalten"
+  },
+  "languages": {
+    "label": "Sprachen"
+  },
+  "filtering": {
+    "label": "HTML-Filterung"
+  },
+  "wcag": {
+    "label": "WCAG-Kompatibilität"
+  },
+  "models": {
+    "label": "Vorlagensatz"
+  },
+  "roles": {
+    "label": "Site-Rechte"
+  },
+  "modules": {
+    "label": "Module"
   }
 }
