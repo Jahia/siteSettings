@@ -72,7 +72,6 @@
         <jahia-module-type>system</jahia-module-type>
         <jahia-deploy-on-site>all</jahia-deploy-on-site>
         <jahia-module-signature>MCwCFCh/RnycKDTpPzlX1ZsSQsdtqSg5AhQmvlGvPphbWh5tM6KqcMFGneOrWg==</jahia-module-signature>
-        <jahia-depends>jahia-ui-root</jahia-depends>
         <yarn.arguments>build:production</yarn.arguments>
     </properties>
 
