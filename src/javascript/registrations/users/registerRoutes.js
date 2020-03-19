@@ -3,36 +3,21 @@ import {Person} from '@jahia/moonstone/dist/icons';
 import React from 'react';
 
 export const registerRoutes = function () {
-    const level = 'server';
-    const parentTarget = 'administration-server';
-
-    const path = '/administration/manageUsers';
-    const route = 'manageUsers';
-    registry.add('adminRoute', `${level}-${path.toLowerCase()}`, {
-        id: route,
-        targets: [`${parentTarget}-usersandroles:4`],
-        path: path,
-        route: route,
-        defaultPath: path,
+    registry.add('adminRoute', 'manageUsers', {
+        targets: ['administration-server-usersAndRoles:4'],
         requiredPermission: 'adminUsers',
         icon: <Person/>,
         label: 'siteSettings:users.label',
-        childrenTarget: null,
         isSelectable: true,
-        level: level
+        iframeUrl: window.contextJsParameters.contextPath + '/cms/adminframe/default/en/settings.manageUsers.html'
     });
 
-    registry.add('adminRoute', 'sites-/administration/:sitekey/settings/users', {
-        id: 'users',
+    registry.add('adminRoute', 'settings/users', {
         targets: ['administration-sites:4'],
-        path: '/administration/:siteKey/settings/users',
-        route: 'manageUsers',
-        defaultPath: '/administration/:siteKey/settings/users',
         requiredPermission: 'siteAdminUsers',
         icon: <Person/>,
         label: 'siteSettings:users.label',
-        childrenTarget: null,
         isSelectable: true,
-        level: 'sites'
+        iframeUrl: window.contextJsParameters.contextPath + '/cms/adminframe/default/en/sites/$site-key.manageUsers.html'
     });
 };
