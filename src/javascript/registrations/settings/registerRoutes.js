@@ -9,7 +9,7 @@ export const registerRoutes = function () {
         icon: <Filter/>,
         label: 'siteSettings:filtering.label',
         isSelectable: true,
-        iframeUrl: window.contextJsParameters.contextPath + '/cms/adminframe/default/en/sites/$site-key.htmlFiltering.html'
+        iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.htmlFiltering.html'
     });
 
     registry.add('adminRoute', 'settings/languages', {
@@ -18,7 +18,7 @@ export const registerRoutes = function () {
         icon: <Language/>,
         label: 'siteSettings:languages.label',
         isSelectable: true,
-        iframeUrl: window.contextJsParameters.contextPath + '/cms/adminframe/default/en/sites/$site-key.manageLanguages.html'
+        iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.manageLanguages.html'
     });
 
     registry.add('adminRoute', 'settings/wcag', {
@@ -27,7 +27,7 @@ export const registerRoutes = function () {
         icon: null,
         label: 'siteSettings:wcag.label',
         isSelectable: true,
-        iframeUrl: window.contextJsParameters.contextPath + '/cms/adminframe/default/en/sites/$site-key.wcagCompliance.html'
+        iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.wcagCompliance.html'
     });
 
     registry.add('adminRoute', 'settings/models', {
@@ -36,7 +36,7 @@ export const registerRoutes = function () {
         icon: null,
         label: 'siteSettings:models.label',
         isSelectable: true,
-        iframeUrl: window.contextJsParameters.contextPath + '/cms/adminframe/default/en/sites/$site-key.page-models.html'
+        iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.page-models.html'
     });
 
     registry.add('adminRoute', 'settings/roles', {
@@ -45,7 +45,7 @@ export const registerRoutes = function () {
         icon: null,
         label: 'siteSettings:roles.label',
         isSelectable: true,
-        iframeUrl: window.contextJsParameters.contextPath + '/cms/adminframe/default/en/sites/$site-key.manageSiteRoles.html'
+        iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.manageSiteRoles.html'
     });
 
     registry.add('adminRoute', 'settings/modules', {
@@ -54,6 +54,6 @@ export const registerRoutes = function () {
         icon: null,
         label: 'siteSettings:modules.label',
         isSelectable: true,
-        iframeUrl: window.contextJsParameters.contextPath + '/cms/adminframe/default/en/sites/$site-key.manageModules.html'
+        iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.manageModules.html'
     });
 };
