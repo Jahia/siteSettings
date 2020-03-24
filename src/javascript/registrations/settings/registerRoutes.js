@@ -30,15 +30,6 @@ export const registerRoutes = function () {
         iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.wcagCompliance.html'
     });
 
-    registry.add('adminRoute', 'settings/models', {
-        targets: ['administration-sites:6'],
-        requiredPermission: 'siteAdminTemplates',
-        icon: null,
-        label: 'siteSettings:models.label',
-        isSelectable: true,
-        iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.page-models.html'
-    });
-
     registry.add('adminRoute', 'settings/roles', {
         targets: ['administration-sites:7'],
         requiredPermission: 'siteAdminSiteRoles',
