@@ -13,7 +13,7 @@ export const registerRoutes = function () {
     });
 
     registry.add('adminRoute', 'settings/groups', {
-        targets: ['administration-sites:3'],
+        targets: ['administration-sites:20'],
         requiredPermission: 'siteAdminGroups',
         icon: <Group/>,
         label: 'siteSettings:groups.label',
