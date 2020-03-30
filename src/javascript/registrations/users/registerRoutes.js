@@ -13,7 +13,7 @@ export const registerRoutes = function () {
     });
 
     registry.add('adminRoute', 'settings/users', {
-        targets: ['administration-sites:4'],
+        targets: ['administration-sites:10'],
         requiredPermission: 'siteAdminUsers',
         icon: <Person/>,
         label: 'siteSettings:users.label',
