@@ -4,9 +4,9 @@ import React from 'react';
 
 export const registerRoutes = function () {
     registry.add('adminRoute', 'manageGroups', {
-        targets: ['administration-server-usersAndRoles:1'],
+        targets: ['administration-server-usersAndRoles:20'],
         requiredPermission: 'adminGroups',
-        icon: <Group/>,
+        icon: null,
         label: 'siteSettings:groups.label',
         isSelectable: true,
         iframeUrl: window.contextJsParameters.contextPath + '/cms/adminframe/default/$lang/settings.manageGroups.html'
