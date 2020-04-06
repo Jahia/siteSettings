@@ -1,6 +1,6 @@
 import React from 'react';
 import {registry} from '@jahia/ui-extender';
-import {Funnel, Language, Crown, Module, Visibility} from '@jahia/moonstone/dist/icons';
+import {Funnel, Language, Crown, Module, Accessibility} from '@jahia/moonstone/dist/icons';
 
 export const registerRoutes = function () {
     registry.add('adminRoute', 'settings/filtering', {
@@ -24,7 +24,7 @@ export const registerRoutes = function () {
     registry.add('adminRoute', 'settings/wcag', {
         targets: ['administration-sites:60'],
         requiredPermission: 'siteAdminWcagCompliance',
-        icon: <Visibility/>,
+        icon: <Accessibility/>,
         label: 'siteSettings:wcag.label',
         isSelectable: true,
         iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.wcagCompliance.html'
