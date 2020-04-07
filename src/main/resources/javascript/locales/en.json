@@ -9,7 +9,7 @@
     "label": "Languages"
   },
   "filtering": {
-    "label": "HTML Filtering"
+    "label": "HTML filtering"
   },
   "wcag": {
     "label": "WCAG compliance"
@@ -18,7 +18,7 @@
     "label": "Page models"
   },
   "roles": {
-    "label": "Site Roles"
+    "label": "Site roles"
   },
   "modules": {
     "label": "Modules"
