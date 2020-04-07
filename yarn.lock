@@ -1119,15 +1119,15 @@
     eslint-plugin-react "^7.16.0"
     eslint-plugin-react-hooks "^2.2.0"
 
-"@jahia/moonstone@^0.13.1":
-  version "0.13.1"
-  resolved "https://npm.jahia.com/@jahia%2fmoonstone/-/moonstone-0.13.1.tgz#dca86db04d2d17aa258cebf53a2ad34c832a0847"
-  integrity sha512-1AGCmav9lOht0kiOcOUGLh7c1+0lMiDU/Wm/rFBvqAIJ2i20tF9Myq/+G/dWMDt4eo9ynr+0dIvQkFtuRG+NZw==
+"@jahia/moonstone@^0.15.5":
+  version "0.15.5"
+  resolved "https://npm.jahia.com/@jahia%2fmoonstone/-/moonstone-0.15.5.tgz#f1d6fedab59134eca7f91873fd2e7c825ffd7576"
+  integrity sha512-0e1wC0VYbSlB3JDQoqmzeiaBfW47LbNAHSBhbFiDwjIC2o/8PK7dlfboZLhEJh7r5bkmSnnI97Zo4Iz2prZfyQ==
   dependencies:
     "@svgr/webpack" "^4.3.3"
     clsx "^1.0.4"
     prop-types "^15.7.2"
-    re-resizable "^6.1.0"
+    re-resizable "^6.2.0"
     react-is "^16.12.0"
     to-px "^1.1.0"
 
@@ -6953,10 +6953,10 @@ raw-body@2.4.0:
     iconv-lite "0.4.24"
     unpipe "1.0.0"
 
-re-resizable@^6.1.0:
-  version "6.2.0"
-  resolved "https://registry.yarnpkg.com/re-resizable/-/re-resizable-6.2.0.tgz#7b42aee4df6de4e1f602c78828052d41f642bc94"
-  integrity sha512-3bi0yTzub/obnqoTPs9C8A1ecrgt5OSWlKdHDJ6gBPiEiEIG5LO0PqbwWTpABfzAzdE4kldOG2MQDQEaJJNYkQ==
+re-resizable@^6.2.0:
+  version "6.3.2"
+  resolved "https://registry.yarnpkg.com/re-resizable/-/re-resizable-6.3.2.tgz#27cc984af6ea5dbafd2b79f64c5224a6e1722fbe"
+  integrity sha512-ngxe4XBSb46vfwXjAwpURacVDig/pPt1kHRhcKlRRIoGICmo4aQHr725jurezepp1pm5jSC6iQhyLYfx3zOC3w==
   dependencies:
     fast-memoize "^2.5.1"
 
