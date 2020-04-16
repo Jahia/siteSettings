@@ -72,6 +72,7 @@
         <jahia-module-type>system</jahia-module-type>
         <jahia-deploy-on-site>all</jahia-deploy-on-site>
         <jahia-module-signature>MCwCFCh/RnycKDTpPzlX1ZsSQsdtqSg5AhQmvlGvPphbWh5tM6KqcMFGneOrWg==</jahia-module-signature>
+        <require-capability>osgi.extender;filter:="(osgi.extender=org.jahia.bundles.blueprint.extender.config)"</require-capability>
         <yarn.arguments>build:production</yarn.arguments>
     </properties>
 
@@ -79,7 +80,7 @@
         <dependency>
             <groupId>org.jahia.modules</groupId>
             <artifactId>app-shell</artifactId>
-            <version>1.4.0-SNAPSHOT</version>
+            <version>2.0.0-SNAPSHOT</version>
             <type>json</type>
             <classifier>manifest</classifier>
             <scope>provided</scope>
@@ -87,7 +88,7 @@
         <dependency>
             <groupId>org.jahia.modules</groupId>
             <artifactId>app-shell</artifactId>
-            <version>1.4.0-SNAPSHOT</version>
+            <version>2.0.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
