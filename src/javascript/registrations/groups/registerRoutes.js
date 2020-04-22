@@ -18,6 +18,6 @@ export const registerRoutes = function () {
         icon: <Group/>,
         label: 'siteSettings:groups.label',
         isSelectable: true,
-        iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.manageGroups.html'
+        iframeUrl: window.contextJsParameters.contextPath + '/cms/adminframe/default/$lang/sites/$site-key.manageGroups.html'
     });
 };
