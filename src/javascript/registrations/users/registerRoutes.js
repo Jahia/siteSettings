@@ -18,6 +18,6 @@ export const registerRoutes = function () {
         icon: <Person/>,
         label: 'siteSettings:users.label',
         isSelectable: true,
-        iframeUrl: window.contextJsParameters.contextPath + '/cms/adminframe/default/$lang/sites/$site-key.manageUsers.html'
+        iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.manageUsers.html'
     });
 };

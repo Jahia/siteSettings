@@ -9,7 +9,7 @@ export const registerRoutes = function () {
         icon: <Funnel/>,
         label: 'siteSettings:filtering.label',
         isSelectable: true,
-        iframeUrl: window.contextJsParameters.contextPath + '/cms/adminframe/default/$lang/sites/$site-key.htmlFiltering.html'
+        iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.htmlFiltering.html'
     });
 
     registry.add('adminRoute', 'settings/languages', {
@@ -18,7 +18,7 @@ export const registerRoutes = function () {
         icon: <Language/>,
         label: 'siteSettings:languages.label',
         isSelectable: true,
-        iframeUrl: window.contextJsParameters.contextPath + '/cms/adminframe/default/$lang/sites/$site-key.manageLanguages.html'
+        iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.manageLanguages.html'
     });
 
     registry.add('adminRoute', 'settings/wcag', {
@@ -27,7 +27,7 @@ export const registerRoutes = function () {
         icon: <Accessibility/>,
         label: 'siteSettings:wcag.label',
         isSelectable: true,
-        iframeUrl: window.contextJsParameters.contextPath + '/cms/adminframe/default/$lang/sites/$site-key.wcagCompliance.html'
+        iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.wcagCompliance.html'
     });
 
     registry.add('adminRoute', 'settings/roles', {
@@ -36,7 +36,7 @@ export const registerRoutes = function () {
         icon: <Crown/>,
         label: 'siteSettings:roles.label',
         isSelectable: true,
-        iframeUrl: window.contextJsParameters.contextPath + '/cms/adminframe/default/$lang/sites/$site-key.manageSiteRoles.html'
+        iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.manageSiteRoles.html'
     });
 
     registry.add('adminRoute', 'settings/modules', {
@@ -45,6 +45,6 @@ export const registerRoutes = function () {
         icon: <Module/>,
         label: 'siteSettings:modules.label',
         isSelectable: true,
-        iframeUrl: window.contextJsParameters.contextPath + '/cms/adminframe/default/$lang/sites/$site-key.manageModules.html'
+        iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.manageModules.html'
     });
 };
