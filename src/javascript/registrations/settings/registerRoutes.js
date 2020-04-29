@@ -1,6 +1,6 @@
 import React from 'react';
 import {registry} from '@jahia/ui-extender';
-import {Funnel, Language, Crown, Module, Accessibility} from '@jahia/moonstone/dist/icons';
+import {Funnel, Language, Crown, Module /* Accessibility */} from '@jahia/moonstone/dist/icons';
 
 export const registerRoutes = function () {
     registry.add('adminRoute', 'settings/filtering', {
@@ -21,14 +21,15 @@ export const registerRoutes = function () {
         iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.manageLanguages.html'
     });
 
-    registry.add('adminRoute', 'settings/wcag', {
+    // TODO BACKLOG-13371 add these lines or removed them definitely
+    /* Registry.add('adminRoute', 'settings/wcag', {
         targets: ['administration-sites:60'],
         requiredPermission: 'siteAdminWcagCompliance',
         icon: <Accessibility/>,
         label: 'siteSettings:wcag.label',
         isSelectable: true,
         iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.wcagCompliance.html'
-    });
+    }); */
 
     registry.add('adminRoute', 'settings/roles', {
         targets: ['administration-sites:30'],
