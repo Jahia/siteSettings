@@ -9,6 +9,7 @@
 
     <bean class="org.jahia.modules.sitesettings.languages.LanguagesCountAction">
         <property name="requiredPermission" value="siteAdminLanguages"/>
+        <property name="requiredMethods" value="POST,GET"/>
     </bean>
 
   <util:map id="siteSettingsProperties">

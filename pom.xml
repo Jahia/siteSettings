@@ -50,7 +50,7 @@
     <parent>
         <groupId>org.jahia.modules</groupId>
         <artifactId>jahia-modules</artifactId>
-        <version>8.0.0.0</version>
+        <version>8.0.1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>siteSettings</artifactId>
@@ -70,7 +70,7 @@
         <export-package>org.jahia.modules.sitesettings.users.management</export-package>
         <jahia-module-type>system</jahia-module-type>
         <jahia-deploy-on-site>all</jahia-deploy-on-site>
-        <jahia-module-signature>MCwCFCh/RnycKDTpPzlX1ZsSQsdtqSg5AhQmvlGvPphbWh5tM6KqcMFGneOrWg==</jahia-module-signature>
+        <jahia-module-signature>MCwCFC/EimRV93+KU+MZ+jEwEM7kTS+KAhRfulGKBhF3GhkNjO1QhWa6z1gqrg==</jahia-module-signature>
         <require-capability>osgi.extender;filter:="(osgi.extender=org.jahia.bundles.blueprint.extender.config)"</require-capability>
         <yarn.arguments>build:production</yarn.arguments>
     </properties>

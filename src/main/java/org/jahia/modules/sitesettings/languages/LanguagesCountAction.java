@@ -46,6 +46,7 @@ package org.jahia.modules.sitesettings.languages;
 import org.apache.commons.lang.StringUtils;
 import org.jahia.bin.Action;
 import org.jahia.bin.ActionResult;
+import org.jahia.services.content.JCRContentUtils;
 import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.render.RenderContext;
 import org.jahia.services.render.Resource;
@@ -74,7 +75,7 @@ public class LanguagesCountAction extends Action {
 
         JSONObject result = new JSONObject();
         result.put("count", jcrSessionWrapper.getWorkspace().getQueryManager()
-                .createQuery("SELECT count AS [rep:count(skipChecks=1)] FROM [jnt:translation] WHERE isdescendantnode(['" + renderContext.getMainResource().getNode().getPath() + "']) and [jcr:language] = '" + locale + "'", Query.JCR_SQL2)
+                .createQuery("SELECT count AS [rep:count(skipChecks=1)] FROM [jnt:translation] WHERE isdescendantnode(['" + renderContext.getMainResource().getNode().getPath() + "']) and [jcr:language] = '" + JCRContentUtils.sqlEncode(locale) + "'", Query.JCR_SQL2)
                 .execute().getRows().nextRow().getValue("count").getLong());
 
 
