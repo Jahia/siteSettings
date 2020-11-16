@@ -70,7 +70,7 @@
         <export-package>org.jahia.modules.sitesettings.users.management</export-package>
         <jahia-module-type>system</jahia-module-type>
         <jahia-deploy-on-site>all</jahia-deploy-on-site>
-        <jahia-module-signature>MCwCFC/EimRV93+KU+MZ+jEwEM7kTS+KAhRfulGKBhF3GhkNjO1QhWa6z1gqrg==</jahia-module-signature>
+        <jahia-module-signature>MCwCFAwLZQARycTiO3+kV7baLWKL/MGMAhQiKnW7aHMT5LHYu1So6SC5MhkaPw==</jahia-module-signature>
         <require-capability>osgi.extender;filter:="(osgi.extender=org.jahia.bundles.blueprint.extender.config)"</require-capability>
         <yarn.arguments>build:production</yarn.arguments>
     </properties>
