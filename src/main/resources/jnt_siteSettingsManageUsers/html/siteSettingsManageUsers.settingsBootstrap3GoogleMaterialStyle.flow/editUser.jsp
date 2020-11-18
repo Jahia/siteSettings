@@ -176,5 +176,14 @@
               </form>
           </div>
       </div>
-  </div>
+      <div class="panel panel-default">
+          <div class="panel-heading">
+              <h4><fmt:message key="siteSettings.label.tokens"/></h4>
+          </div>
+          <div class="panel-body">
+              <button onclick="window.parent.jahia.routerHistory.push('manageUsers/pat?user=${userProperties.localPath}')" class="btn btn-primary btn-raised pull-right" type="button">
+                  <fmt:message key='siteSettings.label.editTokens'/>
+              </button>
+          </div>
+      </div>
 </div>
