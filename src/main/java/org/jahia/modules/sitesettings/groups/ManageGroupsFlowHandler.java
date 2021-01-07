@@ -481,7 +481,7 @@ public class ManageGroupsFlowHandler implements Serializable {
         Map<JCRGroupNode, Boolean> sortedResults = new TreeMap<>(new Comparator<JCRNodeWrapper>() {
             @Override
             public int compare(JCRNodeWrapper o1, JCRNodeWrapper o2) {
-                return PrincipalViewHelper.getDisplayName(o1).compareToIgnoreCase(PrincipalViewHelper.getDisplayName(o2));
+                return PrincipalViewHelper.getDisplayName(o1).compareTo(PrincipalViewHelper.getDisplayName(o2));
             }
         });
 
@@ -509,7 +509,7 @@ public class ManageGroupsFlowHandler implements Serializable {
         Map<JCRUserNode, Boolean> sortedResults = new TreeMap<>(new Comparator<JCRNodeWrapper>(){
             @Override
             public int compare(JCRNodeWrapper o1, JCRNodeWrapper o2) {
-                return PrincipalViewHelper.getDisplayName(o1).compareToIgnoreCase(PrincipalViewHelper.getDisplayName(o2));
+                return PrincipalViewHelper.getDisplayName(o1).compareTo(PrincipalViewHelper.getDisplayName(o2));
             }
         });
 
