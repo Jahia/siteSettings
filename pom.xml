@@ -54,7 +54,7 @@
     </parent>
 
     <artifactId>siteSettings</artifactId>
-    <version>7.4.1-SNAPSHOT</version>
+    <version>7.5.0</version>
     <packaging>bundle</packaging>
     <name>Jahia Site Settings</name>
     <description>Settings (groups,tools, etc) for site.</description>
@@ -63,7 +63,7 @@
         <connection>scm:git:git@github.com:Jahia/siteSettings.git</connection>
         <developerConnection>scm:git:git@github.com:Jahia/siteSettings.git</developerConnection>
         <url>scm:git:git@github.com:Jahia/siteSettings.git</url>
-        <tag>7_4_x</tag>
+        <tag>7_5_0</tag>
     </scm>
 
     <properties>
