@@ -68,7 +68,6 @@
     "path": "^0.12.7",
     "puppeteer": "^2.0.0",
     "puppeteer-edge": "^0.12.4",
-    "puppeteer-firefox": "0.5.0",
     "rimraf": "^3.0.0",
     "sass-loader": "^8.0.0",
     "style-loader": "^1.0.0",
