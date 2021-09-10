@@ -1,5 +1,5 @@
 import {registry} from '@jahia/ui-extender';
-import {Person} from '@jahia/moonstone/dist/icons';
+import {Person} from '@jahia/moonstone';
 import React from 'react';
 
 export const registerRoutes = function () {

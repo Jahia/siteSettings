@@ -1,6 +1,6 @@
 import React from 'react';
 import {registry} from '@jahia/ui-extender';
-import {Funnel, Language, Crown, Module /* Accessibility */} from '@jahia/moonstone/dist/icons';
+import {Crown, Funnel, Language, Module} from '@jahia/moonstone';
 
 export const registerRoutes = function () {
     registry.add('adminRoute', 'settings/filtering', {
