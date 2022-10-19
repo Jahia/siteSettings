@@ -28,6 +28,9 @@
       "jahia": "javascript/apps/remoteEntry.js"
     }
   },
+  "resolutions": {
+    "scss-tokenizer": "^0.4.2"
+  },
   "dependencies": {
     "@jahia/moonstone": "^1.5.2",
     "@jahia/ui-extender": "^1.0.3",
