@@ -42,7 +42,7 @@
         <export-package>org.jahia.modules.sitesettings.users.management</export-package>
         <jahia-module-type>system</jahia-module-type>
         <jahia-deploy-on-site>all</jahia-deploy-on-site>
-        <jahia-module-signature>MC0CFE+ekeDKf/yrAnhdfuiwclJVs6Y3AhUAlTJLchCuJY1+vggbNGMS1ZA3APw=</jahia-module-signature>
+        <jahia-module-signature>MCwCFCKO2p4NF1r+0FUWa8AyhxXVM5u+AhQ+EsN0zcT9FI6sHfPX9t0ewbN6yQ==</jahia-module-signature>
         <require-capability>osgi.extender;filter:="(osgi.extender=org.jahia.bundles.blueprint.extender.config)"</require-capability>
         <yarn.arguments>build:production</yarn.arguments>
     </properties>
