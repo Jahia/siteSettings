@@ -151,7 +151,7 @@
                                   <div class="col-md-10">
                                       <select class="form-control fontfix" name="selectMember" size="6" multiple>
                                           <c:forEach items="${userGroups}" var="group">
-                                              <option value="${user:formatUserValueOption(group)}">${user:formatUserTextOption(group, 'Name, 20;SiteTitle, 15;Properties, 20')}</option>
+                                              <option value="${user:formatUserValueOption(group)}" title="${group.name}">${user:formatUserTextOption(group, 'Name, 20;SiteTitle, 15;Properties, 20')}</option>
                                           </c:forEach>
                                       </select>
                                   </div>
