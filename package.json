@@ -32,7 +32,7 @@
     "scss-tokenizer": "^0.4.2"
   },
   "dependencies": {
-    "@jahia/moonstone": "^1.5.2",
+    "@jahia/moonstone": "^2.4.24",
     "@jahia/ui-extender": "^1.0.3",
     "file-loader": "^6.2.0",
     "i18next": "^19.3.2",
