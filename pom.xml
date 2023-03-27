@@ -22,11 +22,11 @@
     <parent>
         <groupId>org.jahia.modules</groupId>
         <artifactId>jahia-modules</artifactId>
-        <version>8.0.1.0</version>
+        <version>8.1.0.0</version>
     </parent>
 
     <artifactId>siteSettings</artifactId>
-    <version>8.6.0-SNAPSHOT</version>
+    <version>8.7.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>Jahia Site Settings</name>
     <description>Settings (groups,tools, etc) for site.</description>
@@ -42,7 +42,8 @@
         <export-package>org.jahia.modules.sitesettings.users.management</export-package>
         <jahia-module-type>system</jahia-module-type>
         <jahia-deploy-on-site>all</jahia-deploy-on-site>
-        <jahia-module-signature>MC0CFEkeibeORQ9aM72ipPUGoqyZ+PIdAhUAjtnGquKTSNqpwOMCgs1OWfk/4Lw=</jahia-module-signature>
+        <jahia-depends>default</jahia-depends>
+        <jahia-module-signature>MCwCFCtcr5JYjhqQLmdiHRb9BMzGvzLFAhR1yVfxsOZHEGInoRH154+INS59ng==</jahia-module-signature>
         <require-capability>osgi.extender;filter:="(osgi.extender=org.jahia.bundles.blueprint.extender.config)"</require-capability>
         <yarn.arguments>build:production</yarn.arguments>
     </properties>
