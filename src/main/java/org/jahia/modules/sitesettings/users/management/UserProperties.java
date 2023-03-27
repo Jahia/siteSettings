@@ -22,6 +22,7 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jahia.api.Constants;
 import org.jahia.data.viewhelper.principal.PrincipalViewHelper;
@@ -367,12 +368,12 @@ public class UserProperties implements Serializable {
     }
 
     public void populate(JCRUserNode jahiaUser) {
-        setFirstName(jahiaUser.getPropertyAsString("j:firstName"));
-        setLastName(jahiaUser.getPropertyAsString("j:lastName"));
-        setUsername(jahiaUser.getName());
+        setFirstName(StringEscapeUtils.escapeXml(jahiaUser.getPropertyAsString("j:firstName")));
+        setLastName(StringEscapeUtils.escapeXml(jahiaUser.getPropertyAsString("j:lastName")));
+        setUsername(StringEscapeUtils.escapeXml(jahiaUser.getName()));
         setUserKey(jahiaUser.getPath());
-        setEmail(jahiaUser.getPropertyAsString("j:email"));
-        setOrganization(jahiaUser.getPropertyAsString("j:organization"));
+        setEmail(StringEscapeUtils.escapeXml(jahiaUser.getPropertyAsString("j:email")));
+        setOrganization(StringEscapeUtils.escapeXml(jahiaUser.getPropertyAsString("j:organization")));
 
         try {
             if (jahiaUser.hasProperty("emailNotificationsDisabled")) {
@@ -391,7 +392,7 @@ public class UserProperties implements Serializable {
         }
 
         setPreferredLanguage(UserPreferencesHelper.getPreferredLocale(jahiaUser));
-        setDisplayName(PrincipalViewHelper.getDisplayName(jahiaUser, LocaleContextHolder.getLocale()));
+        setDisplayName(StringEscapeUtils.escapeXml(PrincipalViewHelper.getDisplayName(jahiaUser, LocaleContextHolder.getLocale())));
         setLocalPath(jahiaUser.getPath());
 
         Set<String> readOnlyProperties = new HashSet<String>();
