@@ -21,4 +21,7 @@ COPY --chown=jahians:jahians . /home/jahians
 
 RUN CI=true /home/jahians/node_modules/.bin/cypress install
 
+
+COPY --chown=jahians:jahians maven.settings.xml /home/jahians/.m2/settings.xml
+
 CMD ["/bin/bash", "-c", "/home/jahians/env.run.sh"]

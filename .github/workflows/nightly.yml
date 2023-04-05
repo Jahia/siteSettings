@@ -2,7 +2,7 @@ name: Nightly Test run
 
 on:
   schedule:
-    - cron: "0 0 * * *"
+    - cron:  '0 0 * * *'
 
 jobs:
   integration-tests-standalone:
@@ -18,10 +18,10 @@ jobs:
       - uses: jahia/jahia-modules-action/helper@v2
       - uses: KengoTODA/actions-setup-docker-compose@main
         with:
-          version: "1.29.2"
+          version: '1.29.2'
       - uses: actions/setup-node@v3
         with:
-          node-version: "lts/*"
+          node-version: 'lts/*'
       - uses: actions/checkout@v3
       - uses: jahia/jahia-modules-action/integration-tests@v2
         with:
