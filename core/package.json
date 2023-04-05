@@ -1,11 +1,6 @@
 {
   "name": "@jahia/site-settings",
   "version": "0.0.1",
-  "husky": {
-    "hooks": {
-      "pre-push": "yarn lint:fix"
-    }
-  },
   "scripts": {
     "test": "env-cmd --no-override jest",
     "testcli": "jest",
@@ -34,6 +29,12 @@
   "dependencies": {
     "@jahia/moonstone": "^1.5.2",
     "@jahia/ui-extender": "^1.0.3",
+    "@typescript-eslint/eslint-plugin": "^5.57.1",
+    "eslint": "^8.37.0",
+    "eslint-plugin-cypress": "^2.13.2",
+    "eslint-plugin-jest": "^27.2.1",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "file-loader": "^6.2.0",
     "i18next": "^19.3.2",
     "prop-types": "^15.7.2",
@@ -44,6 +45,7 @@
   "devDependencies": {
     "@babel/cli": "^7.6.2",
     "@babel/core": "^7.6.2",
+    "@babel/eslint-parser": "^7.5.4",
     "@babel/plugin-proposal-class-properties": "^7.5.0",
     "@babel/plugin-transform-classes": "^7.4.4",
     "@babel/plugin-transform-runtime": "^7.5.0",
@@ -57,10 +59,8 @@
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^9.0.1",
     "css-loader": "^3.2.0",
-    "eslint": "^6.8.0",
     "eslint-loader": "^3.0.2",
     "eslint-plugin-json": "^2.0.1",
-    "husky": "^3.0.9",
     "node-sass": "^6.0.1",
     "path": "^0.12.7",
     "rimraf": "^3.0.0",
