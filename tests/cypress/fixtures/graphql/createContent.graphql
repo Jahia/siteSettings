@@ -1,0 +1,29 @@
+mutation($pathOrId: String!){
+    jcr {
+        mutateNode(pathOrId: $pathOrId) {
+            addChild(name: "area-main", primaryNodeType: "jnt:contentList") {
+                addChildrenBatch(
+                    nodes: [
+                        {
+                            name: "test-content-en"
+                            primaryNodeType: "jnt:bigText"
+                            properties: [{ name: "text", language: "en", value: "test EN" }]
+                        }
+                        {
+                            name: "test-content-fr"
+                            primaryNodeType: "jnt:bigText"
+                            properties: [{ name: "text", language: "fr", value: "test FR" }]
+                        }
+                        {
+                            name: "test-content-de"
+                            primaryNodeType: "jnt:bigText"
+                            properties: [{ name: "text", language: "de", value: "test DE" }]
+                        }
+                    ]
+                ) {
+                    uuid
+                }
+            }
+        }
+    }
+}
