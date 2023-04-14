@@ -2,14 +2,11 @@ import { SiteSettingsLanguages } from '../page-object'
 import { createSite } from '@jahia/cypress'
 describe('Language deactivation test', () => {
     const siteKey = 'siteSettingsSite'
-    const langEN = '"en"'
-    const langFR = '"fr"'
-    const langDE = '"de"'
-    const languages = langEN + ',' + langFR + ',' + langDE
+    const languages = ['en', 'fr', 'de']
 
     before(function () {
         createSite(siteKey, {
-            languages: languages,
+            languages: languages.join(','),
             templateSet: 'dx-base-demo-templates',
             serverName: 'localhost',
             locale: 'en',
