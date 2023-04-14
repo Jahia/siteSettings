@@ -113,7 +113,7 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
-"@jahia/cypress@^3.0.0":
+"@jahia/cypress@^3.4.0":
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/@jahia/cypress/-/cypress-3.4.0.tgz#c1281c46fccc55e38f77acde016ad714f60cf756"
   integrity sha512-ehGVVYuS8OHVaXKViFCR5yOPfqpM3uxYDzOSa3PTK1bcZ2KuNwqN0myk3eGTX8Pf6diR1lp5s+Xv2kw5iW2nVQ==

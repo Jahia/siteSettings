@@ -8,7 +8,12 @@ describe('Language deactivation test', () => {
     const languages = langEN + ',' + langFR + ',' + langDE
 
     before(function () {
-        createSite(siteKey, null, null, null, languages)
+        createSite(siteKey, {
+            languages: languages,
+            templateSet: 'dx-base-demo-templates',
+            serverName: 'localhost',
+            locale: 'en',
+        })
         cy.apollo({
             variables: {
                 pathOrId: '/sites/' + siteKey + '/home',
