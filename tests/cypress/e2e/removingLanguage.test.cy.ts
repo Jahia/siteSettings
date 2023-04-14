@@ -1,4 +1,4 @@
-import { SiteSettingsLanguages } from '../../page-object'
+import { SiteSettingsLanguages } from '../page-object'
 import { createSite } from '@jahia/cypress'
 describe('Language deactivation test', () => {
     const siteKey = 'siteSettingsSite'
