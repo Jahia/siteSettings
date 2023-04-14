@@ -1,5 +1,5 @@
 import { SiteSettingsLanguages } from '../page-object'
-import { createSite } from '@jahia/cypress'
+import { createSite, deleteSite } from '@jahia/cypress'
 describe('Language deactivation test', () => {
     const siteKey = 'siteSettingsSite'
     const languages = ['en', 'fr', 'de']
@@ -20,7 +20,7 @@ describe('Language deactivation test', () => {
     })
 
     after(function () {
-        cy.executeGroovy('groovy/admin/deleteSite.groovy', { SITEKEY: siteKey })
+        deleteSite(siteKey)
     })
 
     it('Should be able to deactivate a non-mandatory language', () => {
