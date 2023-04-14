@@ -6,3 +6,4 @@ src/main/resources/javascript/locales
 src/main/resources/javascript/settings
 src/javascript/publicPath.js
 webpack.config.js
+tests
