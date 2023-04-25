@@ -3,11 +3,11 @@ export class LanguageSettings {
         cy.visit(`/cms/editframe/default/${language}/sites/${siteKey}.manageLanguages.html`)
     }
 
-    public SwitchReplaceUntranslatedWithDefault() {
+    public switchReplaceUntranslatedWithDefault() {
         cy.get('label[for="mixLanguages"]').find('span.checkbox-material').click()
     }
 
-    public SubmitChanges() {
+    public submitChanges() {
         cy.get('button[id="updateSite_button"]').click()
     }
 }
