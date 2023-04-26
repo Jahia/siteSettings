@@ -20,6 +20,8 @@ describe('Tests on UI for language settings', () => {
         LanguageSettings.visit('languagesTestSite', 'ca')
         languageSettings.switchReplaceUntranslatedWithDefault()
         languageSettings.submitChanges()
+        //eslint-disable-next-line
+        cy.wait(5000)
         getNodeByPath('/sites/languagesTestSite', ['j:mixLanguage']).then((result) => {
             expect(result.data.jcr.nodeByPath.properties[0].value).deep.eq('true')
         })
