@@ -20,12 +20,17 @@ describe('Tests on UI for language settings', () => {
         LanguageSettings.visit('languagesTestSite', 'ca')
         languageSettings.switchReplaceUntranslatedWithDefault()
         languageSettings.submitChanges()
-        cy.waitUntil(() => getNodeByPath('/sites/languagesTestSite', ['j:mixLanguage']).then((result) => result.data.jcr.nodeByPath.properties[0].value === 'true'),
-        {
-            timeout: 30000,
-            interval: 1000,
-            verbose: true
-        })
+        cy.waitUntil(
+            () =>
+                getNodeByPath('/sites/languagesTestSite', ['j:mixLanguage']).then(
+                    (result) => result.data.jcr.nodeByPath.properties[0].value === 'true',
+                ),
+            {
+                timeout: 30000,
+                interval: 1000,
+                verbose: true,
+            },
+        )
 
         cy.logout()
     })
