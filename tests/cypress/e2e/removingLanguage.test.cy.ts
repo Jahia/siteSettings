@@ -61,7 +61,5 @@ describe('Language deactivation test', () => {
         }).then((response) => {
             expect(response.status).to.eq(404)
         })
-
-
     })
 })
