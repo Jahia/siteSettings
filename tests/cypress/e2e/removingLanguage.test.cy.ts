@@ -44,10 +44,19 @@ describe('Language deactivation test', () => {
         siteSettingsLanguages.isLanguageActivateForTargetMode('fr', 'live').should('eq', false)
         siteSettingsLanguages.isLanguageActivateForTargetMode('fr', 'edit').should('eq', false)
 
-        // Verify that we cannot access to the homepage in French
+        // Verify that we cannot access to the homepage in French in EDIT workspace
         cy.visit('/cms/render/default/fr/sites/' + siteKey + '/home.html', { failOnStatusCode: false })
         cy.request({
             url: '/cms/render/default/fr/sites/' + siteKey + '/home.html',
+            failOnStatusCode: false,
+        }).then((response) => {
+            expect(response.status).to.eq(404)
+        })
+
+        // Verify that we cannot access to the homepage in French in LIVE workspace
+        cy.visit('/fr/sites/' + siteKey + '/home.html', { failOnStatusCode: false })
+        cy.request({
+            url: '/fr/sites/' + siteKey + '/home.html',
             failOnStatusCode: false,
         }).then((response) => {
             expect(response.status).to.eq(404)
