@@ -59,7 +59,7 @@ describe('Language deactivation test', () => {
             url: '/fr/sites/' + siteKey + '/home.html',
             failOnStatusCode: false,
         }).then((response) => {
-            expect(response.status).to.eq(404) 
+            expect(response.status).to.eq(404)
         })
     })
 })
