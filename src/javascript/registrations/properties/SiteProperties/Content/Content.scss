@@ -1,0 +1,23 @@
+.left {
+    flex: 1;
+}
+
+.right {
+    display: flex;
+    flex: 4;
+    gap: var(--spacing-small);
+}
+
+.row {
+    align-content: center;
+    height: var(--spacing-large);
+    margin-top: var(--spacing-medium);
+}
+
+.paper {
+    height: 100%;
+}
+
+.heading {
+    margin-top: var(--spacing-big);
+}

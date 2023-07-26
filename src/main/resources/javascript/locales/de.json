@@ -22,5 +22,11 @@
   },
   "modules": {
     "label": "Module"
+  },
+  "properties": {
+    "label": "Site Eigenschaften",
+    "edit": "Site Eigenschaften editieren",
+    "generalInfo": "Allgemeine Informationen",
+    "editLang": "Site Sprachen können <u>hier</u> editiert werden."
   }
 }

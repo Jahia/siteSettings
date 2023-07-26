@@ -9,5 +9,6 @@
         <siteAdminTemplates jcr:primaryType="jnt:permission" />
         <siteAdminWcagCompliance jcr:primaryType="jnt:permission" />
         <siteAdminSiteRoles jcr:primaryType="jnt:permission" />
+        <siteAdminSiteProperties jcr:primaryType="jnt:permission" />
     </site-admin>
 </permissions>
