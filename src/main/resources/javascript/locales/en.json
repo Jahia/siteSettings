@@ -27,6 +27,15 @@
     "label": "Site properties",
     "edit": "Edit site properties",
     "generalInfo": "General information",
-    "editLang": "Site languages can be edited <u>here</u>"
+    "editLang": "Site languages can be edited here",
+    "additionalServerNames": "Additional Server Names",
+    "serverName": "Server Name",
+    "templateSet": "Template Set",
+    "title": "Title",
+    "description": "Description",
+    "languages": "Languages",
+    "mandatoryLanguages": "Mandatory Languages",
+    "defaultLanguage": "Default Language",
+    "creationDate": "Creation Date"
   }
 }

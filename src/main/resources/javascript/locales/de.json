@@ -27,6 +27,15 @@
     "label": "Site Eigenschaften",
     "edit": "Site Eigenschaften editieren",
     "generalInfo": "Allgemeine Informationen",
-    "editLang": "Site Sprachen können <u>hier</u> editiert werden."
+    "editLang": "Site Sprachen können hier editiert werden.",
+    "additionalServerNames": "Zusätzliche Projekt Hostnamen",
+    "serverName": "Projekt Hostname",
+    "templateSet": "Vorlagensatz",
+    "title": "Name",
+    "description": "Beschreibung",
+    "languages": "Sprachen",
+    "mandatoryLanguages": "Mandatory Languages",
+    "defaultLanguage": "Default Language",
+    "creationDate": "Creation Date"
   }
 }

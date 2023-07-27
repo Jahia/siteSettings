@@ -23,6 +23,7 @@ export const SITE_INFO_QUERY = gql`
         }
     }
     fragment SiteInfo on JCRSite {
+        name
         displayName(language: $displayLanguage)
         defaultLanguage
         serverName
@@ -32,6 +33,9 @@ export const SITE_INFO_QUERY = gql`
         }
         created:property(name:"jcr:created") {
           value
+        }
+        additionalServerNames:property(name:"j:serverNameAliases") {
+          values
         }
         languages {
           displayName
