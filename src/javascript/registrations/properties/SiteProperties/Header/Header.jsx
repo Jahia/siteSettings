@@ -9,7 +9,7 @@ export const HeaderComp = ({edit, siteDisplayName}) => {
     return (
         <Header title={siteDisplayName}
                 mainActions={[
-                    <Button key="edit-site" color="accent" label={t('properties.edit')} size="big" onClick={edit}/>
+                    <Button key="edit-site" color="accent" label={t('properties.edit')} size="big" data-sel-role="edit-site-properties" onClick={edit}/>
         ]}/>
     );
 };

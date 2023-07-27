@@ -16,7 +16,7 @@ export const SiteProperties = () => {
     const {data, loading, error} = useQuery(SITE_INFO_QUERY, {
         variables: {
             path: `/sites/${site}`,
-            displayLanguage: language
+            displayLanguage: uilang
         },
         skip: !site
     });
@@ -26,8 +26,6 @@ export const SiteProperties = () => {
         throw new Error(error.message);
     }
 
-    console.log(data);
-
     const edit = () => {
         if (window.CE_API?.edit) {
             window.CE_API.edit({uuid: data?.default?.result?.uuid, site: site, lang: language, uilang: uilang});
@@ -36,8 +34,9 @@ export const SiteProperties = () => {
 
     return (
         <LayoutContent isLoading={loading}
+                       aria-labelledby="site-properties"
                        header={<Header siteDisplayName={data?.default?.result?.site?.displayName} edit={edit}/>}
-                       content={<Content site={data?.default?.result?.site} language={language}/>}
+                       content={<Content site={data?.default?.result?.site} language={uilang}/>}
         />
     );
 };

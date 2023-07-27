@@ -14,7 +14,7 @@ export const Content = ({site, language}) => {
     const {t} = useTranslation('siteSettings');
 
     const mandatoryLanguages = site.languages.filter(l => l.mandatory).map(l => (<Chip key={l.language} label={l.displayName} color="accent"/>));
-    const additionalServerNames = site.additionalServerNames.values.join(', ');
+    const additionalServerNames = site.additionalServerNames ? site.additionalServerNames.values.join(', ') : [];
     const navigateToLanguages = () => {
         window.location.pathname = `/jahia/administration/${site.name}/settings/languages`;
     };
@@ -51,7 +51,7 @@ export const Content = ({site, language}) => {
             <Typography variant="title" weight="bold" className={styles.heading}>{t('properties.languages')}</Typography>
             <div className="flexCol">
                 <div className={clsx('flexRow', styles.row)}>
-                    <Button label={t('properties.editLang')} variant="ghost" onClick={navigateToLanguages}/>
+                    <Button label={t('properties.editLang')} variant="ghost" data-sel-role="edit-languages" onClick={navigateToLanguages}/>
                 </div>
                 <div className={clsx('flexRow', styles.row)}>
                     <Typography variant="subheading" weight="bold" className={styles.left}>{t('properties.languages')}</Typography>
