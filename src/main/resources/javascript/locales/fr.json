@@ -22,5 +22,20 @@
   },
   "modules": {
     "label": "Modules"
+  },
+  "properties": {
+    "label": "Propriétés du site",
+    "edit": "Editer les propriétés du site",
+    "generalInfo": "Informations générales",
+    "editLang": "Les langues du site peuvent être modifiées ici.",
+    "additionalServerNames": "Noms de serveurs supplémentaires",
+    "serverName": "Nom du serveur",
+    "templateSet": "Jeu de modèles",
+    "title": "Nom",
+    "description": "Description",
+    "languages": "Langues",
+    "mandatoryLanguages": "Langues obligatoires",
+    "defaultLanguage": "Langue par défaut",
+    "creationDate": "Date de création"
   }
 }
