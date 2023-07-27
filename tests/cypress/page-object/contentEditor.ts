@@ -1,12 +1,4 @@
-import {
-    BasePage,
-    Button,
-    Collapsible,
-    getComponentByAttr,
-    getComponentByRole,
-    getComponentBySelector,
-    Menu,
-} from '@jahia/cypress'
+import { BasePage, Button, getComponentByAttr, getComponentByRole, getComponentBySelector } from '@jahia/cypress'
 import { ComponentType } from '@jahia/cypress/src/page-object/baseComponent'
 import { Field, SmallTextField } from './fields'
 

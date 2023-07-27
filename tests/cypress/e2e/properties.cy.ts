@@ -1,4 +1,4 @@
-import { createSite, deleteSite, getNodeByPath } from '@jahia/cypress'
+import { createSite, deleteSite } from '@jahia/cypress'
 import { SiteProperties } from '../page-object/siteProperties'
 
 describe('Tests for site properties panel', () => {

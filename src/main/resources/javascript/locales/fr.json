@@ -34,8 +34,8 @@
     "title": "Nom",
     "description": "Description",
     "languages": "Langues",
-    "mandatoryLanguages": "Obligatoire",
+    "mandatoryLanguages": "Langues obligatoires",
     "defaultLanguage": "Langue par défaut",
-    "creationDate": "Creation Date"
+    "creationDate": "Date de création"
   }
 }
