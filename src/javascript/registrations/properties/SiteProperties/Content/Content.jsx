@@ -5,18 +5,20 @@ import clsx from 'clsx';
 import styles from './Content.scss';
 import dayjs from 'dayjs';
 import {useTranslation} from 'react-i18next';
+import {useNodeChecks} from '@jahia/data-helper';
 
 function getFormattedDate(date, locale) {
     return dayjs(date).locale(locale).format('LLL');
 }
 
-export const Content = ({site, language}) => {
+export const Content = ({site, language, uilang}) => {
     const {t} = useTranslation('siteSettings');
+    const res = useNodeChecks({path: `/sites/${site.name}`, language}, {requiredPermission: 'siteAdminLanguages'});
 
     const mandatoryLanguages = site.languages.filter(l => l.mandatory).map(l => (<Chip key={l.language} label={l.displayName} color="accent"/>));
     const additionalServerNames = site.additionalServerNames ? site.additionalServerNames.values.join(', ') : [];
     const navigateToLanguages = () => {
-        window.location.pathname = `/jahia/administration/${site.name}/settings/languages`;
+        window.location.pathname = `${window.contextJsParameters.contextPath}/jahia/administration/${site.name}/settings/languages`;
     };
 
     return (
@@ -33,7 +35,7 @@ export const Content = ({site, language}) => {
                 </div>
                 <div className={clsx('flexRow', styles.row)}>
                     <Typography variant="subheading" weight="bold" className={styles.left}>{t('properties.creationDate')}</Typography>
-                    <Typography variant="body" className={styles.right}>{getFormattedDate(site.created.value, language)}</Typography>
+                    <Typography variant="body" className={styles.right}>{getFormattedDate(site.created.value, uilang)}</Typography>
                 </div>
                 <div className={clsx('flexRow', styles.row)}>
                     <Typography variant="subheading" weight="bold" className={styles.left}>{t('properties.serverName')}</Typography>
@@ -50,16 +52,19 @@ export const Content = ({site, language}) => {
             </div>
             <Typography variant="title" weight="bold" className={styles.heading}>{t('properties.languages')}</Typography>
             <div className="flexCol">
-                <div className={clsx('flexRow', styles.row)}>
-                    <Button label={t('properties.editLang')} variant="ghost" data-sel-role="edit-languages" onClick={navigateToLanguages}/>
-                </div>
-                <div className={clsx('flexRow', styles.row)}>
+                {
+                    res.checksResult &&
+                    <div className={clsx('flexRow', styles.row)}>
+                        <Button label={t('properties.editLang')} variant="ghost" data-sel-role="edit-languages" onClick={navigateToLanguages}/>
+                    </div>
+                }
+                <div className={clsx('flexRow', styles.row, styles.rowNoHeight)}>
                     <Typography variant="subheading" weight="bold" className={styles.left}>{t('properties.languages')}</Typography>
                     <div className={styles.right}>
                         {site.languages.map(l => (<Chip key={l.language} label={l.displayName} color="accent"/>))}
                     </div>
                 </div>
-                <div className={clsx('flexRow', styles.row)}>
+                <div className={clsx('flexRow', styles.row, styles.rowNoHeight)}>
                     <Typography variant="subheading" weight="bold" className={styles.left}>{t('properties.mandatoryLanguages')}</Typography>
                     <div className={styles.right}>
                         {mandatoryLanguages.length === 0 ? '-' : mandatoryLanguages}
@@ -78,5 +83,6 @@ export const Content = ({site, language}) => {
 
 Content.propTypes = {
     language: PropTypes.string.isRequired,
+    uilang: PropTypes.string.isRequired,
     site: PropTypes.object.isRequired
 };
