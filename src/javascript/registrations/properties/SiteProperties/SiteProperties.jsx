@@ -35,8 +35,8 @@ export const SiteProperties = () => {
     return (
         <LayoutContent isLoading={loading}
                        aria-labelledby="site-properties"
-                       header={<Header siteDisplayName={data?.default?.result?.site?.displayName} edit={edit}/>}
-                       content={<Content site={data?.default?.result?.site} language={uilang}/>}
+                       header={<Header siteDisplayName={data?.default?.result?.site?.displayName} path={`/sites/${site}`} language={language} edit={edit}/>}
+                       content={<Content site={data?.default?.result?.site} uilang={uilang} language={language}/>}
         />
     );
 };
