@@ -28,8 +28,8 @@
     "edit": "Site Eigenschaften editieren",
     "generalInfo": "Allgemeine Informationen",
     "editLang": {
-      "text": "Site Sprachen können hier editiert ",
-      "linkText": "werden"
+      "text": "Editieren Sie die Site Sprachen ",
+      "linkText": "hier"
     },
     "additionalServerNames": "Zusätzliche Projekt Hostnamen",
     "serverName": "Projekt Hostname",
