@@ -27,7 +27,10 @@
     "label": "Site properties",
     "edit": "Edit site properties",
     "generalInfo": "General information",
-    "editLang": "Site languages can be edited here",
+    "editLang": {
+      "text": "Site languages can be edited ",
+      "linkText": "here"
+    },
     "additionalServerNames": "Additional Server Names",
     "serverName": "Server Name",
     "templateSet": "Template Set",

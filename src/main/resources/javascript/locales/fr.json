@@ -27,7 +27,10 @@
     "label": "Propriétés du site",
     "edit": "Editer les propriétés du site",
     "generalInfo": "Informations générales",
-    "editLang": "Les langues du site peuvent être modifiées ici.",
+    "editLang": {
+      "text": "Les langues du site peuvent être modifiées ",
+      "linkText": "ici"
+    },
     "additionalServerNames": "Noms de serveurs supplémentaires",
     "serverName": "Nom du serveur",
     "templateSet": "Jeu de modèles",

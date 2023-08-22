@@ -15,6 +15,6 @@ export class SiteProperties extends BasePage {
     }
 
     editLanguages() {
-        getComponentByRole(Button, 'edit-languages').click()
+        cy.get('a').click()
     }
 }

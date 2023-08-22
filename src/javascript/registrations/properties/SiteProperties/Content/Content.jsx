@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Paper, Typography, Chip, Button} from '@jahia/moonstone';
+import {Paper, Typography, Chip} from '@jahia/moonstone';
 import clsx from 'clsx';
 import styles from './Content.scss';
 import dayjs from 'dayjs';
@@ -17,9 +17,6 @@ export const Content = ({site, language, uilang}) => {
 
     const mandatoryLanguages = site.languages.filter(l => l.mandatory).map(l => (<Chip key={l.language} label={l.displayName} color="accent"/>));
     const additionalServerNames = site.additionalServerNames ? site.additionalServerNames.values.join(', ') : [];
-    const navigateToLanguages = () => {
-        window.location.pathname = `${window.contextJsParameters.contextPath}/jahia/administration/${site.name}/settings/languages`;
-    };
 
     return (
         <Paper className={styles.paper}>
@@ -52,12 +49,15 @@ export const Content = ({site, language, uilang}) => {
             </div>
             <Typography variant="title" weight="bold" className={styles.heading}>{t('properties.languages')}</Typography>
             <div className="flexCol">
-                {
-                    res.checksResult &&
+                {res.checksResult &&
                     <div className={clsx('flexRow', styles.row)}>
-                        <Button label={t('properties.editLang')} variant="ghost" data-sel-role="edit-languages" onClick={navigateToLanguages}/>
-                    </div>
-                }
+                        <Typography variant="subheading" className={styles.link} data-sel-role="edit-languages">
+                            {t('properties.editLang.text')}
+                            <a href={`${window.contextJsParameters.contextPath}/jahia/administration/${site.name}/settings/languages`}>
+                                {t('properties.editLang.linkText')}
+                            </a>.
+                        </Typography>
+                    </div>}
                 <div className={clsx('flexRow', styles.row, styles.rowNoHeight)}>
                     <Typography variant="subheading" weight="bold" className={styles.left}>{t('properties.languages')}</Typography>
                     <div className={styles.right}>
