@@ -1,9 +1,9 @@
-name: Nightly Test run
+name: Nightly - Jahia Snapshot
 
 on:
   workflow_dispatch:  
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "30 0 * * *"
 
 jobs:
   integration-tests-standalone:
@@ -11,9 +11,6 @@ jobs:
     runs-on: self-hosted
     strategy:
       fail-fast: false
-      matrix:
-        jahia_image:
-          ["jahia/jahia-discovery:8", "jahia/jahia-discovery-dev:8-SNAPSHOT"]
     timeout-minutes: 45
     steps:
       - uses: jahia/jahia-modules-action/helper@v2
@@ -27,10 +24,11 @@ jobs:
       - uses: jahia/jahia-modules-action/integration-tests@v2
         with:
           module_id: siteSettings
+          incident_service: siteSettings-JahiaSN
           timeout_minutes: 20
           testrail_project: Site Settings Module
           tests_manifest: provisioning-manifest-snapshot.yml
-          jahia_image: ${{ matrix.jahia_image }}
+          jahia_image: jahia/jahia-discovery-dev:8-SNAPSHOT
           should_use_build_artifacts: false
           should_skip_artifacts: true
           should_skip_notifications: false
