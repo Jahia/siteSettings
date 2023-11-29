@@ -13,7 +13,7 @@ public class SiteSettingsQueryExtension {
     @GraphQLField
     @GraphQLName("siteSettings")
     @GraphQLDescription("Entry point for siteSettings queries")
-    public static GqlSiteSettingsQuery getCloud() {
+    public static GqlSiteSettingsQuery getSiteSettings() {
         return new GqlSiteSettingsQuery();
     }
 }

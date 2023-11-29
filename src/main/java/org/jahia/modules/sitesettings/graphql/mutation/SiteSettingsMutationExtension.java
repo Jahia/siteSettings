@@ -13,7 +13,7 @@ public class SiteSettingsMutationExtension {
     @GraphQLField
     @GraphQLName("siteSettings")
     @GraphQLDescription("Entry point for site settings mutations")
-    public static GqlSiteSettingsMutation getCloud() {
+    public static GqlSiteSettingsMutation getSiteSettings() {
         return new GqlSiteSettingsMutation();
     }
 }
