@@ -15,6 +15,7 @@ import javax.jcr.RepositoryException;
 import java.util.*;
 
 @GraphQLName("HTMLFilteringQuery")
+@GraphQLDescription("Query for html filtering settings")
 public class GqlHtmlFilteringQuery {
 
     @GraphQLField

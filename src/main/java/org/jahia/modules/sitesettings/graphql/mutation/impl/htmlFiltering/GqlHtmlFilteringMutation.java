@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @GraphQLName("HtmlFilteringMutation")
+@GraphQLDescription("Mutation to manipulate html filtering settings on a site")
 public class GqlHtmlFilteringMutation {
 
     @GraphQLField
