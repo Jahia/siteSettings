@@ -6,6 +6,7 @@ import graphql.annotations.annotationTypes.GraphQLName;
 import org.jahia.modules.sitesettings.graphql.query.impl.htmlFiltering.GqlHtmlFilteringQuery;
 
 @GraphQLName("SiteSettingsQuery")
+@GraphQLDescription("Entry point for site settings queries")
 public class GqlSiteSettingsQuery {
 
     @GraphQLField

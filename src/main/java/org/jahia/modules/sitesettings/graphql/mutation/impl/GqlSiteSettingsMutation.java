@@ -6,6 +6,7 @@ import graphql.annotations.annotationTypes.GraphQLName;
 import org.jahia.modules.sitesettings.graphql.mutation.impl.htmlFiltering.GqlHtmlFilteringMutation;
 
 @GraphQLName("SiteSettingsMutation")
+@GraphQLDescription("Site settings mutations entry point")
 public class GqlSiteSettingsMutation {
 
     @GraphQLField
