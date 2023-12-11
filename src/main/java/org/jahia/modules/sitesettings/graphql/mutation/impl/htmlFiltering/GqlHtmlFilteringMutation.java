@@ -43,7 +43,7 @@ public class GqlHtmlFilteringMutation {
     @GraphQLField
     @GraphQLName("enableFiltering")
     @GraphQLDescription("Enables html filtering on site")
-    public Boolean getEnableFiltering(@GraphQLNonNull @GraphQLName("siteKey") String siteKey) {
+    public Boolean getEnableFiltering(@GraphQLNonNull @GraphQLName("siteKey") @GraphQLDescription("Site key for the affected site") String siteKey) {
 
         try {
             return JCRTemplate.getInstance().doExecuteWithSystemSession(new JCRCallback<Boolean>() {
@@ -64,7 +64,7 @@ public class GqlHtmlFilteringMutation {
     @GraphQLField
     @GraphQLName("disableFiltering")
     @GraphQLDescription("Disables html filtering on site")
-    public Boolean getDisableFiltering(@GraphQLNonNull @GraphQLName("siteKey") String siteKey) {
+    public Boolean getDisableFiltering(@GraphQLNonNull @GraphQLName("siteKey") @GraphQLDescription("Site key for the affected site") String siteKey) {
 
         try {
             return JCRTemplate.getInstance().doExecuteWithSystemSession(new JCRCallback<Boolean>() {
