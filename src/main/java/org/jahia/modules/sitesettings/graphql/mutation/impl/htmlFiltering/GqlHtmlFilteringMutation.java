@@ -21,7 +21,7 @@ public class GqlHtmlFilteringMutation {
     @GraphQLField
     @GraphQLName("updateTags")
     @GraphQLDescription("Update list of filtered tags for the site")
-    public Boolean getUpdateTags(@GraphQLNonNull @GraphQLName("siteKey") String siteKey, @GraphQLName("tags") @GraphQLDescription("Updated list of tags, supply null to remove all tags.") List<String> tags) {
+    public Boolean getUpdateTags(@GraphQLNonNull @GraphQLName("siteKey") @GraphQLDescription("Site key for the affected site") String siteKey, @GraphQLName("tags") @GraphQLDescription("Updated list of tags, supply null to remove all tags.") List<String> tags) {
 
         try {
             return JCRTemplate.getInstance().doExecuteWithSystemSession(new JCRCallback<Boolean>() {

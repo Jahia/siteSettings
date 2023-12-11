@@ -21,7 +21,7 @@ public class GqlHtmlFilteringQuery {
     @GraphQLField
     @GraphQLName("filteringSettings")
     @GraphQLDescription("HTML filtering settings for a site")
-    public GqlHTMLFiltering getFilteringSettings(@GraphQLNonNull @GraphQLName("siteKey") String siteKey) {
+    public GqlHTMLFiltering getFilteringSettings(@GraphQLNonNull @GraphQLName("siteKey") @GraphQLDescription("Site key for the affected site") String siteKey) {
         GqlHTMLFiltering filtering = null;
 
         try {
