@@ -19,28 +19,6 @@ import java.util.stream.Collectors;
 public class GqlHtmlFilteringMutation {
 
     @GraphQLField
-    @GraphQLName("updateTags")
-    @GraphQLDescription("Update list of filtered tags for the site")
-    public Boolean getUpdateTags(@GraphQLNonNull @GraphQLName("siteKey") @GraphQLDescription("Site key for the affected site") String siteKey, @GraphQLName("tags") @GraphQLDescription("Updated list of tags, supply null to remove all tags.") List<String> tags) {
-
-        try {
-            return JCRTemplate.getInstance().doExecuteWithSystemSession(new JCRCallback<Boolean>() {
-                @Override
-                public Boolean doInJCR(JCRSessionWrapper session) throws RepositoryException {
-                    JCRNodeWrapper siteNode = session.getNode("/sites/" + siteKey);
-                    String t = tags == null ? "" : String.join(",", tags);
-                    siteNode.setProperty("j:filteredTags", t);
-                    session.save();
-
-                    return true;
-                }
-            });
-        } catch (RepositoryException e) {
-            throw new DataFetchingException(e);
-        }
-    }
-
-    @GraphQLField
     @GraphQLName("enableFiltering")
     @GraphQLDescription("Enables html filtering on site")
     public Boolean getEnableFiltering(@GraphQLNonNull @GraphQLName("siteKey") @GraphQLDescription("Site key for the affected site") String siteKey) {

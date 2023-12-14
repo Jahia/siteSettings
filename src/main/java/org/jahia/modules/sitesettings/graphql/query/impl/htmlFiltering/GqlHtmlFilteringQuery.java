@@ -12,7 +12,6 @@ import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.JCRTemplate;
 
 import javax.jcr.RepositoryException;
-import java.util.*;
 
 @GraphQLName("HTMLFilteringQuery")
 @GraphQLDescription("Query for html filtering settings")
@@ -30,10 +29,9 @@ public class GqlHtmlFilteringQuery {
                 @Override
                 public GqlHTMLFiltering doInJCR(JCRSessionWrapper session) throws RepositoryException {
                     JCRNodeWrapper siteNode = session.getNode("/sites/" + siteKey);
-                    List<String> tags = siteNode.hasProperty("j:filteredTags") ? Arrays.asList(siteNode.getPropertyAsString("j:filteredTags").split(",")) : Collections.emptyList();
                     boolean enabled = siteNode.hasProperty("j:doTagFiltering") && siteNode.getProperty("j:doTagFiltering").getBoolean();
 
-                    return new GqlHTMLFiltering(siteKey, tags, enabled);
+                    return new GqlHTMLFiltering(siteKey, enabled);
                 }
             });
         } catch (RepositoryException e) {
