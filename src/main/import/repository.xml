@@ -7,7 +7,7 @@
                     j:moduleType="module"
                     j:title="Jahia Site Settings"
                     jcr:primaryType="jnt:module">
-                
+
                 <portlets jcr:primaryType="jnt:portletFolder"/>
                 <files jcr:primaryType="jnt:folder"/>
                 <contents jcr:primaryType="jnt:contentFolder"/>
@@ -148,19 +148,6 @@
                                 <wcag-compliance jcr:primaryType="jnt:siteSettingsWcagCompliance"/>
                             </pagecontent>
                         </wcagCompliance>
-                        <htmlFiltering j:applyOn="jnt:virtualsite"
-                              j:defaultTemplate="false"
-                              j:hiddenTemplate="true"
-                              j:icon="/modules/siteSettings/templates/files/text_rich_colored.png"
-                              j:priority="100"
-                              j:requiredPermissionNames="siteAdminHtmlSettings"
-                              j:titleKey="siteSettings.label.htmlFiltering"
-                              jcr:mixinTypes="jmix:rbTitle"
-                              jcr:primaryType="jnt:contentTemplate">
-                            <pagecontent jcr:primaryType="jnt:contentList">
-                                <html-filtering jcr:primaryType="jnt:siteSettingsHtmlFiltering"/>
-                            </pagecontent>
-                        </htmlFiltering>
                         <manageModules j:applyOn="jnt:virtualsite"
                               j:defaultTemplate="false"
                               j:hiddenTemplate="true"
@@ -253,19 +240,6 @@
                                 <wcag-compliance jcr:primaryType="jnt:siteSettingsWcagCompliance" jcr:mixinTypes="jmix:renderable" j:view="settingsBootstrap3GoogleMaterialStyle"/>
                             </pagecontent>
                         </wcagCompliance-jahia-anthracite>
-                        <htmlFiltering-jahia-anthracite j:applyOn="jnt:virtualsite"
-                              j:defaultTemplate="false"
-                              j:hiddenTemplate="true"
-                              j:icon="/modules/siteSettings/templates/files/text_rich_colored.png"
-                              j:priority="100"
-                              j:requiredPermissionNames="siteAdminHtmlSettings"
-                              j:titleKey="siteSettings.label.htmlFiltering"
-                              jcr:mixinTypes="jmix:rbTitle"
-                              jcr:primaryType="jnt:contentTemplate">
-                            <pagecontent jcr:primaryType="jnt:contentList">
-                                <html-filtering jcr:primaryType="jnt:siteSettingsHtmlFiltering" jcr:mixinTypes="jmix:renderable" j:view="settingsBootstrap3GoogleMaterialStyle"/>
-                            </pagecontent>
-                        </htmlFiltering-jahia-anthracite>
                         <manageModules-jahia-anthracite j:applyOn="jnt:virtualsite"
                               j:defaultTemplate="false"
                               j:hiddenTemplate="true"
@@ -330,7 +304,7 @@
                         </page-models-jahia-anthracite>
                     </site-settings-base-jahia-anthracite>
                 </templates>
-                
+
             </siteSettings>
     </modules>
 </content>

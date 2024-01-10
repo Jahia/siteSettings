@@ -1,17 +1,8 @@
 import React from 'react';
 import {registry} from '@jahia/ui-extender';
-import {Crown, Funnel, Language, Module} from '@jahia/moonstone';
+import {Crown, Language, Module} from '@jahia/moonstone';
 
 export const registerRoutes = function () {
-    registry.add('adminRoute', 'settings/filtering', {
-        targets: ['administration-sites:50'],
-        requiredPermission: 'siteAdminHtmlSettings',
-        icon: <Funnel/>,
-        label: 'siteSettings:filtering.label',
-        isSelectable: true,
-        iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.htmlFiltering.html'
-    });
-
     registry.add('adminRoute', 'settings/languages', {
         targets: ['administration-sites:40'],
         requiredPermission: 'siteAdminLanguages',
