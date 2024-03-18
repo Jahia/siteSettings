@@ -1,7 +1,7 @@
 name: Nightly - Jahia Release
 
 on:
-  workflow_dispatch:  
+  workflow_dispatch:
 #  schedule:
 #    - cron: "0 0 * * *"
 
@@ -28,7 +28,7 @@ jobs:
           timeout_minutes: 20
           testrail_project: Site Settings Module
           tests_manifest: provisioning-manifest-snapshot.yml
-          jahia_image: jahia/jahia-discovery:8
+          jahia_image: jahia/jahia-ee:8
           should_use_build_artifacts: false
           should_skip_artifacts: true
           should_skip_notifications: false
