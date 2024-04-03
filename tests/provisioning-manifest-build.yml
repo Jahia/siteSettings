@@ -1,6 +1,6 @@
 - addMavenRepository: 'https://devtools.jahia.com/nexus/content/groups/internal@id=jahia-internal@snapshots'
-  username: NEXUS_USERNAME
-  password: NEXUS_PASSWORD
+  username: ${env:NEXUS_USERNAME}
+  password: ${env:NEXUS_PASSWORD}
 
 - installBundle:
       - 'mvn:org.jahia.modules/legacy-default-components/1.0.0-SNAPSHOT'
