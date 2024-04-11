@@ -1,6 +1,6 @@
 {
   "name": "@jahia/site-settings",
-  "version": "8.8.0-SNAPSHOT",
+  "version": "8.8.0",
   "husky": {
     "hooks": {
       "pre-push": "yarn lint:fix"
@@ -72,9 +72,9 @@
     "eslint-loader": "^3.0.2",
     "eslint-plugin-json": "^2.0.1",
     "husky": "^3.0.9",
-    "sass": "^1.66.1",
     "path": "^0.12.7",
     "rimraf": "^3.0.0",
+    "sass": "^1.66.1",
     "sass-loader": "^12.1.0",
     "style-loader": "^1.0.0",
     "stylelint": "^13.7.1",
