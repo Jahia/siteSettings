@@ -26,7 +26,7 @@
     </parent>
 
     <artifactId>siteSettings</artifactId>
-    <version>8.8.0</version>
+    <version>8.9.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>Jahia Site Settings</name>
     <description>Settings (groups,tools, etc) for site.</description>
@@ -35,7 +35,7 @@
         <connection>scm:git:git@github.com:Jahia/siteSettings.git</connection>
         <developerConnection>scm:git:git@github.com:Jahia/siteSettings.git</developerConnection>
         <url>scm:git:git@github.com:Jahia/siteSettings.git</url>
-        <tag>8_8_0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <properties>
