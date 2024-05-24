@@ -2,7 +2,7 @@ name: Nightly - Jahia Release
 
 on:
   workflow_dispatch:
- schedule:
+  schedule:
    - cron: "0 0 * * *"
 
 jobs:
