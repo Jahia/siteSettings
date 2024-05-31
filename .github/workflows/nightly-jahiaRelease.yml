@@ -25,7 +25,7 @@ jobs:
           incident_service: siteSettings-JahiaRL
           timeout_minutes: 20
           testrail_project: Site Settings Module
-          tests_manifest: provisioning-manifest-81x.yml
+          tests_manifest: provisioning-manifest-snapshot.yml
           jahia_image: jahia/jahia-ee:8
           should_use_build_artifacts: false
           should_skip_artifacts: true
