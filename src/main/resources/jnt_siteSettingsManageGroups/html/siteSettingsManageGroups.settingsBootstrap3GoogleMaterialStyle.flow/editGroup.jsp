@@ -220,10 +220,10 @@
                                   <i class="material-icons" style="vertical-align:middle">${principalIcon}</i>
                                 </td>
                                 <td>
-                                    ${fn:escapeXml(user:displayName(member))}
+                                    ${user:displayName(member)}
                                 </td>
                                 <td>
-                                    ${fn:escapeXml(user:fullName(member))}
+                                    ${user:fullName(member)}
                                 </td>
                                 <c:if test="${multipleProvidersAvailable}">
                                     <fmt:message var="i18nProviderLabel" key="providers.${member.providerName}.label"/>
