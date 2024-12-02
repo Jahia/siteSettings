@@ -85,7 +85,6 @@ jobs:
         with:
           module_id: siteSettings
           testrail_project: Site Settings Module
-          jahia_artifact_name: Integration-Tests-Standalone
           tests_manifest: provisioning-manifest-build.yml
           jahia_image: jahia/jahia-ee-dev:8-SNAPSHOT
           should_use_build_artifacts: true
