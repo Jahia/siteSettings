@@ -1,4 +1,4 @@
-import { createSite } from '@jahia/cypress'
+import {createSite, deleteSite} from '@jahia/cypress'
 import { generateRandomID } from '../utils/utils'
 import { SiteSettingsUsers } from '../page-object/siteSettingsUsers'
 describe('Create user', () => {
@@ -25,7 +25,7 @@ describe('Create user', () => {
     })
 
     after(function () {
-        //deleteSite(siteKey)
+        deleteSite(siteKey)
     })
 
     it('Create a new users and check it is displayed', () => {

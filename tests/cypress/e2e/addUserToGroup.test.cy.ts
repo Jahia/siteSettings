@@ -28,6 +28,7 @@ describe('Add user to group', () => {
     })
 
     after(function () {
+        deleteUser(userNameTest)
         deleteSite(siteKey)
     })
 
