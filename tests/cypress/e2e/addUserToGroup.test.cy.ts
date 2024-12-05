@@ -1,11 +1,10 @@
-
-import { createSite, deleteSite } from '@jahia/cypress'
-import {generateRandomID} from "../utils/utils";
-import {SiteSettingsGroups} from "../page-object/siteSettingsGroups";
+import { createSite, deleteSite, createUser } from '@jahia/cypress'
+import { generateRandomID } from '../utils/utils'
+import { SiteSettingsGroups } from '../page-object/siteSettingsGroups'
 describe('Add user to group', () => {
     const siteKey = 'siteSettingsSite'
     const languages = ['en', 'fr', 'de']
-    const userNameTest = 'user_' + generateRandomID()
+    const userNameTest = 'user1_' + generateRandomID()
     const groupNameTest = 'group_' + generateRandomID()
 
     before(function () {
@@ -22,28 +21,26 @@ describe('Add user to group', () => {
             mutationFile: 'graphql/createContent.graphql',
         })
 
-        cy.executeGroovy('groovy/createJcrUser.groovy', { USER_NAME: userNameTest,
-            USER_FIRSTNAME: "user1",  USER_LASTNAME: "test", USER_SITE : siteKey })
-
+        createUser(userNameTest, 'password', [
+            { name: 'j:firstName', value: 'user1' },
+            { name: 'j:lastName', value: 'test' },
+        ])
     })
 
     after(function () {
-
-        cy.executeGroovy('groovy/deleteJcrUser.groovy', { USER_NAME: userNameTest })
         deleteSite(siteKey)
     })
 
-    it('Create a group with users', () => {
+    it('Create a group with users check users are added', () => {
         cy.login()
 
-        // Go to site settings and languages edit mode
         const siteSettingsGroups = SiteSettingsGroups.visit(siteKey)
-        const groupCreationPage =  siteSettingsGroups.startGroupCreation()
+        const groupCreationPage = siteSettingsGroups.startGroupCreation()
         groupCreationPage.setGroupname(groupNameTest).save()
         const groupmemberspage = siteSettingsGroups.openGroupByName(groupNameTest)
 
         groupmemberspage.startAddUsers().addUsersToSelection(userNameTest).save()
 
-        groupmemberspage.verifyUserNameDisplayed("user1 test")
+        groupmemberspage.verifyUserNameDisplayed('user1 test')
     })
 })

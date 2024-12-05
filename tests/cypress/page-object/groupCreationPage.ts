@@ -1,8 +1,7 @@
 import { BasePage } from '@jahia/cypress'
 
 export class GroupCreationPage extends BasePage {
-
-    setGroupname( groupname : string) {
+    setGroupname(groupname: string) {
         cy.get('[name="groupname"]').type(groupname)
         return this
     }
@@ -14,5 +13,4 @@ export class GroupCreationPage extends BasePage {
         cy.get('[name=""]').click()
         return this
     }
-
 }

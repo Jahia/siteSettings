@@ -1,20 +1,18 @@
-import {BasePage} from '@jahia/cypress'
+import { BasePage } from '@jahia/cypress'
 
 export class GroupMembersPage extends BasePage {
-
     startAddUsers() {
         cy.get('[name="_eventId_editGroupMembers"]').click()
         return this
     }
 
-    addUsersToSelection(username:string) {
+    addUsersToSelection(username: string) {
         cy.contains(username).parent().find('[class="checkbox"]').click()
         return this
     }
 
-    save(){
+    save() {
         cy.get('[id="saveButton"]').click()
-
     }
 
     verifyUserNameDisplayed(text: string) {
