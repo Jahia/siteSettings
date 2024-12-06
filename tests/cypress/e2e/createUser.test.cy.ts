@@ -1,4 +1,4 @@
-import {createSite, deleteSite} from '@jahia/cypress'
+import { createSite, deleteSite } from '@jahia/cypress'
 import { generateRandomID } from '../utils/utils'
 import { SiteSettingsUsers } from '../page-object/siteSettingsUsers'
 describe('Create user', () => {
