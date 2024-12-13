@@ -14,12 +14,6 @@ describe('Add user to group', () => {
             serverName: 'localhost',
             locale: 'en',
         })
-        cy.apollo({
-            variables: {
-                pathOrId: '/sites/' + siteKey + '/home',
-            },
-            mutationFile: 'graphql/createContent.graphql',
-        })
 
         createUser(userNameTest, 'password', [
             { name: 'j:firstName', value: 'user1' },

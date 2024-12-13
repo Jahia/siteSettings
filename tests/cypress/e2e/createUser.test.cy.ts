@@ -16,12 +16,6 @@ describe('Create user', () => {
             serverName: 'localhost',
             locale: 'en',
         })
-        cy.apollo({
-            variables: {
-                pathOrId: '/sites/' + siteKey + '/home',
-            },
-            mutationFile: 'graphql/createContent.graphql',
-        })
     })
 
     after(function () {
