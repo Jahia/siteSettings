@@ -8,6 +8,6 @@ export const registerRoutes = function () {
         icon: <WebPage/>,
         label: 'siteSettings:models.label',
         isSelectable: true,
-        iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.page-models.html'
+        iframeUrl: window.contextJsParameters.contextPath + '/cms/edit/default/$lang/sites/$site-key.page-models.html?redirect=false&fullscreen=true'
     });
 };
