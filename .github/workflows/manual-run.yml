@@ -30,7 +30,7 @@ jobs:
       - uses: jahia/jahia-modules-action/integration-tests@v2
         with:
           module_id: siteSettings
-          testrail_project: Site Settings Module
+          testrail_project: Site Settings
           jahia_image: ${{ github.event.inputs.jahia_image }}
           should_use_build_artifacts: false
           should_skip_artifacts: true
