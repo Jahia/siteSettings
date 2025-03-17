@@ -309,7 +309,7 @@ public class UsersFlowHandler implements Serializable {
                     }
                     if (!readOnlyProps.contains("j:accountLocked")) {
                         hasErrors |= !setUserProperty("j:accountLocked", userProperties.getAccountLocked().toString(), "accountLocked", context, jahiaUser);
-                         hasErrors |= !setUserProperty("j:invalidateSessionTime", String.valueOf(new Date().getTime()), "accountLocked", context, jahiaUser);
+                        hasErrors |= !setUserProperty("j:invalidateSessionTime", String.valueOf(new Date().getTime()), "accountLocked", context, jahiaUser);
                     }
                     if (!readOnlyProps.contains("preferredLanguage")) {
                         hasErrors |= !setUserProperty("preferredLanguage", userProperties.getPreferredLanguage().toString(), "preferredLanguage", context, jahiaUser);
