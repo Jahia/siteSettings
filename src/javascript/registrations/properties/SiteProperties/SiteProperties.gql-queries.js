@@ -6,7 +6,7 @@ export const SITE_INFO_QUERY = gql`
         live: jcr(workspace: LIVE) {
             result:nodeByPath(path: $path) {
                 site {
-                    ...SiteInfo
+                    ...SettingsSiteInfo
                     ...NodeCacheRequiredFields
                 }
                 ...NodeCacheRequiredFields
@@ -15,14 +15,14 @@ export const SITE_INFO_QUERY = gql`
         default: jcr {
             result:nodeByPath(path: $path) {
                 site {
-                    ...SiteInfo
+                    ...SettingsSiteInfo
                     ...NodeCacheRequiredFields
                 }
                 ...NodeCacheRequiredFields
             }
         }
     }
-    fragment SiteInfo on JCRSite {
+    fragment SettingsSiteInfo on JCRSite {
         name
         displayName(language: $displayLanguage)
         defaultLanguage
