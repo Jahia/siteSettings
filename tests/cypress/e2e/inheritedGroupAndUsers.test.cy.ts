@@ -1,5 +1,5 @@
 describe('Inherited groups and users for a given group', () => {
-    before("Create users and groups", () => {
+    before('Create users and groups', () => {
         cy.executeGroovy('groovy/deleteGroups.groovy')
         cy.executeGroovy('groovy/createGroups.groovy')
     })
@@ -31,9 +31,9 @@ describe('Inherited groups and users for a given group', () => {
         // Edit users
         cy.get('button[name="_eventId_editGroupMembers"]').click()
         // Check users
-        cy.get( 'input[value$="user1"]').should('be.checked')
-        cy.get( 'input[value$="user2"]').should('be.checked')
-        cy.get( 'input[value$="user3"]').should('not.be.checked')
+        cy.get('input[value$="user1"]').should('be.checked')
+        cy.get('input[value$="user2"]').should('be.checked')
+        cy.get('input[value$="user3"]').should('not.be.checked')
         cy.get('input[value$="user4"]').should('not.be.checked')
         // Check groups
         cy.get('[data-sel-role="switchToGroupsView"]').click()

@@ -458,9 +458,9 @@ public class ManageGroupsFlowHandler implements Serializable {
         });
 
         Set<JCRGroupNode> groups = PrincipalViewHelper.getGroupSearchResult(null, siteKey, null, null, null, null);
-
+        List<JCRNodeWrapper> members = groupNode.getMembers();
         for (JCRGroupNode group : groups) {
-            sortedResults.put(group, groupNode.getMembers().contains(group));
+            sortedResults.put(group, members.contains(group));
         }
 
         LinkedHashMap<JahiaGroup, Boolean> results = new LinkedHashMap<>();
@@ -491,8 +491,9 @@ public class ManageGroupsFlowHandler implements Serializable {
                 searchCriteria.getProviders());
 
         // Flag current group users
+        List<JCRNodeWrapper> members = groupNode.getMembers();
         for (JCRUserNode user : users) {
-            sortedResults.put(user, groupNode.getMembers().contains(user));
+            sortedResults.put(user, members.contains(user));
         }
 
         LinkedHashMap<JahiaUser, Boolean> results = new LinkedHashMap<>();
