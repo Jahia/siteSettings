@@ -40,7 +40,7 @@ import java.util.*;
 
 /**
  * Web flow handler for group management actions.
- * 
+ *
  * @author Sergiy Shyrkov
  */
 public class ManageGroupsFlowHandler implements Serializable {
@@ -64,7 +64,7 @@ public class ManageGroupsFlowHandler implements Serializable {
 
     /**
      * Performs the creation of a new group for the site.
-     * 
+     *
      * @param group
      *            the group model object with the data for the new group
      * @param context
@@ -100,7 +100,7 @@ public class ManageGroupsFlowHandler implements Serializable {
 
     /**
      * Adds the specified members to the group.
-     * 
+     *
      * @param groupKey
      *            the key of the group to add members to
      * @param members
@@ -152,7 +152,7 @@ public class ManageGroupsFlowHandler implements Serializable {
 
     /**
      * Duplicates the selected group.
-     * 
+     *
      * @param selectedGroupKey
      *            the key of the group to be copied
      * @param newGroup
@@ -206,7 +206,7 @@ public class ManageGroupsFlowHandler implements Serializable {
 
     /**
      * Returns a map of all group providers currently registered.
-     * 
+     *
      * @return a map of all group providers currently registered
      */
     public Set<String> getProviders(final boolean isUsers, final boolean includeGlobals) throws RepositoryException {
@@ -222,7 +222,7 @@ public class ManageGroupsFlowHandler implements Serializable {
                     }
                     for (JCRStoreProvider provider : userManagerService.getProviderList(siteKey, session)) {
                         providerKeys.add(provider.getKey());
-                    }    
+                    }
                 } else {
                     if(includeGlobals) {
                         for (JCRStoreProvider provider : groupManagerService.getProviderList(null, session)) {
@@ -241,7 +241,7 @@ public class ManageGroupsFlowHandler implements Serializable {
 
     /**
      * Returns a set of group keys that are considered as system and cannot be deleted.
-     * 
+     *
      * @param groups
      *            the set of all groups from the search
      * @return a set of group keys that are considered as system and cannot be deleted
@@ -262,7 +262,7 @@ public class ManageGroupsFlowHandler implements Serializable {
 
     /**
      * Returns an empty (newly initialized) search criteria bean.
-     * 
+     *
      * @return an empty (newly initialized) search criteria bean
      */
     public SearchCriteria initCriteria(RequestContext ctx) {
@@ -271,7 +271,7 @@ public class ManageGroupsFlowHandler implements Serializable {
 
     /**
      * Returns an empty (newly initialized) group bean.
-     * 
+     *
      * @return an empty (newly initialized) group bean
      */
     public GroupModel initGroup(RequestContext ctx) {
@@ -289,7 +289,7 @@ public class ManageGroupsFlowHandler implements Serializable {
 
     /**
      * Looks up the specified group by key.
-     * 
+     *
      * @param selectedGroup
      *            the group key
      * @return up the specified group by key
@@ -317,7 +317,7 @@ public class ManageGroupsFlowHandler implements Serializable {
 
     /**
      * Returns the principal object for the specified key.
-     * 
+     *
      * @param memberKey
      *            the principal key
      * @return the principal object for the specified key
@@ -337,7 +337,7 @@ public class ManageGroupsFlowHandler implements Serializable {
 
     /**
      * Performs the removal of the specified groups for the site.
-     * 
+     *
      * @param selectedGroup
      *            a key of the group to be removed
      * @param context
@@ -382,7 +382,7 @@ public class ManageGroupsFlowHandler implements Serializable {
 
     /**
      * Performs the removal of the specified members from the group.
-     * 
+     *
      * @param groupKey
      *            the key of the group to remove members from
      * @param members
@@ -458,9 +458,9 @@ public class ManageGroupsFlowHandler implements Serializable {
         });
 
         Set<JCRGroupNode> groups = PrincipalViewHelper.getGroupSearchResult(null, siteKey, null, null, null, null);
-
+        List<JCRNodeWrapper> members = groupNode.getMembers();
         for (JCRGroupNode group : groups) {
-            sortedResults.put(group, groupNode.isMember(group));
+            sortedResults.put(group, members.contains(group));
         }
 
         LinkedHashMap<JahiaGroup, Boolean> results = new LinkedHashMap<>();
@@ -485,13 +485,15 @@ public class ManageGroupsFlowHandler implements Serializable {
             }
         });
 
+        // Load all users, they will be displayed in the user selector for the group.
         Set<JCRUserNode> users = PrincipalViewHelper.getSearchResult(searchCriteria.getSearchIn(),
                 searchCriteria.getSiteKey(), searchCriteria.getSearchString(), searchCriteria.getProperties(), searchCriteria.getStoredOn(),
                 searchCriteria.getProviders());
 
-        String groupName = groupNode.getName();
+        // Flag current group users
+        List<JCRNodeWrapper> members = groupNode.getMembers();
         for (JCRUserNode user : users) {
-            sortedResults.put(user, user.isMemberOfGroup(siteKey, groupName));
+            sortedResults.put(user, members.contains(user));
         }
 
         LinkedHashMap<JahiaUser, Boolean> results = new LinkedHashMap<>();
