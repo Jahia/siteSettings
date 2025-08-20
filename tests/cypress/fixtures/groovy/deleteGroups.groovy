@@ -18,6 +18,7 @@ def session = JCRSessionFactory.getInstance().getCurrentUserSession("default")
         log.info("delete user {}", user)
         userService.deleteUser(userPath, session)
     }
+    session.save()
 }
 
 // delete groups
@@ -28,4 +29,5 @@ def session = JCRSessionFactory.getInstance().getCurrentUserSession("default")
         log.info("delete group {}", group)
         groupService.deleteGroup(groupPath, session)
     }
+    session.save()
 }
