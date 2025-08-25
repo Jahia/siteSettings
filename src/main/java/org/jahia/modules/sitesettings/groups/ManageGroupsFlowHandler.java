@@ -124,7 +124,9 @@ public class ManageGroupsFlowHandler implements Serializable {
             }
 
             // do not add group to itself and check if the principal is not yet a member of the group
-            if (!group.equals(principal) && !group.isMember(principal) && (!(principal instanceof JCRGroupNode) || !((JCRGroupNode)principal).isMember(group))) {
+            boolean isNotCurrentGroup = !group.equals(principal);
+            boolean isNotCircularGroup = !(principal instanceof JCRGroupNode) || !((JCRGroupNode) principal).isMember(group);
+            if (isNotCurrentGroup && isNotCircularGroup) {
                 candidates.add(principal);
             }
         }
