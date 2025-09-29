@@ -11,7 +11,7 @@ jobs:
     name: Sonar Analysis
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/jahia/jahia-docker-mvn-cache:11-jdk-noble-node-base
+      image: ghcr.io/jahia/jahia-docker-mvn-cache:11-jdk-noble-mvn-loaded
       credentials:
         username: ${{ secrets.GH_PACKAGES_USERNAME }}
         password: ${{ secrets.GH_PACKAGES_TOKEN }}
