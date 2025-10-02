@@ -44,8 +44,8 @@ describe('Tests for site properties panel', () => {
     })
 
     it('Verifies systemname of system site is readonly', () => {
-        const siteProps = SiteProperties.visit('systemsite');
-        cy.contains('System Site').should('be.visible');
+        const siteProps = SiteProperties.visit('systemsite')
+        cy.contains('System Site').should('be.visible')
         const contentEditor = siteProps.edit()
         const field = contentEditor.getField(SmallTextField, 'nt:base_ce:systemName')
         field.get().find('input').should('have.attr', 'readonly', 'readonly')
