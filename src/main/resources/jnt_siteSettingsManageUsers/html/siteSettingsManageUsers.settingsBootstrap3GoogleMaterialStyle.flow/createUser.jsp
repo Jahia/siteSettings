@@ -69,7 +69,7 @@
                             <div class="col-md-6">
                                 <div class="form-group label-floating">
                                     <label class="control-label" for="email"><fmt:message key="label.email"/></label>
-                                    <input type="text" name="email" class="form-control" id="email" value="${userProperties.email}">
+                                    <input type="text" name="email" class="form-control" id="email" autocomplete="off" value="${userProperties.email}">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -83,13 +83,13 @@
                             <div class="col-md-6">
                                 <div class="form-group label-floating">
                                     <label class="control-label" for="password"><fmt:message key="label.password"/><strong class="text-danger">*</strong></label>
-                                    <input type="password" name="password" class="form-control" id="password" value="" autocomplete="off">
+                                    <input type="password" name="password" class="form-control" id="password" value="" autocomplete="new-password">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group label-floating">
                                     <label class="control-label" for="passwordConfirm"><fmt:message key="label.confirmPassword"/><strong class="text-danger">*</strong></label>
-                                    <input type="password" name="passwordConfirm" class="form-control" id="passwordConfirm" value="" autocomplete="off">
+                                    <input type="password" name="passwordConfirm" class="form-control" id="passwordConfirm" value="" autocomplete="new-password">
                                 </div>
                             </div>
                         </div>

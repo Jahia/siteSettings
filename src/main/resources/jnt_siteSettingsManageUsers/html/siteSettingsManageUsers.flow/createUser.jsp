@@ -60,7 +60,7 @@
                     <div class="row-fluid">
                         <div class="span4">
                             <label for="email"><fmt:message key="label.email"/></label>
-                            <input type="text" name="email" class="span12" id="email" value="${userProperties.email}">
+                            <input type="text" name="email" class="span12" id="email" value="${userProperties.email}" autocomplete="off">
                         </div>
                         <div class="span4">
                             <label for="organization"><fmt:message key="label.organization"/></label>
