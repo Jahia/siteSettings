@@ -61,7 +61,7 @@
                           <div class="col-md-6">
                               <div class="form-group label-floating">
                                   <label class="control-label" for="email"><fmt:message key="label.email"/></label>
-                                  <input class="form-control" type="text" name="email" id="email" value="${userProperties.email}"${functions:contains(readOnlyProperties, 'j:email') ? ' disabled="disabled"' : ''}>
+                                  <input class="form-control" type="text" name="email" id="email" autocomplete="off" value="${userProperties.email}" ${functions:contains(readOnlyProperties, 'j:email') ? ' disabled="disabled"' : ''}>
                               </div>
                           </div>
                           <div class="col-md-6">
@@ -79,7 +79,7 @@
                               <div class="form-group label-floating">
                                   <div class="input-group">
                                       <label class="control-label" for="password"><fmt:message key="label.password"/></label>
-                                      <input class="form-control" type="password" name="password" id="password" value=""${userProperties.readOnly or userProperties.external ? ' disabled="disabled"' : ''} autocomplete="off">
+                                      <input class="form-control" type="password" name="password" id="password" value=""${userProperties.readOnly or userProperties.external ? ' disabled="disabled"' : ''} autocomplete="new-password">
                                       <span class="input-group-btn">
                                           <i class="material-icons text-info" data-toggle="tooltip" data-placement="left"
                                              title="<fmt:message key='siteSettings.user.edit.password.no.change'/>"
@@ -92,7 +92,7 @@
                               <div class="form-group label-floating">
                                   <div class="input-group">
                                       <label class="control-label" for="passwordConfirm"><fmt:message key="label.confirmPassword"/></label>
-                                      <input class="form-control" type="password" name="passwordConfirm" id="passwordConfirm" value=""${userProperties.readOnly or userProperties.external ? ' disabled="disabled"' : ''} autocomplete="off">
+                                      <input class="form-control" type="password" name="passwordConfirm" id="passwordConfirm" value=""${userProperties.readOnly or userProperties.external ? ' disabled="disabled"' : ''} autocomplete="new-password">
                                       <span class="input-group-btn">
                                           <i class="material-icons text-info" data-toggle="tooltip" data-placement="left"
                                              title="<fmt:message key='siteSettings.user.edit.password.no.change'/>"
