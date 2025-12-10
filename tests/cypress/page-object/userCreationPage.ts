@@ -24,6 +24,12 @@ export class UserCreationPage extends BasePage {
         cy.get('[id="passwordConfirm"]').type(password)
         return this
     }
+
+    setEmail(email: string) {
+        cy.get('#email').type(email)
+        return this
+    }
+
     save() {
         cy.get('[name="_eventId_add"]').click()
     }

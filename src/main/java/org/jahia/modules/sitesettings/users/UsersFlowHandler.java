@@ -133,7 +133,7 @@ public class UsersFlowHandler implements Serializable {
                         if (userManagerService.userExists(userName, siteKey)) {
                              context.addMessage(new MessageBuilder().error().code(
                                    "siteSettings.users.bulk.errors.user.already.exists").arg(userName).build());
-                             hasErrors = true;                        
+                             hasErrors = true;
                         } else if (userManagerService.isUsernameSyntaxCorrect(userName)) {
                             PolicyEnforcementResult evalResult = pwdPolicyService.enforcePolicyOnUserCreate(userName, password);
                             if (evalResult.isSuccess()) {

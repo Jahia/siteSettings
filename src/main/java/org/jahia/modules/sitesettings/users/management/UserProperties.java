@@ -312,7 +312,7 @@ public class UserProperties implements Serializable {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = StringUtils.trim(email);
     }
 
     public void setEmailNotificationsDisabled(Boolean emailNotifications) {
