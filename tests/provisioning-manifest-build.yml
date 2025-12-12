@@ -26,3 +26,7 @@
       - 'mvn:org.jahia.modules/tabularList'
   autoStart: true
   uninstallPreviousVersion: true
+
+# Remove siteSettings module as it will be installed by the built one.
+- uninstallBundle:
+    - 'siteSettings'
