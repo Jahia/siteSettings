@@ -55,7 +55,7 @@
                     <input type="file" name="csvFile" id="csvFile"/>
                 </div>
                 <label for="csvSeparator"><fmt:message key="label.csvSeparator"/></label>
-                <input class="span6" type="text" name="csvSeparator" value="${csvFile.csvSeparator}" id="csvSeparator"/>
+                <input class="span6" type="text" name="csvSeparator" value="${csvFile.csvSeparator}" id="csvSeparator" maxLength="1"/>
             </fieldset>
 
         <fieldset>
