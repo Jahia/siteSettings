@@ -12,6 +12,8 @@ describe('Bulk Create Users XSS Prevention', () => {
         cy.iframe('[src="/cms/adminframe/default/en/settings.manageUsers.html"]').within(() => {
             bulkUserCreationPage = usersPage.startBulkUserCreation()
         })
+        //eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(500)
         cy.iframe('[src="/cms/adminframe/default/en/settings.manageUsers.html"]').within(() => {
             bulkUserCreationPage.setSeparator(',<script>alert("XSS")</script>')
             bulkUserCreationPage.getSeparator().then((separator) => {
@@ -26,6 +28,8 @@ describe('Bulk Create Users XSS Prevention', () => {
         cy.iframe('[src="/cms/adminframe/default/en/settings.manageUsers.html"]').within(() => {
             bulkUserCreationPage = usersPage.startBulkUserCreation()
         })
+        //eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(500)
         cy.iframe('[src="/cms/adminframe/default/en/settings.manageUsers.html"]').within(() => {
             bulkUserCreationPage.setCsvFile('csv/bulkCreateUsersXSS.csv')
             bulkUserCreationPage.setSeparator(',')
