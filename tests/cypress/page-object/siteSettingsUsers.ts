@@ -3,10 +3,9 @@ import { UserCreationPage } from './userCreationPage'
 import { BulkUserCreationPage } from './bulkUserCreationPage'
 
 export class SiteSettingsUsers extends BasePage {
-
     static visitGlobal() {
-        cy.visit('/jahia/administration/manageUsers');
-        return new SiteSettingsUsers();
+        cy.visit('/jahia/administration/manageUsers')
+        return new SiteSettingsUsers()
     }
 
     static visit(siteKey: string): SiteSettingsUsers {
@@ -21,7 +20,7 @@ export class SiteSettingsUsers extends BasePage {
 
     startBulkUserCreation() {
         cy.get('[onclick="doUserAction(\'bulkAddUser\')"]').click()
-        return new BulkUserCreationPage();
+        return new BulkUserCreationPage()
     }
 
     verifyUserNameDisplayed(text: string) {
