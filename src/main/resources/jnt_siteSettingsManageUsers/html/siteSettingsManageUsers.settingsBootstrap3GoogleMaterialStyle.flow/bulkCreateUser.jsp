@@ -66,7 +66,7 @@
 
                     <div class="form-group label-floating">
                         <label class="control-label" for="csvSeparator"><fmt:message key="label.csvSeparator"/></label>
-                        <input class="form-control" type="text" name="csvSeparator" value="${csvFile.csvSeparator}" id="csvSeparator"/>
+                        <input class="form-control" type="text" name="csvSeparator" value="${csvFile.csvSeparator}" id="csvSeparator" maxLength="1"/>
                     </div>
 
                     <div class="form-group">

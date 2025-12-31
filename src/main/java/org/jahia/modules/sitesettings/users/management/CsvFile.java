@@ -36,7 +36,9 @@ public class CsvFile implements Serializable {
     }
 
     public void setCsvSeparator(String csvSeparator) {
-        this.csvSeparator = csvSeparator;
+        if(csvSeparator.length() == 1) {
+            this.csvSeparator = csvSeparator;
+        }
     }
 
     public MultipartFile getCsvFile() {
