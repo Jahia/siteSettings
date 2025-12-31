@@ -40,7 +40,7 @@ describe('Bulk Create Users XSS Prevention', () => {
         }).then((response) => {
             expect(response.data.admin.userAdmin.users.nodes.some((user) => user.node.displayName === 'steven'))
             response.data.admin.userAdmin.users.nodes.forEach((user) => {
-                if(user.node.displayName === 'steven') deleteNode(user.node.uuid)
+                if (user.node.displayName === 'steven') deleteNode(user.node.uuid)
             })
         })
     })
