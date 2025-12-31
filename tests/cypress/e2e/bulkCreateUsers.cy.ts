@@ -38,13 +38,10 @@ describe('Bulk Create Users XSS Prevention', () => {
         cy.apollo({
             queryFile: 'graphql/getUsersQuery.graphql',
         }).then((response) => {
-            cy.log(JSON.stringify(response, null, 2))
             expect(response.data.admin.userAdmin.users.nodes.some((user) => user.node.displayName === 'steven'))
-            //eslint-disable-next-line cypress/no-unnecessary-waiting
-            cy.wait(500)
-            deleteNode(
-                response.data.admin.userAdmin.users.nodes.find((user) => user.node.displayName === 'steven').node.uuid,
-            )
+            response.data.admin.userAdmin.users.nodes.forEach((user) => {
+                if(user.node.displayName === 'steven') deleteNode(user.node.uuid)
+            })
         })
     })
 })
