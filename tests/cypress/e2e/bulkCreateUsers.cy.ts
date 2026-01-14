@@ -38,7 +38,7 @@ describe('Bulk Create Users XSS Prevention', () => {
         cy.apollo({
             queryFile: 'graphql/getUsersQuery.graphql',
         }).then((response) => {
-            expect(response.data.admin.userAdmin.users.nodes.some((user) => user.node.displayName === 'steven'))
+            expect(response.data.admin.userAdmin.users.nodes.some((user) => user.node.displayName === 'steven')).to.be.true
             response.data.admin.userAdmin.users.nodes.forEach((user) => {
                 if (user.node.displayName === 'steven') deleteNode(user.node.uuid)
             })
