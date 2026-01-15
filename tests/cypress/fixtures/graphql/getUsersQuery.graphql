@@ -1,0 +1,14 @@
+query {
+  admin {
+    userAdmin {
+      users {
+        nodes {
+          node {
+            displayName,
+            uuid
+          }
+        }
+      }
+    }
+  }
+}
