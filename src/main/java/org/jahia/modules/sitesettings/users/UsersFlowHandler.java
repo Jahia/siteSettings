@@ -18,6 +18,7 @@ package org.jahia.modules.sitesettings.users;
 import au.com.bytecode.opencsv.CSVReader;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.spi.LoggerAdapter;
 import org.jahia.data.viewhelper.principal.PrincipalViewHelper;
 import org.jahia.modules.sitesettings.users.management.CsvFile;
 import org.jahia.modules.sitesettings.users.management.SearchCriteria;
@@ -112,7 +113,7 @@ public class UsersFlowHandler implements Serializable {
                 try {
 
                     csvReader = new CSVReader(new InputStreamReader(csvFile.getCsvFile().getInputStream(), "UTF-8"),
-                            csvFile.getCsvSeparator().charAt(0));
+                            csvFile.getCsvSeparator());
                     // the first line contains the column names;
                     String[] headerElements = csvReader.readNext();
                     List<String> headerElementList = Arrays.asList(headerElements);
@@ -188,7 +189,7 @@ public class UsersFlowHandler implements Serializable {
 
     public CsvFile initCSVFile() {
         CsvFile csvFile = new CsvFile();
-        csvFile.setCsvSeparator(",");
+        csvFile.setCsvSeparator(',');
         return csvFile;
     }
 
