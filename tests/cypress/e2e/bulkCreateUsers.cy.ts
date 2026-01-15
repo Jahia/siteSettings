@@ -45,12 +45,6 @@ describe('Bulk Create Users XSS Prevention', () => {
                         const userExist = response.data.admin.userAdmin.users.nodes.some(
                             (user) => user.node.displayName === 'steven',
                         )
-                        if (userExist)
-                            deleteNode(
-                                response.data.admin.userAdmin.users.nodes.find(
-                                    (user) => user.node.displayName === 'steven',
-                                ).node.uuid,
-                            )
                         return userExist
                     })
             },
@@ -59,5 +53,13 @@ describe('Bulk Create Users XSS Prevention', () => {
                 interval: 500,
             },
         )
+
+        cy.apollo({
+            queryFile: 'graphql/getUsersQuery.graphql',
+        }).then((response) => {
+                deleteNode(response.data.admin.userAdmin.users.nodes.find(
+                    (user) => user.node.displayName === 'steven',
+                ).node.uuid)
+        })
     })
 })
