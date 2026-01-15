@@ -35,14 +35,29 @@ describe('Bulk Create Users XSS Prevention', () => {
             bulkUserCreationPage.setSeparator(',')
             bulkUserCreationPage.save()
         })
-        cy.apollo({
-            queryFile: 'graphql/getUsersQuery.graphql',
-        }).then((response) => {
-            expect(response.data.admin.userAdmin.users.nodes.some((user) => user.node.displayName === 'steven')).to.be
-                .true
-            response.data.admin.userAdmin.users.nodes.forEach((user) => {
-                if (user.node.displayName === 'steven') deleteNode(user.node.uuid)
-            })
-        })
+        cy.waitUntil(
+            () => {
+                return cy
+                    .apollo({
+                        queryFile: 'graphql/getUsersQuery.graphql',
+                    })
+                    .then((response) => {
+                        const userExist = response.data.admin.userAdmin.users.nodes.some(
+                            (user) => user.node.displayName === 'steven',
+                        )
+                        if (userExist)
+                            deleteNode(
+                                response.data.admin.userAdmin.users.nodes.find(
+                                    (user) => user.node.displayName === 'steven',
+                                ).node.uuid,
+                            )
+                        return userExist
+                    })
+            },
+            {
+                timeout: 10000,
+                interval: 500,
+            },
+        )
     })
 })
