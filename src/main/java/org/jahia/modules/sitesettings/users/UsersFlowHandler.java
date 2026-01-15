@@ -18,7 +18,6 @@ package org.jahia.modules.sitesettings.users;
 import au.com.bytecode.opencsv.CSVReader;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.spi.LoggerAdapter;
 import org.jahia.data.viewhelper.principal.PrincipalViewHelper;
 import org.jahia.modules.sitesettings.users.management.CsvFile;
 import org.jahia.modules.sitesettings.users.management.SearchCriteria;
