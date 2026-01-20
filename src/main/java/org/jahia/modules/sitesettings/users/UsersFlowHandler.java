@@ -112,7 +112,7 @@ public class UsersFlowHandler implements Serializable {
                 try {
 
                     csvReader = new CSVReader(new InputStreamReader(csvFile.getCsvFile().getInputStream(), "UTF-8"),
-                            csvFile.getCsvSeparator().charAt(0));
+                            csvFile.getCsvSeparator());
                     // the first line contains the column names;
                     String[] headerElements = csvReader.readNext();
                     List<String> headerElementList = Arrays.asList(headerElements);
@@ -188,7 +188,7 @@ public class UsersFlowHandler implements Serializable {
 
     public CsvFile initCSVFile() {
         CsvFile csvFile = new CsvFile();
-        csvFile.setCsvSeparator(",");
+        csvFile.setCsvSeparator(',');
         return csvFile;
     }
 
