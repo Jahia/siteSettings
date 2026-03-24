@@ -14,6 +14,8 @@ jobs:
       module_id: siteSettings
       provisioning_manifest: provisioning-manifest-build.yml
       incident_service: siteSettings-JahiaSN
+      should_use_build_artifacts: false
+      should_skip_artifacts: true
       jahia_image: ghcr.io/jahia/jahia-ee-dev:8-SNAPSHOT
       artifact_prefix: siteSettings
       testrail_project: Site Settings
