@@ -12,7 +12,7 @@ jobs:
     uses: Jahia/jahia-modules-action/.github/workflows/reusable-integration-tests.yml@v2
     with:
       module_id: siteSettings
-      provisioning_manifest: provisioning-manifest-build.yml
+      provisioning_manifest: provisioning-manifest-snapshot.yml
       incident_service: siteSettings-JahiaRL
       jahia_image: jahia/jahia-ee:8
       artifact_prefix: siteSettings
