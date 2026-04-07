@@ -122,19 +122,6 @@
                     <site-settings-base j:view="siteSettings"
                                 jcr:mixinTypes="jmix:useUILocale"
                                 jcr:primaryType="jnt:template">
-                        <manageLanguages j:applyOn="jnt:virtualsite"
-                                j:defaultTemplate="false"
-                                j:hiddenTemplate="true"
-                                j:icon="/modules/siteSettings/templates/files/signpost.png"
-                                j:priority="100"
-                                j:requiredPermissionNames="siteAdminLanguages"
-                                j:titleKey="siteSettings.label.manageLanguages"
-                                jcr:mixinTypes="jmix:rbTitle"
-                                jcr:primaryType="jnt:contentTemplate">
-                            <pagecontent jcr:primaryType="jnt:contentList">
-                                <manage-languages jcr:primaryType="jnt:siteSettingsManageLanguages"/>
-                            </pagecontent>
-                        </manageLanguages>
                         <wcagCompliance j:applyOn="jnt:virtualsite"
                                j:defaultTemplate="false"
                                j:hiddenTemplate="true"
@@ -214,19 +201,6 @@
                     <site-settings-base-jahia-anthracite j:view="settingsBootstrap3GoogleMaterialStyle"
                                 jcr:mixinTypes="jmix:useUILocale"
                                 jcr:primaryType="jnt:template">
-                        <manageLanguages-jahia-anthracite j:applyOn="jnt:virtualsite"
-                                j:defaultTemplate="false"
-                                j:hiddenTemplate="true"
-                                j:icon="/modules/siteSettings/templates/files/signpost.png"
-                                j:priority="100"
-                                j:requiredPermissionNames="siteAdminLanguages"
-                                j:titleKey="siteSettings.label.manageLanguages"
-                                jcr:mixinTypes="jmix:rbTitle"
-                                jcr:primaryType="jnt:contentTemplate">
-                            <pagecontent jcr:primaryType="jnt:contentList">
-                                <manage-languages jcr:primaryType="jnt:siteSettingsManageLanguages" jcr:mixinTypes="jmix:renderable" j:view="settingsBootstrap3GoogleMaterialStyle"/>
-                            </pagecontent>
-                        </manageLanguages-jahia-anthracite>
                         <wcagCompliance-jahia-anthracite j:applyOn="jnt:virtualsite"
                                j:defaultTemplate="false"
                                j:hiddenTemplate="true"
