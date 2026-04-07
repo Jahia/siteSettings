@@ -5,9 +5,6 @@
   "users": {
     "label": "Benutzer verwalten"
   },
-  "languages": {
-    "label": "Sprachen"
-  },
   "filtering": {
     "label": "HTML-Filterung"
   },

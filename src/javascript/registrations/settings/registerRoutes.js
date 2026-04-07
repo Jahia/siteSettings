@@ -1,15 +1,16 @@
 import React from 'react';
 import {registry} from '@jahia/ui-extender';
 import {Crown, Language, Module} from '@jahia/moonstone';
+import {LanguageSettings} from './LanguageSettings/LanguageSettings';
 
 export const registerRoutes = function () {
     registry.add('adminRoute', 'settings/languages', {
         targets: ['administration-sites:40'],
         requiredPermission: 'siteAdminLanguages',
         icon: <Language/>,
-        label: 'siteSettings:languages.label',
+        label: 'siteSettings:label.title',
         isSelectable: true,
-        iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.manageLanguages.html'
+        render: () => <LanguageSettings/>
     });
 
     // TODO BACKLOG-13371 add these lines or removed them definitely
