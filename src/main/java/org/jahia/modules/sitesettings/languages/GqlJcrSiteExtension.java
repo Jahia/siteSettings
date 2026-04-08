@@ -8,8 +8,6 @@ import graphql.annotations.annotationTypes.GraphQLTypeExtension;
 import org.jahia.modules.graphql.provider.dxm.site.GqlJcrSite;
 import org.jahia.services.content.JCRContentUtils;
 import org.jahia.services.content.decorator.JCRSiteNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
@@ -21,8 +19,6 @@ import java.util.stream.Stream;
 
 @GraphQLTypeExtension(GqlJcrSite.class)
 public class GqlJcrSiteExtension {
-    private static final Logger logger = LoggerFactory.getLogger(GqlJcrSiteExtension.class);
-
     private final GqlJcrSite gqlJcrSite;
 
     public GqlJcrSiteExtension(GqlJcrSite gqlJcrSite) {
