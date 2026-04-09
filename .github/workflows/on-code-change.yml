@@ -71,3 +71,4 @@ jobs:
       artifact_prefix: siteSettings
       testrail_project: Site Settings
       timeout_job: 45
+      module_branch: ${{ github.head_ref }}
