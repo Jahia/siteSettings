@@ -85,6 +85,7 @@ export const LanguageSettings = () => {
 
     return (
         <LayoutContent isLoading={loading}
+                       aria-labelledby="language-settings"
                        header={
                            <Header mainActions={[
                                <Button key="addLanguage"

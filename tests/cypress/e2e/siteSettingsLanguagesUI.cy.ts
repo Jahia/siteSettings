@@ -1,6 +1,8 @@
 import {
     BaseComponent,
     Button,
+    createSite,
+    deleteSite,
     Dropdown,
     getComponent,
     getComponentByRole,
@@ -8,22 +10,33 @@ import {
     Menu,
     Table,
 } from '@jahia/cypress'
-import { gql } from '@apollo/client'
+import {gql} from '@apollo/client'
 
 describe('UI Site settings language', () => {
+    const siteKey = 'siteSettingsSite'
+    const languages = ['en', 'fr', 'de']
+    const locale = 'en'
+
+    before(() => createSite(siteKey, {
+        languages: languages.join(','),
+        templateSet: 'dx-base-demo-templates',
+        serverName: 'localhost',
+        locale
+    }))
+    after(() => deleteSite(siteKey))
+
     beforeEach(() => cy.login())
     afterEach(() => cy.logout())
 
     const visitSiteSettingsLanguages = () => {
-        // visit systemsite settings languages page
-        cy.visit('/jahia/administration/systemsite/settings/languages')
+        // visit site settings languages page
+        cy.visit(`/jahia/administration/${siteKey}/settings/languages`)
     }
 
-    it('should display systemsite languages', () => {
+    it('should display settings languages', () => {
         visitSiteSettingsLanguages()
 
-        // 6 rows = 6 languages set
-        getComponent(Table).getRows().should('have.length', 6)
+        getComponent(Table).getRows().should('have.length', languages.length)
     })
 
     it('should display default value', () => {
@@ -51,7 +64,7 @@ describe('UI Site settings language', () => {
         // reset value
         cy.apollo({
             variables: {
-                path: '/sites/systemsite',
+                path: `/sites/${siteKey}`,
                 mixLanguage: true,
                 allowsUnlistedLanguages: true,
             },

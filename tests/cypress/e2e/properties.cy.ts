@@ -37,6 +37,12 @@ describe('Tests for site properties panel', () => {
         cy.contains(newSiteName).should('be.visible')
     })
 
+    it('Navigates to edit languages', () => {
+        const siteProps = SiteProperties.visit(siteKey)
+        siteProps.editLanguages()
+        cy.get('[aria-labelledby="language-settings"]').should('be.visible')
+    })
+
     it('Verifies systemname of system site is readonly', () => {
         const siteProps = SiteProperties.visit('systemsite')
         cy.contains('System Site').should('be.visible')
