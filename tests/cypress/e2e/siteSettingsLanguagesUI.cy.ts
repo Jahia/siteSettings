@@ -10,7 +10,7 @@ import {
     Menu,
     Table,
 } from '@jahia/cypress'
-import { gql } from '@apollo/client'
+import gql from 'graphql-tag'
 
 describe('UI Site settings language', () => {
     const siteKey = 'siteSettingsSite'
