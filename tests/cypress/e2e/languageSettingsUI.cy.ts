@@ -17,7 +17,7 @@ describe('Tests on UI for language settings', () => {
             expect(result.data.jcr.nodeByPath.properties[0].value).deep.eq('false')
         })
         const languageSettings = new LanguageSettings()
-        LanguageSettings.visit('languagesTestSite', 'ca')
+        LanguageSettings.visit('languagesTestSite')
         languageSettings.switchReplaceUntranslatedWithDefault()
         languageSettings.submitChanges()
         cy.waitUntil(

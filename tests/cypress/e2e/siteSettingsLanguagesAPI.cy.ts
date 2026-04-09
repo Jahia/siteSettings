@@ -1,8 +1,21 @@
 import gql from 'graphql-tag'
+import {createSite, deleteSite} from "@jahia/cypress";
 
 describe('GraphQL API calls', () => {
-    before(() => cy.login())
-    after(() => cy.logout())
+    const siteKey = 'siteSettingsSite'
+    const languages = ['en', 'fr', 'de']
+    const locale = 'en'
+
+    before(() => createSite(siteKey, {
+        languages: languages.join(','),
+        templateSet: 'dx-base-demo-templates',
+        serverName: 'localhost',
+        locale
+    }))
+    after(() => deleteSite(siteKey))
+
+    beforeEach(() => cy.login())
+    afterEach(() => cy.logout())
 
     // get systemsite default locales
     it('should get systemsite default locales', () => {
@@ -10,9 +23,9 @@ describe('GraphQL API calls', () => {
             query: gql`
                 {
                     jcr(workspace: EDIT) {
-                        nodeByPath(path: "/sites/systemsite") {
+                        nodeByPath(path: "/sites/${siteKey}") {
                             site {
-                                siteLocales(language: "en") {
+                                siteLocales(language: "${locale}") {
                                     language
                                 }
                             }
@@ -22,8 +35,8 @@ describe('GraphQL API calls', () => {
             `,
         }).should((result) => {
             const data = result?.data?.jcr?.nodeByPath?.site?.siteLocales
-            expect(data).length(6)
-            expect(data.map((l) => l.language)).to.deep.equal(['en', 'fr', 'de', 'it', 'pt', 'es'])
+            expect(data).length(languages.length)
+            expect(data.map((l) => l.language)).to.deep.equal(languages)
         })
     })
 
@@ -33,7 +46,7 @@ describe('GraphQL API calls', () => {
             query: gql`
                 {
                     admin {
-                        availableLocales(language: "en") {
+                        availableLocales(language: "${locale}") {
                             language
                         }
                     }

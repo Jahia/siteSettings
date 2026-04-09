@@ -156,6 +156,9 @@ export const LanguageModal = ({
                               placeholder={t('label.modal.availability.placeholder')}
                               variant="outlined"
                               className={styles.dropdown}
+                              data-value={selectedLanguage.activeInEdit && selectedLanguage.activeInLive && selectedLanguage.mandatory ? 'required' :
+                                  selectedLanguage.activeInEdit && selectedLanguage.activeInLive ? 'active' :
+                                      selectedLanguage.activeInEdit && !selectedLanguage.activeInLive ? 'inactiveInLive' : 'inactive'}
                               value={selectedLanguage.activeInEdit && selectedLanguage.activeInLive && selectedLanguage.mandatory ? 'required' :
                                   selectedLanguage.activeInEdit && selectedLanguage.activeInLive ? 'active' :
                                       selectedLanguage.activeInEdit && !selectedLanguage.activeInLive ? 'inactiveInLive' : 'inactive'}
