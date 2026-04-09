@@ -26,3 +26,4 @@ jobs:
       artifact_prefix: siteSettings-tests-artifacts
       testrail_project: Site Settings
       should_skip_testrail: true
+      module_branch: ${{ github.ref }}
