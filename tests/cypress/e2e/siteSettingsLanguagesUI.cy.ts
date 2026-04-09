@@ -10,23 +10,31 @@ import {
     Menu,
     Table,
 } from '@jahia/cypress'
-import {gql} from '@apollo/client'
+import { gql } from '@apollo/client'
 
 describe('UI Site settings language', () => {
     const siteKey = 'siteSettingsSite'
     const languages = ['en', 'fr', 'de']
     const locale = 'en'
 
-    before(() => createSite(siteKey, {
-        languages: languages.join(','),
-        templateSet: 'dx-base-demo-templates',
-        serverName: 'localhost',
-        locale
-    }))
-    after(() => deleteSite(siteKey))
+    before(() => {
+        createSite(siteKey, {
+            languages: languages.join(','),
+            templateSet: 'dx-base-demo-templates',
+            serverName: 'localhost',
+            locale,
+        })
+    })
+    after(() => {
+        deleteSite(siteKey)
+    })
 
-    beforeEach(() => cy.login())
-    afterEach(() => cy.logout())
+    beforeEach(() => {
+        cy.login()
+    })
+    afterEach(() => {
+        cy.logout()
+    })
 
     const visitSiteSettingsLanguages = () => {
         // visit site settings languages page
