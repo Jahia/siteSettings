@@ -1,18 +1,22 @@
 import gql from 'graphql-tag'
-import {createSite, deleteSite} from "@jahia/cypress";
+import { createSite, deleteSite } from '@jahia/cypress'
 
 describe('GraphQL API calls', () => {
     const siteKey = 'siteSettingsSite'
     const languages = ['en', 'fr', 'de']
     const locale = 'en'
 
-    before(() => createSite(siteKey, {
-        languages: languages.join(','),
-        templateSet: 'dx-base-demo-templates',
-        serverName: 'localhost',
-        locale
-    }))
-    after(() => deleteSite(siteKey))
+    before(() => {
+        createSite(siteKey, {
+            languages: languages.join(','),
+            templateSet: 'dx-base-demo-templates',
+            serverName: 'localhost',
+            locale,
+        })
+    })
+    after(() => {
+        deleteSite(siteKey)
+    })
 
     beforeEach(() => cy.login())
     afterEach(() => cy.logout())

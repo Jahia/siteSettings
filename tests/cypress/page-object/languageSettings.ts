@@ -1,4 +1,4 @@
-import {BaseComponent, Button, getComponentByRole, getComponentBySelector} from "@jahia/cypress";
+import { BaseComponent, Button, getComponentByRole, getComponentBySelector } from '@jahia/cypress'
 
 export class LanguageSettings {
     static visit(siteKey: string): void {

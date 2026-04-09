@@ -1,4 +1,4 @@
-import {BasePage, Button, Dropdown, getComponent, getComponentByRole, Menu, Table} from '@jahia/cypress'
+import { BasePage, Button, Dropdown, getComponent, getComponentByRole, Menu, Table } from '@jahia/cypress'
 
 export class SiteSettingsLanguages extends BasePage {
     static visit(siteKey: string): SiteSettingsLanguages {
@@ -7,12 +7,17 @@ export class SiteSettingsLanguages extends BasePage {
     }
 
     isLanguageActivateForTargetMode(lang: string, mode: string, expectedValue: string) {
-        getComponent(Table).get()
+        getComponent(Table)
+            .get()
             .find(`span.moonstone-pill:contains('${lang}')`)
-            .parentsUntil('tr').parent()
-            .find('button').last().click()
+            .parentsUntil('tr')
+            .parent()
+            .find('button')
+            .last()
+            .click()
         getComponent(Menu).select('Edit')
-        return getComponentByRole(Dropdown, 'availability').get()
+        return getComponentByRole(Dropdown, 'availability')
+            .get()
             .then(($el) => {
                 return $el.attr('data-value') === expectedValue
             })
