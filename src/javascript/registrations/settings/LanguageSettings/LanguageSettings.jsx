@@ -1,48 +1,20 @@
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {shallowEqual, useSelector} from 'react-redux';
 import {useTranslation} from 'react-i18next';
-import {gql, useQuery} from '@apollo/client';
+import {useQuery} from '@apollo/client';
 import {Add, Button, Header, LayoutContent} from '@jahia/moonstone';
-import {PredefinedFragments, useNodeChecks} from '@jahia/data-helper';
+import {useNodeChecks} from '@jahia/data-helper';
 import {LanguageContent} from './LanguageContent';
 import {UntranslatedContent} from './UntranslatedContent';
 import {LanguageModal} from './LanguageModal';
+import * as LanguageGraphQL from './Language.graphql';
 
 export const LanguageSettings = () => {
     const {t} = useTranslation('siteSettings');
     const {site, uilang} = useSelector(state => ({site: state.site, uilang: state.uilang}), shallowEqual);
     const res = useNodeChecks({path: `/sites/${site}`, uilang}, {requiredPermission: 'siteAdminLanguages'});
 
-    const {data, loading, error, refetch} = useQuery(gql`query getSiteLanguages($path: String!, $displayLanguage: String!) {
-        jcr(workspace: EDIT) {
-            result: nodeByPath(path: $path) {
-                site {
-                    name
-                    displayName(language: $displayLanguage)
-                    defaultLanguage                    
-                    mixLanguage: property(name: "j:mixLanguage") { booleanValue }
-                    allowsUnlistedLanguages: property(name: "j:allowsUnlistedLanguages") { booleanValue }
-                    siteLocales(language: $displayLanguage) {
-                        language
-                        count                        
-                        displayName(language: $displayLanguage)
-                        mandatory
-                        activeInEdit
-                        activeInLive
-                    }
-                    ...NodeCacheRequiredFields
-                }
-                ...NodeCacheRequiredFields
-            }
-        }
-        admin {
-            availableLocales(language: $displayLanguage) {
-                displayName(language: $displayLanguage)
-                language
-            }
-        }
-    }
-    ${PredefinedFragments.nodeCacheRequiredFields.gql}`, {
+    const {data, loading, error, refetch} = useQuery(LanguageGraphQL.gqlGetSiteLanguages, {
         variables: {
             path: `/sites/${site}`,
             displayLanguage: uilang
@@ -67,11 +39,10 @@ export const LanguageSettings = () => {
     const allowsUnlistedLanguages = data?.jcr?.result?.site?.allowsUnlistedLanguages?.booleanValue;
     const mixLanguage = data?.jcr?.result?.site?.mixLanguage?.booleanValue;
     const defaultLanguage = data?.jcr?.result?.site?.defaultLanguage;
-    useMemo(() => setSiteLocales(data?.jcr?.result?.site?.siteLocales || []), [data]);
+    useEffect(() => setSiteLocales(data?.jcr?.result?.site?.languages || []), [data]);
 
     const openModal = language => {
-        language.isNew = !language.language;
-        setSelectedLanguage(language);
+        setSelectedLanguage({...language, isNew: !language.language});
         setModalOpen(true);
     };
 
@@ -122,8 +93,7 @@ export const LanguageSettings = () => {
                                                 refetch={refetch}/>
                                <UntranslatedContent site={site}
                                                     value={allowsUnlistedLanguages && mixLanguage ? 'all' :
-                                                        !allowsUnlistedLanguages && mixLanguage ? 'only' :
-                                                            !allowsUnlistedLanguages && !mixLanguage ? 'never' : 'never'}
+                                                        mixLanguage ? 'only' : 'never'}
                                                     refetch={refetch}/>
                            </>
                        }/>

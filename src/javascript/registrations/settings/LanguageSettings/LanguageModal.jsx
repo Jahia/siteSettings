@@ -1,6 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {useTranslation} from 'react-i18next';
-import {gql, useMutation} from '@apollo/client';
+import {useMutation} from '@apollo/client';
 import {
     Button,
     CheckboxGroup,
@@ -14,7 +15,8 @@ import {
     Typography
 } from '@jahia/moonstone';
 import styles from './LanguageSettings.scss';
-import PropTypes from 'prop-types';
+import * as LanguageGraphQL from './Language.graphql';
+import * as LanguageHelper from './LanguageHelper';
 
 export const LanguageModal = ({
     site,
@@ -39,44 +41,15 @@ export const LanguageModal = ({
         closeModal(null, false);
     };
 
-    const [gqlSave] = useMutation(gql`mutation siteLanguages($path: String!, $defaultLanguage: String!, $languages: [String!]!, $mandatoryLanguages: [String!]!, $inactiveLanguages: [String!]!, $inactiveLiveLanguages: [String!]!) {
-          jcr(workspace: EDIT) {
-            mutateNode(pathOrId: $path) {
-              defaultLanguage: mutateProperty(name: "j:defaultLanguage") {
-                setValue(value: $defaultLanguage, type: STRING)
-              }
-              languages: mutateProperty(name: "j:languages") {
-                setValues(values: $languages, type: STRING)
-              }
-              mandatoryLanguages: mutateProperty(name: "j:mandatoryLanguages") {
-                setValues(values: $mandatoryLanguages, type: STRING)
-              }
-              inactiveLanguages: mutateProperty(name: "j:inactiveLanguages") {
-                setValues(values: $inactiveLanguages, type: STRING)
-              }
-              inactiveLiveLanguages: mutateProperty(name: "j:inactiveLiveLanguages") {
-                setValues(values: $inactiveLiveLanguages, type: STRING)
-              }
-            }
-          }
-        }`);
+    const [gqlSave] = useMutation(LanguageGraphQL.gqlSave);
 
-    const save = (l, addLanguage) => {
-        if (addLanguage) {
-            siteLocales = [...siteLocales, l];
-        } else {
-            siteLocales = siteLocales.map(lang => lang.language === l.language ? l : lang);
-        }
+    const save = (updatedLanguage, addLanguage) => {
+        const updatedLocales = addLanguage ?
+            [...siteLocales, updatedLanguage] :
+            siteLocales.map(lang => lang.language === updatedLanguage.language ? updatedLanguage : lang);
 
         gqlSave({
-            variables: {
-                path: `/sites/${site}`,
-                defaultLanguage,
-                languages: siteLocales.filter(l => l.activeInEdit || l.activeInLive || l.defaultLanguage || l.mandatory).map(l => l.language),
-                mandatoryLanguages: siteLocales.filter(l => l.mandatory).map(l => l.language),
-                inactiveLanguages: siteLocales.filter(l => !l.activeInEdit).map(l => l.language),
-                inactiveLiveLanguages: siteLocales.filter(l => !l.activeInLive).map(l => l.language)
-            }
+            variables: LanguageHelper.buildLanguageVariables(`/sites/${site}`, updatedLocales)
         }).then(() => {
             setSelectedLanguage({
                 isNew: true,
@@ -84,7 +57,7 @@ export const LanguageModal = ({
                 activeInLive: false,
                 mandatory: false
             });
-            closeModal(l, addLanguage);
+            closeModal(updatedLanguage, addLanguage);
             refetch();
         });
     };
@@ -156,12 +129,8 @@ export const LanguageModal = ({
                               placeholder={t('label.modal.availability.placeholder')}
                               variant="outlined"
                               className={styles.dropdown}
-                              data-value={selectedLanguage.activeInEdit && selectedLanguage.activeInLive && selectedLanguage.mandatory ? 'required' :
-                                  selectedLanguage.activeInEdit && selectedLanguage.activeInLive ? 'active' :
-                                      selectedLanguage.activeInEdit && !selectedLanguage.activeInLive ? 'inactiveInLive' : 'inactive'}
-                              value={selectedLanguage.activeInEdit && selectedLanguage.activeInLive && selectedLanguage.mandatory ? 'required' :
-                                  selectedLanguage.activeInEdit && selectedLanguage.activeInLive ? 'active' :
-                                      selectedLanguage.activeInEdit && !selectedLanguage.activeInLive ? 'inactiveInLive' : 'inactive'}
+                              data-value={LanguageHelper.getAvailability(selectedLanguage)}
+                              value={LanguageHelper.getAvailability(selectedLanguage)}
                               onChange={(e, v) => {
                                   switch (v.value) {
                                       case 'active':
@@ -197,7 +166,7 @@ export const LanguageModal = ({
                         variant="ghost"
                         label={t('label.actions.cancel')}
                         data-sel-role="cancel"
-                        onClick={() => onClose()}/>
+                        onClick={onClose}/>
                 {selectedLanguage.isNew ?
                     <Button size="big"
                             color="accent"
@@ -216,7 +185,14 @@ export const LanguageModal = ({
 
 LanguageModal.propTypes = {
     site: PropTypes.string.isRequired,
-    selectedLanguage: PropTypes.string.isRequired,
+    selectedLanguage: PropTypes.shape({
+        isNew: PropTypes.bool.isRequired,
+        language: PropTypes.string.isRequired,
+        displayName: PropTypes.string.isRequired,
+        activeInEdit: PropTypes.bool.isRequired,
+        activeInLive: PropTypes.bool.isRequired,
+        mandatory: PropTypes.bool.isRequired
+    }).isRequired,
     setSelectedLanguage: PropTypes.func.isRequired,
     isOpen: PropTypes.bool.isRequired,
     closeModal: PropTypes.func.isRequired,
