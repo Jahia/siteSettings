@@ -29,7 +29,7 @@ describe('GraphQL API calls', () => {
                     jcr(workspace: EDIT) {
                         nodeByPath(path: "/sites/${siteKey}") {
                             site {
-                                siteLocales(language: "${locale}") {
+                                languages {
                                     language
                                 }
                             }
@@ -38,9 +38,9 @@ describe('GraphQL API calls', () => {
                 }
             `,
         }).should((result) => {
-            const data = result?.data?.jcr?.nodeByPath?.site?.siteLocales
+            const data = result?.data?.jcr?.nodeByPath?.site?.languages
             expect(data).length(languages.length)
-            expect(data.map((l) => l.language)).to.deep.equal(languages)
+            expect(data.map((l) => l.language).sort()).to.deep.equal(languages.sort())
         })
     })
 

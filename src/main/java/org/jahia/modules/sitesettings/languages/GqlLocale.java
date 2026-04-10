@@ -2,39 +2,28 @@ package org.jahia.modules.sitesettings.languages;
 
 import graphql.annotations.annotationTypes.GraphQLDescription;
 import graphql.annotations.annotationTypes.GraphQLField;
-import org.jahia.modules.graphql.provider.dxm.site.GqlSiteLanguage;
+import graphql.annotations.annotationTypes.GraphQLName;
+import org.jahia.utils.LanguageCodeConverters;
 
 import java.util.Locale;
 
-public class GqlLocale extends GqlSiteLanguage {
-    private final Locale locale;
-    private final long count;
+public class GqlLocale {
+    private final String language;
 
-    public GqlLocale(Locale locale) {
-        this(locale, false, false, false, 0L);
-    }
-
-    public GqlLocale(Locale locale, boolean activeInEdit, boolean activeInLive, boolean mandatory, long count) {
-        super(locale.toString(), activeInEdit, activeInLive, mandatory);
-        this.locale = locale;
-        this.count = count;
+    public GqlLocale(String language) {
+        this.language = language;
     }
 
     @GraphQLField
-    @GraphQLDescription("Count locale usage")
-    public long getCount() {
-        return count;
+    @GraphQLDescription("Language code")
+    public String getLanguage() {
+        return language;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        GqlLocale gqlLocale = (GqlLocale) o;
-        return locale.equals(gqlLocale.locale);
-    }
-
-    @Override
-    public int hashCode() {
-        return locale.hashCode();
+    @GraphQLField
+    @GraphQLDescription("Display name")
+    public String getDisplayName(@GraphQLName("language") @GraphQLDescription("Language") String displayLanguage) {
+        Locale locale = LanguageCodeConverters.languageCodeToLocale(language);
+        return displayLanguage != null ? locale.getDisplayName(Locale.forLanguageTag(displayLanguage)) : locale.getDisplayName(locale);
     }
 }

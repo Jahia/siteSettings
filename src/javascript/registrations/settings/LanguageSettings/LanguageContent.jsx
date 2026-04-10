@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {gql, useMutation} from '@apollo/client';
+import PropTypes from 'prop-types';
+import {useMutation} from '@apollo/client';
 import {
     Button,
     Delete,
@@ -18,26 +19,27 @@ import {
     TableHeadCell,
     TableRow
 } from '@jahia/moonstone';
-import PropTypes from 'prop-types';
+import * as LanguageGraphQL from './Language.graphql';
+import * as LanguageHelper from './LanguageHelper';
 
 export const LanguageContent = ({site, uilang, openModal, siteLocales, defaultLanguage, refetch}) => {
     const {t} = useTranslation('siteSettings');
 
-    const [menuOpen, setMenuOpen] = useState({});
-    const [anchorEl, setAnchorEl] = useState({});
-    const closeMenu = language => {
-        setMenuOpen(Object.assign({}, menuOpen, {[language]: false}));
-        setAnchorEl(Object.assign({}, anchorEl, {[language]: null}));
+    const [menuOpen, setMenuOpen] = useState(null);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const closeMenu = () => {
+        setMenuOpen(null);
+        setAnchorEl(null);
     };
 
     const openMenu = (e, language) => {
-        setMenuOpen(Object.assign({}, menuOpen, {[language]: !menuOpen[language]}));
-        setAnchorEl(Object.assign({}, anchorEl, {[language]: e.currentTarget}));
+        setMenuOpen(language);
+        setAnchorEl(e.currentTarget);
     };
 
     const editLanguage = language => {
         if (language) {
-            closeMenu(language.language);
+            closeMenu();
         }
 
         openModal(language);
@@ -45,33 +47,8 @@ export const LanguageContent = ({site, uilang, openModal, siteLocales, defaultLa
 
     const getLanguageCount = l => siteLocales.find(lang => lang.language === l.language)?.count || 0;
 
-    const [gqlSetDefaultLanguage] = useMutation(gql`mutation setSiteDefaultLanguage($path: String!, $defaultLanguage: String!) {
-                jcr(workspace: EDIT) {
-                    mutateNode(pathOrId: $path) {
-                        defaultLanguage: mutateProperty(name: "j:defaultLanguage") {
-                            setValue(value: $defaultLanguage, type: STRING)
-                        }
-                    }
-                }
-            }`);
-    const [gqlDeleteLanguage] = useMutation(gql`mutation deleteSiteLanguage($path: String!, $languages: [String!]!, $mandatoryLanguages: [String!]!, $inactiveLanguages: [String!]!, $inactiveLiveLanguages: [String!]!) {
-                jcr {
-                    mutateNode(pathOrId: $path) {
-                        languages: mutateProperty(name: "j:languages") {
-                            setValues(values: $languages, type: STRING)
-                        }
-                        mandatoryLanguages: mutateProperty(name: "j:mandatoryLanguages") {
-                            setValues(values: $mandatoryLanguages, type: STRING)
-                        }
-                        inactiveLanguages: mutateProperty(name: "j:inactiveLanguages") {
-                            setValues(values: $inactiveLanguages, type: STRING)
-                        }
-                        inactiveLiveLanguages: mutateProperty(name: "j:inactiveLiveLanguages") {
-                            setValues(values: $inactiveLiveLanguages, type: STRING)
-                        }
-                    }
-                }
-            }`);
+    const [gqlSetDefaultLanguage] = useMutation(LanguageGraphQL.gqlSetDefaultLanguage);
+    const [gqlDeleteLanguage] = useMutation(LanguageGraphQL.gqlSave);
 
     const setDefaultLanguage = language => {
         gqlSetDefaultLanguage({
@@ -80,23 +57,18 @@ export const LanguageContent = ({site, uilang, openModal, siteLocales, defaultLa
                 defaultLanguage: language
             }
         }).then(() => {
-            closeMenu(language);
+            closeMenu();
             refetch();
         });
     };
 
     const deleteLanguage = language => {
-        const filteredSiteLocales = siteLocales.filter(l => l.language !== language);
         gqlDeleteLanguage({
-            variables: {
-                path: `/sites/${site}`,
-                languages: filteredSiteLocales.filter(l => l.activeInEdit || l.activeInLive || l.defaultLanguage || l.mandatory).map(l => l.language),
-                mandatoryLanguages: filteredSiteLocales.filter(l => l.mandatory).map(l => l.language),
-                inactiveLanguages: filteredSiteLocales.filter(l => !l.activeInEdit).map(l => l.language),
-                inactiveLiveLanguages: filteredSiteLocales.filter(l => !l.activeInLive).map(l => l.language)
-            }
+            variables: LanguageHelper.buildLanguageVariables(
+                `/sites/${site}`,
+                siteLocales.filter(l => l.language !== language))
         }).then(() => {
-            closeMenu(language);
+            closeMenu();
             refetch();
         });
     };
@@ -124,6 +96,7 @@ export const LanguageContent = ({site, uilang, openModal, siteLocales, defaultLa
                 <TableBody>{siteLocales.sort((a, b) => a.displayName.localeCompare(b.displayName))
                     .map(l => {
                         const languageCount = getLanguageCount(l);
+                        const isDisabled = l.mandatory || l.activeInEdit || l.language === defaultLanguage || l.language === uilang || languageCount > 0;
 
                         return (
                             <TableRow key={l.language} onClick={e => e.stopPropagation()}>
@@ -133,29 +106,20 @@ export const LanguageContent = ({site, uilang, openModal, siteLocales, defaultLa
                                 <TableBodyCell width={columnsWidth.languages}>
                                     {l.displayName} <Pill label={l.language}/>
                                 </TableBodyCell>
-                                <TableBodyCell width={columnsWidth.availability}>{
-                                    l.activeInEdit && l.activeInLive && l.mandatory ? t('label.availability.required.title') :
-                                        l.activeInEdit && l.activeInLive ? t('label.availability.active.title') :
-                                            l.activeInEdit && !l.activeInLive ? t('label.availability.inactiveInLive.title') : t('label.availability.inactive.title')
-                                }
+                                <TableBodyCell width={columnsWidth.availability}>
+                                    {t(`label.availability.${LanguageHelper.getAvailability(l)}.title`)}
                                 </TableBodyCell>
                                 <TableBodyCell align="right">
                                     <Button size="big"
                                             variant="ghost"
                                             icon={<MoreVert/>}
                                             onClick={e => openMenu(e, l.language)}/>
-                                    <Menu isDisplayed={menuOpen[l.language] !== undefined && menuOpen[l.language]}
-                                          anchorEl={anchorEl[l.language]}
+                                    <Menu isDisplayed={menuOpen === l.language}
+                                          anchorEl={anchorEl}
                                           anchorPosition={{top: 0, left: 0}}
-                                          anchorElOrigin={{
-                                              vertical: 'bottom',
-                                              horizontal: 'left'
-                                          }}
-                                          transformElOrigin={{
-                                              vertical: 'top',
-                                              horizontal: 'left'
-                                          }}
-                                          onClose={() => closeMenu(l.language)}
+                                          anchorElOrigin={{vertical: 'bottom', horizontal: 'left'}}
+                                          transformElOrigin={{vertical: 'top', horizontal: 'left'}}
+                                          onClose={closeMenu}
                                     >
                                         <MenuItem label={t('label.actions.edit')}
                                                   iconStart={<Edit/>}
@@ -167,18 +131,16 @@ export const LanguageContent = ({site, uilang, openModal, siteLocales, defaultLa
                                                       if (l.language === defaultLanguage) {
                                                           // eslint-disable-next-line no-alert
                                                           alert(t('label.table.actions.default.error'));
-                                                          closeMenu(l.language);
+                                                          closeMenu();
                                                       } else {
                                                           setDefaultLanguage(l.language);
                                                       }
                                                   }}/>
                                         <MenuItem label={t('label.table.actions.delete.title')}
                                                   iconStart={<Delete/>}
-                                                  isDisabled={l.mandatory || l.activeInEdit || l.language === defaultLanguage || l.language === uilang || languageCount > 0}
+                                                  isDisabled={isDisabled}
                                                   onClick={() => {
-                                                      if (!l.mandatory && !l.activeInEdit && l.language !== defaultLanguage && l.language !== uilang && languageCount === 0) {
-                                                          deleteLanguage(l.language);
-                                                      } else {
+                                                      if (isDisabled) {
                                                           let errorMessage = 'error';
                                                           if (l.mandatory) {
                                                               errorMessage = t('label.table.actions.delete.error.mandatory');
@@ -194,7 +156,9 @@ export const LanguageContent = ({site, uilang, openModal, siteLocales, defaultLa
 
                                                           // eslint-disable-next-line no-alert
                                                           alert(errorMessage);
-                                                          closeMenu(l.language);
+                                                          closeMenu();
+                                                      } else {
+                                                          deleteLanguage(l.language);
                                                       }
                                                   }}/>
                                     </Menu>

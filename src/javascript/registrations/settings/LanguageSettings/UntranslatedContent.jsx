@@ -36,30 +36,16 @@ export const UntranslatedContent = ({site, value, refetch}) => {
             }`);
 
     const save = () => {
-        let allowsUnlistedLanguages = untranslatedValue === 'all';
-        let mixLanguage = untranslatedValue !== 'all';
-        switch (untranslatedValue) {
-            case 'never':
-                allowsUnlistedLanguages = false;
-                mixLanguage = false;
-                break;
-            case 'only':
-                allowsUnlistedLanguages = false;
-                mixLanguage = true;
-                break;
-            case 'all':
-                allowsUnlistedLanguages = true;
-                mixLanguage = true;
-                break;
-            default:
-                break;
-        }
+        const options = {
+            never: {mixLanguage: false, allowsUnlistedLanguages: false},
+            only: {mixLanguage: true, allowsUnlistedLanguages: false},
+            all: {mixLanguage: true, allowsUnlistedLanguages: true}
+        };
 
         gqlSave({
             variables: {
                 path: `/sites/${site}`,
-                mixLanguage,
-                allowsUnlistedLanguages
+                ...options[untranslatedValue]
             }
         }).then(() => {
             setModalOpen(false);
