@@ -1,0 +1,17 @@
+.field {
+    .dropdown {
+        margin-top: var(--spacing-small);
+    }
+
+    &:not(:first-child) {
+        margin-top: var(--spacing-medium);
+    }
+}
+
+.btnUntranslatedContent {
+    float: right;
+}
+
+.spacingSmall {
+    margin-top: var(--spacing-medium);
+}

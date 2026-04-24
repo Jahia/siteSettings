@@ -5,9 +5,6 @@
   "users": {
     "label": "Users"
   },
-  "languages": {
-    "label": "Languages"
-  },
   "filtering": {
     "label": "HTML filtering"
   },
@@ -40,5 +37,75 @@
     "mandatoryLanguages": "Mandatory Languages",
     "defaultLanguage": "Default Language",
     "creationDate": "Creation Date"
+  },
+  "label": {
+    "title": "Languages",
+    "header": "Manage languages for \"{{ siteName }}\"",
+    "actions": {
+      "add": "Add",
+      "cancel": "Cancel",
+      "edit": "Edit",
+      "save": "Save"
+    },
+    "unstranslatedContent": {
+      "title": "Display the default language when the content is untranslated",
+      "never": "Never (recommended for website)",
+      "only": "Only for languages supported by the website",
+      "all": "All languages, even those not supported by the website",
+      "modal": "Set fallback"
+    },
+    "modal": {
+      "header": "{{ action }} language",
+      "language": {
+        "title": "Language",
+        "placeholder": "Select a language"
+      },
+      "default": "Default language",
+      "availability": {
+        "title": "Availability",
+        "placeholder": "Active, Hidden in live, Required, Inactive"
+      }
+    },
+    "availability": {
+      "inactive": {
+        "title": "Inactive",
+        "description": "Content is not editable and not visible in live"
+      },
+      "inactiveInLive": {
+        "title": "Inactive in live",
+        "description": "Content is editable but not visible in live"
+      },
+      "active": {
+        "title": "Active",
+        "description": "Content is editable and visible in live"
+      },
+      "required": {
+        "title": "Required",
+        "description": "Mandatory language to publish any other languages (editable and visible in live)"
+      }
+    },
+    "table": {
+      "th": {
+        "default": "Default",
+        "languages": "Languages",
+        "availability": "Availability"
+      },
+      "actions": {
+        "add": "Add language",
+        "default": {
+          "title": "Set as default language",
+          "error": "This language is already the default language."
+        },
+        "delete": {
+          "title": "Delete",
+          "error": {
+            "mandatory": "This language is mandatory and cannot be deleted.",
+            "default": "This language is the default language and cannot be deleted.",
+            "activeInEdit": "This language is active in edit mode and cannot be deleted.",
+            "language": "This language is used by {{ count }} content and cannot be deleted."
+          }
+        }
+      }
+    }
   }
 }

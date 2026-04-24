@@ -40,7 +40,7 @@ describe('Tests for site properties panel', () => {
     it('Navigates to edit languages', () => {
         const siteProps = SiteProperties.visit(siteKey)
         siteProps.editLanguages()
-        cy.get(`iframe[src="/cms/editframe/default/en/sites/${siteKey}.manageLanguages.html"]`).should('be.visible')
+        cy.get('[aria-labelledby="language-settings"]').should('be.visible')
     })
 
     it('Verifies systemname of system site is readonly', () => {

@@ -4,8 +4,6 @@
 
 [jnt:siteSettingsManageGroups] > jnt:content, mix:title, jmix:studioOnly, jmix:siteComponent
 
-[jnt:siteSettingsManageLanguages] > jnt:content, mix:title, jmix:studioOnly, jmix:siteComponent
-
 [jnt:siteSettingsWcagCompliance] > jnt:content, mix:title, jmix:studioOnly, jmix:siteComponent
 
 [jnt:siteSettingsHtmlFiltering] > jnt:content, mix:title, jmix:studioOnly, jmix:siteComponent
