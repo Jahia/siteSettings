@@ -1,3 +1,4 @@
+<%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
 <template:addResources type="javascript" resources="jquery.min.js,jquery-ui.min.js,jquery.blockUI.js,workInProgress.js,admin-bootstrap.js"/>
 <template:addResources type="css"
                        resources="admin-bootstrap.css,jquery-ui.smoothness.css,jquery-ui.smoothness-jahia.css"/>
@@ -79,12 +80,12 @@
                         &nbsp;<fmt:message key="siteSettings.label.backToGroup"/>
                     </button>
                     <button class="btn" type="submit" name="_eventId_editUsers">
-                        <img src="<c:url value='/modules/assets/css/img/icon-user-small.png'/>" alt=""/>
+                        <img src="<c:url value='${url.currentModule}/img/icon-user-small.png'/>" alt=""/>
                         &nbsp;<fmt:message key="label.users"/>
                     </button>
 
                     <button class="btn" type="submit" name="_eventId_editGroups">
-                        <img src="<c:url value='/modules/assets/css/img/icon-group-small.png'/>" alt=""/>
+                        <img src="<c:url value='${url.currentModule}/img/icon-group-small.png'/>" alt=""/>
                         &nbsp;<fmt:message key="label.groups"/>
                     </button>
                 </c:otherwise>
