@@ -21,6 +21,7 @@ jobs:
     uses: Jahia/jahia-modules-action/.github/workflows/reusable-integration-tests.yml@v2
     with:
       module_id: siteSettings
+      module_branch: ${{ github.ref }}
       provisioning_manifest: ${{ github.event.inputs.manifest }}
       jahia_image: ${{ github.event.inputs.jahia_image }}
       artifact_prefix: siteSettings-tests-artifacts
