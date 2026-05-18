@@ -1,39 +1,38 @@
 import React, {useState} from 'react';
-import {useTranslation} from 'react-i18next';
-import {gql, useMutation} from '@apollo/client';
-import {
-    Button,
-    Edit,
-    Modal,
-    ModalBody,
-    ModalFooter,
-    ModalHeader,
-    Paper,
-    RadioGroup,
-    RadioItem,
-    Typography
-} from '@jahia/moonstone';
-import styles from './LanguageSettings.scss';
 import PropTypes from 'prop-types';
+import {useTranslation} from 'react-i18next';
+import {useMutation} from '@apollo/client';
+import {Button, Edit, Modal, ModalBody, ModalFooter, ModalHeader, Paper, RadioGroup, RadioItem, Typography} from '@jahia/moonstone';
+import styles from './LanguageSettings.scss';
+import * as LanguageGraphQL from './Language.gql-queries';
+import {LanguageModalError} from './LanguageModalError';
 
-export const UntranslatedContent = ({site, value, refetch}) => {
+export const UntranslatedContent = ({site, uilang, value}) => {
     const {t} = useTranslation('siteSettings');
 
+    const [modalErrorDescription, setModalErrorDescription] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
+    const openModal = () => {
+        setUntranslatedValue(value);
+        setModalOpen(true);
+    };
+
+    const closeModal = () => setModalOpen(false);
 
     const [untranslatedValue, setUntranslatedValue] = useState(value);
-    const [gqlSave] = useMutation(gql`mutation saveSiteLanguageOptions($path: String!, $mixLanguage: String!, $allowsUnlistedLanguages: String!) {
-                jcr(workspace: EDIT) {
-                    mutateNode(pathOrId: $path) {
-                        mixLanguage: mutateProperty(name: "j:mixLanguage") {
-                            setValue(value: $mixLanguage, type: BOOLEAN)
-                        }
-                        allowsUnlistedLanguages: mutateProperty(name: "j:allowsUnlistedLanguages") {
-                            setValue(value: $allowsUnlistedLanguages, type: BOOLEAN)
-                        }
-                    }
-                }
-            }`);
+    const [gqlSaveSiteLanguageOptions, {loading: isSavingSiteLanguagesOptions}] = useMutation(LanguageGraphQL.gqlSaveSiteLanguageOptions,
+        {
+            refetchQueries: [{
+                query: LanguageGraphQL.gqlGetSiteLanguages,
+                variables: {path: `/sites/${site}`, displayLanguage: uilang}
+            }],
+            awaitRefetchQueries: true,
+            onCompleted: () => closeModal(),
+            onError: err => {
+                console.error(err);
+                setModalErrorDescription(t('label.modal.error.description'));
+            }
+        });
 
     const save = () => {
         const options = {
@@ -41,44 +40,44 @@ export const UntranslatedContent = ({site, value, refetch}) => {
             only: {mixLanguage: true, allowsUnlistedLanguages: false},
             all: {mixLanguage: true, allowsUnlistedLanguages: true}
         };
-
-        gqlSave({
+        gqlSaveSiteLanguageOptions({
             variables: {
                 path: `/sites/${site}`,
                 ...options[untranslatedValue]
             }
-        }).then(() => {
-            setModalOpen(false);
-            refetch();
         });
     };
 
     return (
         <>
             <Modal isOpen={modalOpen} size="large">
-                <ModalHeader title={t('label.unstranslatedContent.modal')}/>
+                <ModalHeader title={t('label.untranslatedContent.modal')}/>
                 <ModalBody>
-                    <Typography variant="heading">{t('label.unstranslatedContent.title')}</Typography>
+                    <LanguageModalError isOpen={modalErrorDescription !== null}
+                                        closeModal={() => setModalErrorDescription(null)}
+                                        description={modalErrorDescription}/>
+                    <Typography variant="heading">{t('label.untranslatedContent.title')}</Typography>
                     <RadioGroup name="values"
                                 className={styles.spacingSmall}
                                 value={untranslatedValue}
                                 onChange={(e, v) => setUntranslatedValue(v)}
                     >
-                        <RadioItem id="never" label={t('label.unstranslatedContent.never')} value="never"/>
-                        <RadioItem id="only" label={t('label.unstranslatedContent.only')} value="only"/>
-                        <RadioItem id="all" label={t('label.unstranslatedContent.all')} value="all"/>
+                        <RadioItem id="never" label={t('label.untranslatedContent.never')} value="never"/>
+                        <RadioItem id="only" label={t('label.untranslatedContent.only')} value="only"/>
+                        <RadioItem id="all" label={t('label.untranslatedContent.all')} value="all"/>
                     </RadioGroup>
                 </ModalBody>
                 <ModalFooter>
                     <Button size="big"
                             variant="ghost"
                             label={t('label.actions.cancel')}
-                            onClick={() => setModalOpen(false)}/>
+                            onClick={closeModal}/>
                     <Button size="big"
                             color="accent"
                             label={t('label.actions.save')}
                             data-sel-role="save"
-                            onClick={() => save()}/>
+                            isDisabled={isSavingSiteLanguagesOptions}
+                            onClick={save}/>
                 </ModalFooter>
             </Modal>
 
@@ -89,12 +88,12 @@ export const UntranslatedContent = ({site, value, refetch}) => {
                         label={t('label.actions.edit')}
                         data-sel-role="edit"
                         className={styles.btnUntranslatedContent}
-                        onClick={() => setModalOpen(true)}/>
-                <Typography variant="heading">{t('label.unstranslatedContent.title')}</Typography>
+                        onClick={openModal}/>
+                <Typography variant="heading">{t('label.untranslatedContent.title')}</Typography>
                 <div className={styles.spacingSmall}>
-                    <Typography data-sel-role="unstranslatedContent-value"
+                    <Typography data-sel-role="untranslatedContent-value"
                                 data-value={value}
-                    >{t(`label.unstranslatedContent.${value}`)}
+                    >{t(`label.untranslatedContent.${value}`)}
                     </Typography>
                 </div>
             </Paper>
@@ -104,6 +103,6 @@ export const UntranslatedContent = ({site, value, refetch}) => {
 
 UntranslatedContent.propTypes = {
     site: PropTypes.string.isRequired,
-    value: PropTypes.string.isRequired,
-    refetch: PropTypes.func.isRequired
+    uilang: PropTypes.string.isRequired,
+    value: PropTypes.string.isRequired
 };

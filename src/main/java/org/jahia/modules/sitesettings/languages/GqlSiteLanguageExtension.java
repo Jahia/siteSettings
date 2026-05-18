@@ -17,19 +17,14 @@ import javax.jcr.query.Query;
 @GraphQLTypeExtension(GqlSiteLanguage.class)
 public class GqlSiteLanguageExtension {
     private final GqlSiteLanguage gqlSiteLanguage;
-    private final Long count;
 
     public GqlSiteLanguageExtension(GqlSiteLanguage gqlSiteLanguage) {
         this.gqlSiteLanguage = gqlSiteLanguage;
-        count = null;
     }
 
     @GraphQLField
     @GraphQLDescription("Count languages usage")
     public long count(@GraphQLName("path") @GraphQLNonNull String path) throws RepositoryException {
-        if (count != null) {
-            return count;
-        }
         return BundleUtils.getOsgiService(JCRTemplate.class, null).doExecuteWithSystemSessionAsUser(null, Constants.EDIT_WORKSPACE, null, session ->
                 session.getWorkspace().getQueryManager()
                         .createQuery("SELECT count AS [rep:count(skipChecks=1)] FROM [jnt:translation]" +

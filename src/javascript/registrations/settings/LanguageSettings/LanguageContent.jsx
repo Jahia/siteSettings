@@ -1,54 +1,71 @@
-import React, {useState} from 'react';
-import {useTranslation} from 'react-i18next';
+import React, {useMemo, useState} from 'react';
 import PropTypes from 'prop-types';
+import {useTranslation} from 'react-i18next';
 import {useMutation} from '@apollo/client';
-import {
-    Button,
-    Delete,
-    Edit,
-    Menu,
-    MenuItem,
-    MoreVert,
-    Paper,
-    Pill,
-    Star,
-    Table,
-    TableBody,
-    TableBodyCell,
-    TableHead,
-    TableHeadCell,
-    TableRow
-} from '@jahia/moonstone';
-import * as LanguageGraphQL from './Language.graphql';
+import {Button, Delete, Edit, Menu, MenuItem, MoreVert, Paper, Pill, Star, Table, TableBody, TableBodyCell, TableHead, TableHeadCell, TableRow} from '@jahia/moonstone';
+import * as LanguageGraphQL from './Language.gql-queries';
 import * as LanguageHelper from './LanguageHelper';
+import {LanguageModalError} from './LanguageModalError';
 
-export const LanguageContent = ({site, uilang, openModal, siteLocales, defaultLanguage, refetch}) => {
+const columnsWidth = {
+    default: '5%',
+    languages: '35%',
+    availability: '45%'
+};
+
+export const LanguageContent = ({site, uilang, openModal, siteLocales, defaultLanguage}) => {
     const {t} = useTranslation('siteSettings');
 
-    const [menuOpen, setMenuOpen] = useState(null);
-    const [anchorEl, setAnchorEl] = useState(null);
-    const closeMenu = () => {
-        setMenuOpen(null);
-        setAnchorEl(null);
+    const [menuState, setMenuState] = useState({anchorEl: null, language: null});
+    const openMenu = (e, language) => setMenuState({anchorEl: e.currentTarget, language});
+    const closeMenu = () => setMenuState({anchorEl: null, language: null});
+
+    const [modalErrorDescription, setModalErrorDescription] = useState(null);
+    const openModalError = description => {
+        closeMenu();
+        setModalErrorDescription(description);
     };
 
-    const openMenu = (e, language) => {
-        setMenuOpen(language);
-        setAnchorEl(e.currentTarget);
-    };
+    const sortedLocales = useMemo(
+        () => [...siteLocales].sort((a, b) => a.displayName.localeCompare(b.displayName)),
+        [siteLocales]
+    );
 
-    const editLanguage = language => {
-        if (language) {
-            closeMenu();
-        }
+    const currentRow = useMemo(
+        () => sortedLocales.find(l => l.language === menuState.language),
+        [sortedLocales, menuState.language]
+    );
+    const languageCount = currentRow?.count ?? 0;
+    const isDisabled = currentRow?.mandatory || currentRow?.activeInEdit || currentRow?.language === defaultLanguage || currentRow?.language === uilang || languageCount > 0;
 
-        openModal(language);
-    };
-
-    const getLanguageCount = l => siteLocales.find(lang => lang.language === l.language)?.count || 0;
-
-    const [gqlSetDefaultLanguage] = useMutation(LanguageGraphQL.gqlSetDefaultLanguage);
-    const [gqlDeleteLanguage] = useMutation(LanguageGraphQL.gqlSave);
+    const [gqlSetDefaultLanguage, {loading: isSavingDefaultLanguage}] = useMutation(LanguageGraphQL.gqlSetDefaultLanguage,
+        {
+            refetchQueries: [{
+                query: LanguageGraphQL.gqlGetSiteLanguages,
+                variables: {path: `/sites/${site}`, displayLanguage: uilang}
+            }],
+            awaitRefetchQueries: true,
+            onCompleted: () => closeMenu(),
+            onError: err => {
+                console.error(err);
+                closeMenu();
+                setModalErrorDescription(t('label.modal.error.description'));
+            }
+        });
+    const [gqlSaveSiteLanguages, {loading: isSavingSiteLanguages}] = useMutation(LanguageGraphQL.gqlSaveSiteLanguages,
+        {
+            refetchQueries: [{
+                query: LanguageGraphQL.gqlGetSiteLanguages,
+                variables: {path: `/sites/${site}`, displayLanguage: uilang}
+            }],
+            awaitRefetchQueries: true,
+            onCompleted: () => closeMenu(),
+            onError: err => {
+                console.error(err);
+                closeMenu();
+                setModalErrorDescription(t('label.modal.error.description'));
+            }
+        });
 
     const setDefaultLanguage = language => {
         gqlSetDefaultLanguage({
@@ -56,119 +73,102 @@ export const LanguageContent = ({site, uilang, openModal, siteLocales, defaultLa
                 path: `/sites/${site}`,
                 defaultLanguage: language
             }
-        }).then(() => {
-            closeMenu();
-            refetch();
         });
     };
 
     const deleteLanguage = language => {
-        gqlDeleteLanguage({
+        gqlSaveSiteLanguages({
             variables: LanguageHelper.buildLanguageVariables(
                 `/sites/${site}`,
-                siteLocales.filter(l => l.language !== language))
-        }).then(() => {
-            closeMenu();
-            refetch();
+                sortedLocales.filter(l => l.language !== language))
         });
     };
 
-    const columnsWidth = {
-        default: '5%',
-        languages: '35%',
-        availability: '45%'
-    };
-
     return (
-        <Paper>
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        <TableHeadCell width={columnsWidth.default}>{t('label.table.th.default')}</TableHeadCell>
-                        <TableHeadCell width={columnsWidth.languages}>{t('label.table.th.languages')}</TableHeadCell>
-                        <TableHeadCell
-                            width={columnsWidth.availability}
-                        >{t('label.table.th.availability')}
-                        </TableHeadCell>
-                        <TableHeadCell/>
-                    </TableRow>
-                </TableHead>
-                <TableBody>{siteLocales.sort((a, b) => a.displayName.localeCompare(b.displayName))
-                    .map(l => {
-                        const languageCount = getLanguageCount(l);
-                        const isDisabled = l.mandatory || l.activeInEdit || l.language === defaultLanguage || l.language === uilang || languageCount > 0;
+        <>
+            <LanguageModalError isOpen={modalErrorDescription !== null}
+                                closeModal={() => setModalErrorDescription(null)}
+                                description={modalErrorDescription}/>
+            <Paper>
+                {currentRow && (
+                    <Menu isDisplayed={Boolean(menuState.anchorEl)}
+                          anchorEl={menuState.anchorEl}
+                          anchorElOrigin={{vertical: 'bottom', horizontal: 'left'}}
+                          transformElOrigin={{vertical: 'top', horizontal: 'left'}}
+                          onClose={closeMenu}
+                    >
+                        <MenuItem label={t('label.actions.edit')}
+                                  iconStart={<Edit/>}
+                                  onClick={() => {
+                                      closeMenu();
+                                      openModal(currentRow);
+                                  }}/>
+                        <MenuItem label={t('label.table.actions.default.title')}
+                                  iconStart={<Star/>}
+                                  isDisabled={isSavingDefaultLanguage || currentRow.language === defaultLanguage}
+                                  onClick={() => {
+                                      if (currentRow.language === defaultLanguage) {
+                                          openModalError(t('label.table.actions.default.error'));
+                                      } else {
+                                          setDefaultLanguage(currentRow.language);
+                                      }
+                                  }}/>
+                        <MenuItem label={t('label.table.actions.delete.title')}
+                                  iconStart={<Delete/>}
+                                  isDisabled={isSavingSiteLanguages || isDisabled}
+                                  onClick={() => {
+                                      if (isDisabled) {
+                                          let errorMessage = 'error';
+                                          if (currentRow.language === defaultLanguage) {
+                                              errorMessage = t('label.table.actions.delete.error.default');
+                                          } else if (currentRow.mandatory) {
+                                              errorMessage = t('label.table.actions.delete.error.mandatory');
+                                          } else if (currentRow.activeInEdit) {
+                                              errorMessage = t('label.table.actions.delete.error.activeInEdit');
+                                          } else if (languageCount > 0) {
+                                              errorMessage = t('label.table.actions.delete.error.language', {count: languageCount});
+                                          }
 
-                        return (
-                            <TableRow key={l.language} onClick={e => e.stopPropagation()}>
-                                <TableBodyCell width={columnsWidth.default}>{defaultLanguage === l.language ?
-                                    <Star color="blue"/> : ''}
-                                </TableBodyCell>
-                                <TableBodyCell width={columnsWidth.languages}>
-                                    {l.displayName} <Pill label={l.language}/>
-                                </TableBodyCell>
-                                <TableBodyCell width={columnsWidth.availability}>
-                                    {t(`label.availability.${LanguageHelper.getAvailability(l)}.title`)}
-                                </TableBodyCell>
-                                <TableBodyCell align="right">
-                                    <Button size="big"
-                                            variant="ghost"
-                                            icon={<MoreVert/>}
-                                            onClick={e => openMenu(e, l.language)}/>
-                                    <Menu isDisplayed={menuOpen === l.language}
-                                          anchorEl={anchorEl}
-                                          anchorPosition={{top: 0, left: 0}}
-                                          anchorElOrigin={{vertical: 'bottom', horizontal: 'left'}}
-                                          transformElOrigin={{vertical: 'top', horizontal: 'left'}}
-                                          onClose={closeMenu}
-                                    >
-                                        <MenuItem label={t('label.actions.edit')}
-                                                  iconStart={<Edit/>}
-                                                  onClick={() => editLanguage(l)}/>
-                                        <MenuItem label={t('label.table.actions.default.title')}
-                                                  iconStart={<Star/>}
-                                                  isDisabled={l.language === defaultLanguage}
-                                                  onClick={() => {
-                                                      if (l.language === defaultLanguage) {
-                                                          // eslint-disable-next-line no-alert
-                                                          alert(t('label.table.actions.default.error'));
-                                                          closeMenu();
-                                                      } else {
-                                                          setDefaultLanguage(l.language);
-                                                      }
-                                                  }}/>
-                                        <MenuItem label={t('label.table.actions.delete.title')}
-                                                  iconStart={<Delete/>}
-                                                  isDisabled={isDisabled}
-                                                  onClick={() => {
-                                                      if (isDisabled) {
-                                                          let errorMessage = 'error';
-                                                          if (l.mandatory) {
-                                                              errorMessage = t('label.table.actions.delete.error.mandatory');
-                                                          }
-
-                                                          if (l.activeInEdit) {
-                                                              errorMessage = t('label.table.actions.delete.error.activeInEdit');
-                                                          }
-
-                                                          if (languageCount > 0) {
-                                                              errorMessage = t('label.table.actions.delete.error.language', {count: languageCount});
-                                                          }
-
-                                                          // eslint-disable-next-line no-alert
-                                                          alert(errorMessage);
-                                                          closeMenu();
-                                                      } else {
-                                                          deleteLanguage(l.language);
-                                                      }
-                                                  }}/>
-                                    </Menu>
-                                </TableBodyCell>
-                            </TableRow>
-                        );
-                    })}
-                </TableBody>
-            </Table>
-        </Paper>
+                                          openModalError(errorMessage);
+                                      } else {
+                                          deleteLanguage(currentRow.language);
+                                      }
+                                  }}/>
+                    </Menu>
+                )}
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableHeadCell width={columnsWidth.default}>{t('label.table.th.default')}</TableHeadCell>
+                            <TableHeadCell width={columnsWidth.languages}>{t('label.table.th.languages')}</TableHeadCell>
+                            <TableHeadCell width={columnsWidth.availability}>{t('label.table.th.availability')}</TableHeadCell>
+                            <TableHeadCell/>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>{sortedLocales.map(l => (
+                        <TableRow key={l.language} onClick={e => e.stopPropagation()}>
+                            <TableBodyCell width={columnsWidth.default}>
+                                {defaultLanguage === l.language ? <Star color="blue"/> : ''}
+                            </TableBodyCell>
+                            <TableBodyCell width={columnsWidth.languages}>
+                                {l.displayName} <Pill label={l.language}/>
+                            </TableBodyCell>
+                            <TableBodyCell width={columnsWidth.availability}>
+                                {t(`label.availability.${LanguageHelper.getAvailability(l)}.title`)}
+                            </TableBodyCell>
+                            <TableBodyCell align="right">
+                                <Button size="big"
+                                        variant="ghost"
+                                        icon={<MoreVert/>}
+                                        aria-label={t('label.actions.more')}
+                                        onClick={e => openMenu(e, l.language)}/>
+                            </TableBodyCell>
+                        </TableRow>
+                    ))}
+                    </TableBody>
+                </Table>
+            </Paper>
+        </>
     );
 };
 
@@ -177,6 +177,5 @@ LanguageContent.propTypes = {
     uilang: PropTypes.string.isRequired,
     openModal: PropTypes.func.isRequired,
     siteLocales: PropTypes.array.isRequired,
-    defaultLanguage: PropTypes.string.isRequired,
-    refetch: PropTypes.func.isRequired
+    defaultLanguage: PropTypes.string
 };

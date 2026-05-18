@@ -44,10 +44,12 @@
     "actions": {
       "add": "Add",
       "cancel": "Cancel",
+      "close": "Close",
       "edit": "Edit",
+      "more": "More",
       "save": "Save"
     },
-    "unstranslatedContent": {
+    "untranslatedContent": {
       "title": "Display the default language when the content is untranslated",
       "never": "Never (recommended for website)",
       "only": "Only for languages supported by the website",
@@ -64,6 +66,10 @@
       "availability": {
         "title": "Availability",
         "placeholder": "Active, Hidden in live, Required, Inactive"
+      },
+      "error": {
+        "title": "Error",
+        "description": "An error occurred"
       }
     },
     "availability": {
@@ -99,10 +105,10 @@
         "delete": {
           "title": "Delete",
           "error": {
-            "mandatory": "This language is mandatory and cannot be deleted.",
-            "default": "This language is the default language and cannot be deleted.",
             "activeInEdit": "This language is active in edit mode and cannot be deleted.",
-            "language": "This language is used by {{ count }} content and cannot be deleted."
+            "default": "This language is the default language and cannot be deleted.",
+            "language": "This language is used by {{ count }} content and cannot be deleted.",
+            "mandatory": "This language is mandatory and cannot be deleted."
           }
         }
       }
