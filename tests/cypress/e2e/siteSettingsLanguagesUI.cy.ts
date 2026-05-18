@@ -15,14 +15,14 @@ import gql from 'graphql-tag'
 describe('UI Site settings language', () => {
     const siteKey = 'siteSettingsSite'
     const languages = ['en', 'fr', 'de']
-    const locale = 'en'
+    const defaultLanguage = 'en'
 
     before(() => {
         createSite(siteKey, {
             languages: languages.join(','),
             templateSet: 'dx-base-demo-templates',
             serverName: 'localhost',
-            locale,
+            locale: defaultLanguage,
         })
     })
     after(() => {
@@ -56,19 +56,7 @@ describe('UI Site settings language', () => {
         getComponent(Table).getRowByIndex(3).get().find('svg').first().should('not.have.class', 'moonstone-icon_blue')
     })
 
-    it('should change mixLanguage and allowsUnlistedLanguages', () => {
-        visitSiteSettingsLanguages()
-
-        // edit settings
-        getComponentByRole(Button, 'edit').click()
-        // change value
-        getComponentBySelector(BaseComponent, 'input[type="radio"][value="only"]').should('be.visible').click()
-        getComponentByRole(Button, 'save').click()
-        // check label
-        getComponentByRole(BaseComponent, 'unstranslatedContent-value')
-            .should('have.text', 'Only for languages supported by the website')
-            .should('have.attr', 'data-value', 'only')
-
+    const resetLanguageSettings = () => {
         // reset value
         cy.apollo({
             variables: {
@@ -91,6 +79,23 @@ describe('UI Site settings language', () => {
                 }
             `,
         }).should((response) => expect(response.data.jcr.mutateNode.mixLanguage.setValue).to.be.true)
+    }
+
+    it('should change mixLanguage and allowsUnlistedLanguages', () => {
+        visitSiteSettingsLanguages()
+
+        // edit settings
+        getComponentByRole(Button, 'edit').click()
+        // change value
+        getComponentBySelector(BaseComponent, 'input[type="radio"][value="only"]').should('be.visible').click()
+        getComponentByRole(Button, 'save').click()
+        // check label
+        getComponentByRole(BaseComponent, 'untranslatedContent-value')
+            .should('have.text', 'Only for languages supported by the website')
+            .should('have.attr', 'data-value', 'only')
+
+        // reset value
+        resetLanguageSettings()
     })
 
     const changeAvailability = (rowIndex: number, item: string) => {
@@ -101,7 +106,7 @@ describe('UI Site settings language', () => {
         getComponent(Table).getRowByIndex(rowIndex).get().contains(item)
     }
 
-    it('should change availability for the default language', () => {
+    it('set a language as required', () => {
         visitSiteSettingsLanguages()
 
         getComponent(Table).getRowByIndex(1).get().find('button').last().click()
@@ -157,5 +162,40 @@ describe('UI Site settings language', () => {
             .parent()
             .parent()
             .should('have.class', 'moonstone-disabled')
+    })
+
+    it('search a language', () => {
+        visitSiteSettingsLanguages()
+        getComponentByRole(Button, 'addLanguage').click()
+
+        const dropDown = getComponentByRole(Dropdown, 'languages')
+        dropDown.get().click()
+        getComponent(Menu, dropDown)
+            .get()
+            .find('.moonstone-menuItem')
+            .contains('Afrikaans')
+        getComponent(Menu, dropDown)
+            .get()
+            .find('.moonstone-menuItem')
+            .should('not.contain', 'AA')
+    })
+
+    it('set a language as default', () => {
+        visitSiteSettingsLanguages()
+        getComponent(Table).getRowByIndex(2).get().find('button').last().click()
+        getComponent(Table).getRowByIndex(2).get().find('svg').first().should('not.have.class', 'moonstone-icon_blue')
+        getComponent(Menu).get().find('.moonstone-menuItem').contains('default').parent().parent().click()
+        getComponent(Table).getRowByIndex(2).get().find('svg').first().should('have.class', 'moonstone-icon_blue')
+    })
+
+    it('set "display the default language when the content is untranslated" to false', () => {
+        visitSiteSettingsLanguages()
+        getComponentByRole(Button, 'edit').click()
+        getComponentBySelector(BaseComponent, 'input[type="radio"][value="never"]').should('be.visible').click()
+        getComponentByRole(Button, 'save').click()
+        getComponentByRole(BaseComponent, 'untranslatedContent-value')
+            .should('have.text', 'Never (recommended for website)')
+            .should('have.attr', 'data-value', 'never')
+        resetLanguageSettings()
     })
 })

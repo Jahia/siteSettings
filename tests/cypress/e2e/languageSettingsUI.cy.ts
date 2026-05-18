@@ -11,7 +11,7 @@ describe('Tests on UI for language settings', () => {
         })
     })
 
-    it('Check for Catalan website', () => {
+    it('should change mixLanguage and allowsUnlistedLanguages', () => {
         cy.login()
         getNodeByPath('/sites/languagesTestSite', ['j:mixLanguage']).then((result) => {
             expect(result.data.jcr.nodeByPath.properties[0].value).deep.eq('false')
