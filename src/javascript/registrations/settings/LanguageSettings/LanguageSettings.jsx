@@ -8,6 +8,8 @@ import {LanguageContent} from './LanguageContent';
 import {UntranslatedContent} from './UntranslatedContent';
 import {LanguageModal} from './LanguageModal';
 import * as LanguageGraphQL from './Language.gql-queries';
+import * as LanguageHelper from './LanguageHelper';
+import {LanguageSettingsContextProvider} from './LanguageSettings.context';
 
 export const LanguageSettings = () => {
     const {t} = useTranslation('siteSettings');
@@ -22,16 +24,28 @@ export const LanguageSettings = () => {
         skip: !site
     });
 
-    const [selectedLanguage, setSelectedLanguage] = useState({
-        isNew: true,
-        activeInEdit: false,
-        activeInLive: false,
-        mandatory: false
-    });
+    const [selectedLanguage, setSelectedLanguage] = useState(LanguageHelper.emptyLanguage);
     const [modalOpen, setModalOpen] = useState(false);
+
+    if (!res?.checksResult || error) {
+        // TODO: Implement a user feedback button / information
+        return '';
+    }
 
     const allowsUnlistedLanguages = data?.jcr?.result?.site?.allowsUnlistedLanguages?.booleanValue;
     const mixLanguage = data?.jcr?.result?.site?.mixLanguage?.booleanValue;
+    const untranslatedValue = () => {
+        if (allowsUnlistedLanguages && mixLanguage) {
+            return 'all';
+        }
+
+        if (mixLanguage) {
+            return 'only';
+        }
+
+        return 'never';
+    };
+
     const defaultLanguage = data?.jcr?.result?.site?.defaultLanguage;
     const siteLocales = data?.jcr?.result?.site?.languages || [];
 
@@ -44,56 +58,36 @@ export const LanguageSettings = () => {
         setModalOpen(false);
     };
 
-    if (error) {
-        console.error(error);
-        throw new Error(error.message);
-    }
-
-    if (!res.checksResult) {
-        return '';
-    }
-
     return (
-        <LayoutContent isLoading={loading}
-                       aria-labelledby="language-settings"
-                       header={
-                           <Header mainActions={[
-                               <Button key="addLanguage"
-                                       size="big"
-                                       color="accent"
-                                       icon={<Add/>}
-                                       label={t('label.table.actions.add')}
-                                       data-sel-role="addLanguage"
-                                       onClick={() => openModal({
-                                           isNew: true,
-                                           activeInEdit: false,
-                                           activeInLive: false,
-                                           mandatory: false
-                                       })}/>
-                           ]}
-                                   title={t('label.header', {siteName: data?.jcr?.result?.site?.displayName})}/>
-                       }
-                       content={
-                           <>
-                               <LanguageModal site={site}
-                                              uilang={uilang}
-                                              selectedLanguage={selectedLanguage}
-                                              setSelectedLanguage={setSelectedLanguage}
-                                              isOpen={modalOpen}
-                                              closeModal={closeModal}
-                                              availableLocales={data?.admin?.availableLocales}
-                                              siteLocales={siteLocales}
-                                              defaultLanguage={defaultLanguage}/>
-                               <LanguageContent site={site}
-                                                uilang={uilang}
-                                                openModal={openModal}
-                                                siteLocales={siteLocales}
-                                                defaultLanguage={defaultLanguage}/>
-                               <UntranslatedContent site={site}
-                                                    uilang={uilang}
-                                                    value={allowsUnlistedLanguages && mixLanguage ? 'all' :
-                                                        mixLanguage ? 'only' : 'never'}/>
-                           </>
-                       }/>
+        <LanguageSettingsContextProvider site={site} uilang={uilang}>
+            <LayoutContent isLoading={loading}
+                           header={
+                               <Header title={t('label.header', {siteName: data?.jcr?.result?.site?.displayName})}
+                                       mainActions={[
+                                           <Button key="addLanguage"
+                                                   size="big"
+                                                   color="accent"
+                                                   icon={<Add/>}
+                                                   label={t('label.table.actions.add')}
+                                                   data-sel-role="addLanguage"
+                                                   onClick={() => openModal(LanguageHelper.emptyLanguage)}/>
+                                       ]}/>
+                           }
+                           content={
+                               <>
+                                   <LanguageModal selectedLanguage={selectedLanguage}
+                                                  setSelectedLanguage={setSelectedLanguage}
+                                                  isOpen={modalOpen}
+                                                  closeModal={closeModal}
+                                                  availableLocales={data?.admin?.availableLocales}
+                                                  siteLocales={siteLocales}
+                                                  defaultLanguage={defaultLanguage}/>
+                                   <LanguageContent openModal={openModal}
+                                                    siteLocales={siteLocales}
+                                                    defaultLanguage={defaultLanguage}/>
+                                   <UntranslatedContent value={untranslatedValue()}/>
+                               </>
+                           }/>
+        </LanguageSettingsContextProvider>
     );
 };

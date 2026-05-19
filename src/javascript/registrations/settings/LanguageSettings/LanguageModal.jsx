@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import PropTypes from 'prop-types';
 import {useTranslation} from 'react-i18next';
 import {useMutation} from '@apollo/client';
@@ -7,25 +7,17 @@ import styles from './LanguageSettings.scss';
 import * as LanguageGraphQL from './Language.gql-queries';
 import * as LanguageHelper from './LanguageHelper';
 import {LanguageModalError} from './LanguageModalError';
+import {useLanguageSettingsContext} from './LanguageSettings.context';
 
-const emptyLanguage = Object.freeze({
-    isNew: true,
-    activeInEdit: false,
-    activeInLive: false,
-    mandatory: false
-});
-const availabilityFlags = {
-    active: {activeInEdit: true, activeInLive: true, mandatory: false},
+const availabilities = {
+    inactive: {activeInEdit: false, activeInLive: false, mandatory: false},
     inactiveInLive: {activeInEdit: true, activeInLive: false, mandatory: false},
-    required: {activeInEdit: true, activeInLive: true, mandatory: true},
-    inactive: {activeInEdit: false, activeInLive: false, mandatory: false}
+    active: {activeInEdit: true, activeInLive: true, mandatory: false},
+    required: {activeInEdit: true, activeInLive: true, mandatory: true}
 };
-const availabilityValues = ['inactive', 'inactiveInLive', 'active', 'required'];
 const defaultDisabledValues = new Set(['inactive', 'inactiveInLive']);
 
 export const LanguageModal = ({
-    site,
-    uilang,
     selectedLanguage,
     setSelectedLanguage,
     isOpen,
@@ -35,16 +27,28 @@ export const LanguageModal = ({
     defaultLanguage
 }) => {
     const {t} = useTranslation('siteSettings');
+    const {site, uilang} = useLanguageSettingsContext();
 
     const [modalErrorDescription, setModalErrorDescription] = useState(null);
 
+    // Reset transient modal state when the modal transitions from open -> closed.
+    const wasOpenRef = useRef(isOpen);
+    useEffect(() => {
+        if (wasOpenRef.current && !isOpen) {
+            setSelectedLanguage(LanguageHelper.emptyLanguage);
+            setModalErrorDescription(null);
+        }
+
+        wasOpenRef.current = isOpen;
+    }, [isOpen, setSelectedLanguage]);
+
     const onClose = () => {
-        setSelectedLanguage(emptyLanguage);
+        setSelectedLanguage(LanguageHelper.emptyLanguage);
         closeModal();
     };
 
     const availabilityData = useMemo(
-        () => availabilityValues.map(value => ({
+        () => Object.keys(availabilities).map(value => ({
             value,
             label: t(`label.availability.${value}.title`),
             description: t(`label.availability.${value}.description`),
@@ -60,7 +64,7 @@ export const LanguageModal = ({
                 variables: {path: `/sites/${site}`, displayLanguage: uilang}
             }],
             awaitRefetchQueries: true,
-            onCompleted: () => onClose(),
+            onCompleted: closeModal,
             onError: err => {
                 console.error(err);
                 setModalErrorDescription(t('label.modal.error.description'));
@@ -74,6 +78,16 @@ export const LanguageModal = ({
 
         gqlSaveSiteLanguages({variables: LanguageHelper.buildLanguageVariables(`/sites/${site}`, updatedLocales)});
     };
+
+    const dropDownData = useMemo(() => availableLocales.map(l => {
+        return {
+            iconEnd: <Pill label={l.language.toUpperCase()}/>,
+            id: l.language,
+            label: l.displayName,
+            value: l.language,
+            isDisabled: siteLocales.some(lang => lang.language === l.language)
+        };
+    }), [availableLocales, siteLocales]);
 
     return (
         <Modal isOpen={isOpen}>
@@ -91,15 +105,7 @@ export const LanguageModal = ({
                               isDisabled={!selectedLanguage.isNew}
                               value={selectedLanguage.language}
                               data-sel-role="languages"
-                              data={availableLocales.map(l => {
-                                  return {
-                                      iconEnd: <Pill label={l.language.toUpperCase()}/>,
-                                      id: l.language,
-                                      label: l.displayName,
-                                      value: l.language,
-                                      isDisabled: siteLocales.find(lang => lang.language === l.language)
-                                  };
-                              })}
+                              data={dropDownData}
                               onChange={(e, v) => setSelectedLanguage({
                                   ...selectedLanguage,
                                   language: v.value,
@@ -122,10 +128,9 @@ export const LanguageModal = ({
                               placeholder={t('label.modal.availability.placeholder')}
                               variant="outlined"
                               className={styles.dropdown}
-                              data-value={LanguageHelper.getAvailability(selectedLanguage)}
                               value={LanguageHelper.getAvailability(selectedLanguage)}
                               onChange={(e, v) => {
-                                  const flags = availabilityFlags[v.value];
+                                  const flags = availabilities[v.value];
                                   if (!flags) {
                                       return;
                                   }
@@ -142,6 +147,7 @@ export const LanguageModal = ({
                         onClick={onClose}/>
                 {selectedLanguage.isNew ?
                     <Button size="big"
+                            isDisabled={isSavingSiteLanguages || !selectedLanguage.language || !selectedLanguage.displayName}
                             color="accent"
                             label={t('label.actions.add')}
                             data-sel-role="add"
@@ -158,8 +164,6 @@ export const LanguageModal = ({
 };
 
 LanguageModal.propTypes = {
-    site: PropTypes.string.isRequired,
-    uilang: PropTypes.string.isRequired,
     selectedLanguage: PropTypes.shape({
         isNew: PropTypes.bool.isRequired,
         language: PropTypes.string, // Optional until selected

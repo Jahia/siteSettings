@@ -6,6 +6,7 @@ import {Button, Delete, Edit, Menu, MenuItem, MoreVert, Paper, Pill, Star, Table
 import * as LanguageGraphQL from './Language.gql-queries';
 import * as LanguageHelper from './LanguageHelper';
 import {LanguageModalError} from './LanguageModalError';
+import {useLanguageSettingsContext} from './LanguageSettings.context';
 
 const columnsWidth = {
     default: '5%',
@@ -13,12 +14,13 @@ const columnsWidth = {
     availability: '45%'
 };
 
-export const LanguageContent = ({site, uilang, openModal, siteLocales, defaultLanguage}) => {
+export const LanguageContent = ({openModal, siteLocales, defaultLanguage}) => {
     const {t} = useTranslation('siteSettings');
+    const {site, uilang} = useLanguageSettingsContext();
 
-    const [menuState, setMenuState] = useState({anchorEl: null, language: null});
-    const openMenu = (e, language) => setMenuState({anchorEl: e.currentTarget, language});
-    const closeMenu = () => setMenuState({anchorEl: null, language: null});
+    const [menuState, setMenuState] = useState({anchorEl: null, row: null});
+    const openMenu = (e, row) => setMenuState({anchorEl: e.currentTarget, row});
+    const closeMenu = () => setMenuState(prev => ({...prev, anchorEl: null}));
 
     const [modalErrorDescription, setModalErrorDescription] = useState(null);
     const openModalError = description => {
@@ -31,10 +33,7 @@ export const LanguageContent = ({site, uilang, openModal, siteLocales, defaultLa
         [siteLocales]
     );
 
-    const currentRow = useMemo(
-        () => sortedLocales.find(l => l.language === menuState.language),
-        [sortedLocales, menuState.language]
-    );
+    const currentRow = menuState.row;
     const languageCount = currentRow?.count ?? 0;
     const isDisabled = currentRow?.mandatory || currentRow?.activeInEdit || currentRow?.language === defaultLanguage || currentRow?.language === uilang || languageCount > 0;
 
@@ -90,52 +89,55 @@ export const LanguageContent = ({site, uilang, openModal, siteLocales, defaultLa
                                 closeModal={() => setModalErrorDescription(null)}
                                 description={modalErrorDescription}/>
             <Paper>
-                {currentRow && (
-                    <Menu isDisplayed={Boolean(menuState.anchorEl)}
-                          anchorEl={menuState.anchorEl}
-                          anchorElOrigin={{vertical: 'bottom', horizontal: 'left'}}
-                          transformElOrigin={{vertical: 'top', horizontal: 'left'}}
-                          onClose={closeMenu}
-                    >
-                        <MenuItem label={t('label.actions.edit')}
-                                  iconStart={<Edit/>}
-                                  onClick={() => {
-                                      closeMenu();
-                                      openModal(currentRow);
-                                  }}/>
-                        <MenuItem label={t('label.table.actions.default.title')}
-                                  iconStart={<Star/>}
-                                  isDisabled={isSavingDefaultLanguage || currentRow.language === defaultLanguage}
-                                  onClick={() => {
-                                      if (currentRow.language === defaultLanguage) {
-                                          openModalError(t('label.table.actions.default.error'));
-                                      } else {
-                                          setDefaultLanguage(currentRow.language);
-                                      }
-                                  }}/>
-                        <MenuItem label={t('label.table.actions.delete.title')}
-                                  iconStart={<Delete/>}
-                                  isDisabled={isSavingSiteLanguages || isDisabled}
-                                  onClick={() => {
-                                      if (isDisabled) {
-                                          let errorMessage = 'error';
+                <Menu
+                    isDisplayed={Boolean(menuState.anchorEl)}
+                    anchorEl={menuState.anchorEl}
+                    anchorElOrigin={{vertical: 'bottom', horizontal: 'left'}}
+                    transformElOrigin={{vertical: 'top', horizontal: 'left'}}
+                    onClose={closeMenu}
+                >
+                    {currentRow && (
+                        <>
+                            <MenuItem label={t('label.actions.edit')}
+                                      iconStart={<Edit/>}
+                                      onClick={() => {
+                                          closeMenu();
+                                          openModal(currentRow);
+                                      }}/>
+                            <MenuItem label={t('label.table.actions.default.title')}
+                                      iconStart={<Star/>}
+                                      isDisabled={isSavingDefaultLanguage || currentRow.language === defaultLanguage}
+                                      onClick={() => {
                                           if (currentRow.language === defaultLanguage) {
-                                              errorMessage = t('label.table.actions.delete.error.default');
-                                          } else if (currentRow.mandatory) {
-                                              errorMessage = t('label.table.actions.delete.error.mandatory');
-                                          } else if (currentRow.activeInEdit) {
-                                              errorMessage = t('label.table.actions.delete.error.activeInEdit');
-                                          } else if (languageCount > 0) {
-                                              errorMessage = t('label.table.actions.delete.error.language', {count: languageCount});
+                                              openModalError(t('label.table.actions.default.error'));
+                                          } else {
+                                              setDefaultLanguage(currentRow.language);
                                           }
+                                      }}/>
+                            <MenuItem label={t('label.table.actions.delete.title')}
+                                      iconStart={<Delete/>}
+                                      isDisabled={isSavingSiteLanguages || isDisabled}
+                                      onClick={() => {
+                                          if (isDisabled) {
+                                              let errorMessage = 'error';
+                                              if (currentRow.language === defaultLanguage) {
+                                                  errorMessage = t('label.table.actions.delete.error.default');
+                                              } else if (currentRow.mandatory) {
+                                                  errorMessage = t('label.table.actions.delete.error.mandatory');
+                                              } else if (currentRow.activeInEdit) {
+                                                  errorMessage = t('label.table.actions.delete.error.activeInEdit');
+                                              } else if (languageCount > 0) {
+                                                  errorMessage = t('label.table.actions.delete.error.language', {count: languageCount});
+                                              }
 
-                                          openModalError(errorMessage);
-                                      } else {
-                                          deleteLanguage(currentRow.language);
-                                      }
-                                  }}/>
-                    </Menu>
-                )}
+                                              openModalError(errorMessage);
+                                          } else {
+                                              deleteLanguage(currentRow.language);
+                                          }
+                                      }}/>
+                        </>
+                    )}
+                </Menu>
                 <Table>
                     <TableHead>
                         <TableRow>
@@ -160,8 +162,8 @@ export const LanguageContent = ({site, uilang, openModal, siteLocales, defaultLa
                                 <Button size="big"
                                         variant="ghost"
                                         icon={<MoreVert/>}
-                                        aria-label={t('label.actions.more')}
-                                        onClick={e => openMenu(e, l.language)}/>
+                                        aria-label={t('label.actions.moreFor', {language: l.displayName})}
+                                        onClick={e => openMenu(e, l)}/>
                             </TableBodyCell>
                         </TableRow>
                     ))}
@@ -173,8 +175,6 @@ export const LanguageContent = ({site, uilang, openModal, siteLocales, defaultLa
 };
 
 LanguageContent.propTypes = {
-    site: PropTypes.string.isRequired,
-    uilang: PropTypes.string.isRequired,
     openModal: PropTypes.func.isRequired,
     siteLocales: PropTypes.array.isRequired,
     defaultLanguage: PropTypes.string

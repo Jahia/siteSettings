@@ -6,9 +6,11 @@ import {Button, Edit, Modal, ModalBody, ModalFooter, ModalHeader, Paper, RadioGr
 import styles from './LanguageSettings.scss';
 import * as LanguageGraphQL from './Language.gql-queries';
 import {LanguageModalError} from './LanguageModalError';
+import {useLanguageSettingsContext} from './LanguageSettings.context';
 
-export const UntranslatedContent = ({site, uilang, value}) => {
+export const UntranslatedContent = ({value}) => {
     const {t} = useTranslation('siteSettings');
+    const {site, uilang} = useLanguageSettingsContext();
 
     const [modalErrorDescription, setModalErrorDescription] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
@@ -102,7 +104,5 @@ export const UntranslatedContent = ({site, uilang, value}) => {
 };
 
 UntranslatedContent.propTypes = {
-    site: PropTypes.string.isRequired,
-    uilang: PropTypes.string.isRequired,
     value: PropTypes.string.isRequired
 };
