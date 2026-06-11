@@ -1,13 +1,16 @@
+import { BaseComponent, Button, getComponentByRole, getComponentBySelector } from '@jahia/cypress'
+
 export class LanguageSettings {
-    static visit(siteKey: string, language: string): void {
-        cy.visit(`/cms/editframe/default/${language}/sites/${siteKey}.manageLanguages.html`)
+    static visit(siteKey: string): void {
+        cy.visit(`/jahia/administration/${siteKey}/settings/languages`)
     }
 
     public switchReplaceUntranslatedWithDefault() {
-        cy.get('label[for="mixLanguages"]').find('span.checkbox-material').click()
+        getComponentByRole(Button, 'edit').click()
+        getComponentBySelector(BaseComponent, 'input[type="radio"][value="only"]').should('be.visible').click()
     }
 
     public submitChanges() {
-        cy.get('button[id="updateSite_button"]').click()
+        getComponentByRole(Button, 'save').click()
     }
 }
