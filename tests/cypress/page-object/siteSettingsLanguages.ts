@@ -19,9 +19,7 @@ export class SiteSettingsLanguages extends BasePage {
     }
 
     checkLanguageAvailability(expectedLabel: string) {
-        getComponentByRole(Dropdown, 'availability')
-            .get()
-            .should('contain.text', expectedLabel)
+        getComponentByRole(Dropdown, 'availability').get().should('contain.text', expectedLabel)
     }
 
     deActivateLanguageForTargetMode(lang: string, mode: string) {

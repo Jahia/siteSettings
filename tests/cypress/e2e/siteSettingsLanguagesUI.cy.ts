@@ -170,14 +170,8 @@ describe('UI Site settings language', () => {
 
         const dropDown = getComponentByRole(Dropdown, 'languages')
         dropDown.get().click()
-        getComponent(Menu, dropDown)
-            .get()
-            .find('.moonstone-menuItem')
-            .contains('Afrikaans')
-        getComponent(Menu, dropDown)
-            .get()
-            .find('.moonstone-menuItem')
-            .should('not.contain', 'AA')
+        getComponent(Menu, dropDown).get().find('.moonstone-menuItem').contains('Afrikaans')
+        getComponent(Menu, dropDown).get().find('.moonstone-menuItem').should('not.contain', 'AA')
     })
 
     it('set a language as default', () => {
