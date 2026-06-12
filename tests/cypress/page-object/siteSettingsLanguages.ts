@@ -6,7 +6,7 @@ export class SiteSettingsLanguages extends BasePage {
         return new SiteSettingsLanguages()
     }
 
-    isLanguageActivateForTargetMode(lang: string, mode: string, expectedValue: string) {
+    openLanguageEdit(lang: string) {
         getComponent(Table)
             .get()
             .find(`span.moonstone-pill:contains('${lang}')`)
@@ -16,11 +16,12 @@ export class SiteSettingsLanguages extends BasePage {
             .last()
             .click()
         getComponent(Menu).select('Edit')
-        return getComponentByRole(Dropdown, 'availability')
+    }
+
+    checkLanguageAvailability(expectedLabel: string) {
+        getComponentByRole(Dropdown, 'availability')
             .get()
-            .then(($el) => {
-                return $el.attr('data-value') === expectedValue
-            })
+            .should('contain.text', expectedLabel)
     }
 
     deActivateLanguageForTargetMode(lang: string, mode: string) {
