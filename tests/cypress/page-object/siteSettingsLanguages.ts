@@ -18,8 +18,8 @@ export class SiteSettingsLanguages extends BasePage {
         getComponent(Menu).select('Edit')
     }
 
-    checkLanguageAvailability(expectedLabel: string) {
-        getComponentByRole(Dropdown, 'availability').get().should('contain.text', expectedLabel)
+    checkLanguageAvailability(expectedValue: string) {
+        getComponentByRole(Dropdown, 'availability').get().should('have.attr', 'data-value', expectedValue)
     }
 
     deActivateLanguageForTargetMode(lang: string, mode: string) {
