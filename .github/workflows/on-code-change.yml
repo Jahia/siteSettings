@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: jahia/jahia-modules-action/update-signature@v2 
+      - uses: jahia/jahia-modules-action/update-signature@v2
         with:
           nexus_username: ${{ secrets.NEXUS_USERNAME }}
           nexus_password: ${{ secrets.NEXUS_PASSWORD }}
@@ -64,7 +64,6 @@ jobs:
     uses: Jahia/jahia-modules-action/.github/workflows/reusable-integration-tests.yml@v2
     with:
       module_id: siteSettings
-      module_branch: ${{ github.ref }}
       provisioning_manifest: provisioning-manifest-build.yml
       jahia_image: ghcr.io/jahia/jahia-ee-dev:8-SNAPSHOT
       should_use_build_artifacts: true
@@ -72,4 +71,4 @@ jobs:
       artifact_prefix: siteSettings
       testrail_project: Site Settings
       timeout_job: 45
-      module_branch: ${{ github.head_ref }}
+      module_branch: ${{ github.ref }}

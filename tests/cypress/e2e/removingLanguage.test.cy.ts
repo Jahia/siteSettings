@@ -30,17 +30,17 @@ describe('Language deactivation test', () => {
         const siteSettingsLanguages = SiteSettingsLanguages.visit(siteKey)
 
         // Remove active (live & edit) for the non-mandatory French language
-        if (siteSettingsLanguages.isLanguageActivateForTargetMode('fr', 'live', 'active').should('eq', true)) {
-            siteSettingsLanguages.deActivateLanguageForTargetMode('fr', 'live')
-        }
-        if (siteSettingsLanguages.isLanguageActivateForTargetMode('fr', 'edit', 'inactiveInLive').should('eq', true)) {
-            siteSettingsLanguages.deActivateLanguageForTargetMode('fr', 'edit')
-        }
+        siteSettingsLanguages.openLanguageEdit('fr')
+        siteSettingsLanguages.checkLanguageAvailability('Active')
+        siteSettingsLanguages.deActivateLanguageForTargetMode('fr', 'live')
+
+        siteSettingsLanguages.openLanguageEdit('fr')
+        siteSettingsLanguages.checkLanguageAvailability('Inactive in live')
+        siteSettingsLanguages.deActivateLanguageForTargetMode('fr', 'edit')
 
         // Verify that the French language has been deactivated
-        siteSettingsLanguages.isLanguageActivateForTargetMode('fr', 'live', 'active').should('eq', false)
-        siteSettingsLanguages.close()
-        siteSettingsLanguages.isLanguageActivateForTargetMode('fr', 'edit', 'active').should('eq', false)
+        siteSettingsLanguages.openLanguageEdit('fr')
+        siteSettingsLanguages.checkLanguageAvailability('Inactive')
         siteSettingsLanguages.close()
 
         // Verify that we cannot access to the homepage in French in EDIT workspace
