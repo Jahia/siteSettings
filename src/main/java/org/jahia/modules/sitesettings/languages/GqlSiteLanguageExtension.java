@@ -24,7 +24,10 @@ public class GqlSiteLanguageExtension {
 
     @GraphQLField
     @GraphQLDescription("Count languages usage")
-    public long count(@GraphQLName("path") @GraphQLNonNull String path) throws RepositoryException {
+    public long count(
+        @GraphQLName("path") 
+        @GraphQLDescription("The path to check the language usage for")
+        @GraphQLNonNull String path) throws RepositoryException {
         return BundleUtils.getOsgiService(JCRTemplate.class, null).doExecuteWithSystemSessionAsUser(null, Constants.EDIT_WORKSPACE, null, session ->
                 session.getWorkspace().getQueryManager()
                         .createQuery("SELECT count AS [rep:count(skipChecks=1)] FROM [jnt:translation]" +

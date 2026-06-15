@@ -26,7 +26,9 @@ public class GqlAdminQueryExtension {
 
     @GraphQLField
     @GraphQLDescription("List all available locales in the JVM")
-    public static Set<GqlLocale> getAvailableLocales(@GraphQLName("language") @GraphQLNonNull String language) {
+    public static Set<GqlLocale> getAvailableLocales(
+        @GraphQLName("language") @GraphQLNonNull @GraphQLDescription("List all available locales for the given language code") String language
+    ) {
         Locale locale = LanguageCodeConverters.languageCodeToLocale(language);
         if (locale == null) {
             logger.error("Invalid language: {}", language);

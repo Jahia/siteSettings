@@ -7,6 +7,8 @@ import org.jahia.utils.LanguageCodeConverters;
 
 import java.util.Locale;
 
+
+@GraphQLDescription("GQL type representing a locale")
 public class GqlLocale {
     private final String language;
 
