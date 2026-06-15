@@ -19,7 +19,10 @@ export class SiteSettingsLanguages extends BasePage {
     }
 
     checkLanguageAvailability(expectedValue: string) {
-        getComponentByRole(Dropdown, 'availability').get().find('[role="listbox"]').should('have.attr', 'aria-label', expectedValue)
+        getComponentByRole(Dropdown, 'availability')
+            .get()
+            .find('[role="listbox"]')
+            .should('have.attr', 'aria-label', expectedValue)
     }
 
     deActivateLanguageForTargetMode(lang: string, mode: string) {
