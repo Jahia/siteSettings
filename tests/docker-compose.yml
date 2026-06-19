@@ -32,9 +32,8 @@ services:
             - mariadb
         extra_hosts:
           - "jahia:172.18.0.10"
-          - "jahia-p:172.18.0.10"
-          - "jahia-b1:172.18.0.11"
-          - "jahia-b2:172.18.0.12"
+          - "jahia-browsing-a:172.18.0.11"
+          - "jahia-browsing-b:172.18.0.12"
         networks:
           default:
             ipv4_address: 172.18.0.10
@@ -75,9 +74,8 @@ services:
             - jahia
         extra_hosts:
           - "jahia:172.18.0.10"
-          - "jahia-p:172.18.0.10"
-          - "jahia-b1:172.18.0.11"
-          - "jahia-b2:172.18.0.12"
+          - "jahia-browsing-a:172.18.0.11"
+          - "jahia-browsing-b:172.18.0.12"
         networks:
           default:
             ipv4_address: 172.18.0.11
@@ -117,9 +115,8 @@ services:
             - jahia
         extra_hosts:
           - "jahia:172.18.0.10"
-          - "jahia-p:172.18.0.10"
-          - "jahia-b1:172.18.0.11"
-          - "jahia-b2:172.18.0.12"
+          - "jahia-browsing-a:172.18.0.11"
+          - "jahia-browsing-b:172.18.0.12"
         networks:
           default:
             ipv4_address: 172.18.0.12
@@ -175,6 +172,8 @@ services:
           ipv4_address: 172.18.0.20
       extra_hosts:
         - "jahia:172.18.0.10"
+        - "jahia-browsing-a:172.18.0.11"
+        - "jahia-browsing-b:172.18.0.12"
 networks:
   default:
     ipam:
