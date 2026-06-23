@@ -37,5 +37,81 @@
     "mandatoryLanguages": "Langues obligatoires",
     "defaultLanguage": "Langue par défaut",
     "creationDate": "Date de création"
+  },
+  "label": {
+    "title": "Langues",
+    "header": "Gérer les langues pour \"{{ siteName }}\"",
+    "actions": {
+      "add": "Ajouter",
+      "cancel": "Annuler",
+      "close": "Fermer",
+      "edit": "Modifier",
+      "more": "Plus {{ language }}",
+      "save": "Enregistrer"
+    },
+    "untranslatedContent": {
+      "title": "Afficher la langue par défaut lorsque le contenu n'est pas traduit",
+      "never": "Jamais (recommandé pour un site web)",
+      "only": "Uniquement pour les langues prises en charge par le site web",
+      "all": "Toutes les langues, même celles non prises en charge par le site web",
+      "modal": "Définir la langue par défaut"
+    },
+    "modal": {
+      "header": "{{ action }} une langue",
+      "language": {
+        "title": "Langue",
+        "placeholder": "Sélectionner une langue"
+      },
+      "default": "Langue par défaut",
+      "availability": {
+        "title": "Disponibilité",
+        "placeholder": "Active, Masquée en live, Obligatoire, Inactive"
+      },
+      "error": {
+        "title": "Erreur",
+        "description": "Une erreur est survenue"
+      }
+    },
+    "availability": {
+      "inactive": {
+        "title": "Inactive",
+        "description": "Le contenu n'est pas modifiable et n'est pas visible en live"
+      },
+      "inactiveInLive": {
+        "title": "Inactive en live",
+        "description": "Le contenu est modifiable mais n'est pas visible en live"
+      },
+      "active": {
+        "title": "Active",
+        "description": "Le contenu est modifiable et visible en live"
+      },
+      "required": {
+        "title": "Obligatoire",
+        "description": "Langue obligatoire pour publier toute autre langue (modifiable et visible en live)"
+      }
+    },
+    "table": {
+      "th": {
+        "default": "Par défaut",
+        "languages": "Langues",
+        "availability": "Disponibilité"
+      },
+      "actions": {
+        "add": "Ajouter une langue",
+        "default": {
+          "title": "Définir comme langue par défaut",
+          "error": "Cette langue est déjà la langue par défaut."
+        },
+        "delete": {
+          "title": "Supprimer",
+          "error": {
+            "activeInEdit": "Cette langue est active en mode édition et ne peut pas être supprimée.",
+            "default": "Cette langue est la langue par défaut et ne peut pas être supprimée.",
+            "language": "Cette langue est utilisée par {{ count }} contenu(s) et ne peut pas être supprimée.",
+            "mandatory": "Cette langue est obligatoire et ne peut pas être supprimée."
+          }
+        }
+      }
+    }
   }
 }
