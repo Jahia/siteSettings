@@ -37,5 +37,81 @@
     "mandatoryLanguages": "Verpflichtende Sprachen",
     "defaultLanguage": "Standardsprache",
     "creationDate": "Erstellungsdatum"
+  },
+  "label": {
+    "title": "Sprachen",
+    "header": "Sprachen für \"{{ siteName }}\"",
+    "actions": {
+      "add": "Hinzufügen",
+      "cancel": "Abbrechen",
+      "close": "Schließen",
+      "edit": "Bearbeiten",
+      "more": "Mehr für {{ language }}",
+      "save": "Speichern"
+    },
+    "untranslatedContent": {
+      "title": "Standardsprache anzeigen, wenn der Inhalt nicht übersetzt ist",
+      "never": "Nie (empfohlen für Webseiten)",
+      "only": "Nur für von der Webseite unterstützte Sprachen",
+      "all": "Alle Sprachen, auch die von der Webseite nicht unterstützten",
+      "modal": "Ersatzsprache festlegen"
+    },
+    "modal": {
+      "header": "Sprache {{ action }}",
+      "language": {
+        "title": "Sprache",
+        "placeholder": "Sprache auswählen"
+      },
+      "default": "Standardsprache",
+      "availability": {
+        "title": "Verfügbarkeit",
+        "placeholder": "Aktiv, In Live ausgeblendet, Erforderlich, Inaktiv"
+      },
+      "error": {
+        "title": "Fehler",
+        "description": "Ein Fehler ist aufgetreten"
+      }
+    },
+    "availability": {
+      "inactive": {
+        "title": "Inaktiv",
+        "description": "Inhalt ist nicht bearbeitbar und in Live nicht sichtbar"
+      },
+      "inactiveInLive": {
+        "title": "In Live inaktiv",
+        "description": "Inhalt ist bearbeitbar, aber in Live nicht sichtbar"
+      },
+      "active": {
+        "title": "Aktiv",
+        "description": "Inhalt ist bearbeitbar und in Live sichtbar"
+      },
+      "required": {
+        "title": "Erforderlich",
+        "description": "Pflichtsprache zur Veröffentlichung aller anderen Sprachen (bearbeitbar und in Live sichtbar)"
+      }
+    },
+    "table": {
+      "th": {
+        "default": "Standard",
+        "languages": "Sprachen",
+        "availability": "Verfügbarkeit"
+      },
+      "actions": {
+        "add": "Sprache hinzufügen",
+        "default": {
+          "title": "Als Standardsprache festlegen",
+          "error": "Diese Sprache ist bereits die Standardsprache."
+        },
+        "delete": {
+          "title": "Löschen",
+          "error": {
+            "activeInEdit": "Diese Sprache ist im Bearbeitungsmodus aktiv und kann nicht gelöscht werden.",
+            "default": "Diese Sprache ist die Standardsprache und kann nicht gelöscht werden.",
+            "language": "Diese Sprache wird von {{ count }} Inhalt(en) verwendet und kann nicht gelöscht werden.",
+            "mandatory": "Diese Sprache ist eine Pflichtsprache und kann nicht gelöscht werden."
+          }
+        }
+      }
+    }
   }
 }
