@@ -52,7 +52,7 @@
                                 <td>
                                     <input type="checkbox" name="userToDelete" value="${fn:escapeXml(curUser.userKey)}" class="userCheckbox" readonly="readonly" checked="checked">
                                 </td>
-                                <td>${user:displayName(curUser)}</td>
+                                <td>${fn:escapeXml(user:displayName(curUser))}</td>
                                 <td>${user:fullName(curUser)}</td>
                                 <c:if test="${multipleProvidersAvailable}">
                                     <fmt:message var="i18nProviderLabel" key="providers.${curUser.providerName}.label"/>

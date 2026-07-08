@@ -56,7 +56,7 @@
                                         </label>
                                     </div>
                                 </td>
-                                <td>${user:displayName(curUser)}</td>
+                                <td>${fn:escapeXml(user:displayName(curUser))}</td>
                                 <td>${user:fullName(curUser)}</td>
                                 <c:if test="${multipleProvidersAvailable}">
                                     <fmt:message var="i18nProviderLabel" key="providers.${curUser.providerName}.label"/>
