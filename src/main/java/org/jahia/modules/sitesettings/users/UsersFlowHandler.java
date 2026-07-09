@@ -66,6 +66,23 @@ public class UsersFlowHandler implements Serializable {
         }
     }
 
+    /**
+     * A target principal is only in scope for the realm this management screen is bound to. When bound
+     * to a specific site (siteKey set from a jnt:virtualsite realm) the target must live under that
+     * site's principal tree (/sites/&lt;siteKey&gt;/...); in the server-wide realm (siteKey null) the
+     * target must live in the server-global store (/users/ or /groups/) and never inside a site's tree.
+     * This mirrors the store layout used by JahiaUserManagerService ("/users/" vs "/sites/&lt;siteKey&gt;/users/").
+     */
+    private boolean isInAdministeredScope(String principalPath) {
+        if (principalPath == null) {
+            return false;
+        }
+        if (siteKey == null) {
+            return principalPath.startsWith("/users/") || principalPath.startsWith("/groups/");
+        }
+        return principalPath.startsWith("/sites/" + siteKey + "/");
+    }
+
     public boolean addUser(final UserProperties userProperties, final MessageContext context) throws RepositoryException {
         logger.info("Adding user");
         return JCRTemplate.getInstance().doExecuteWithSystemSession(new JCRCallback<Boolean>() {
@@ -216,6 +233,11 @@ public class UsersFlowHandler implements Serializable {
             @Override
             public Boolean doInJCR(JCRSessionWrapper session) throws RepositoryException {
                 JCRUserNode jahiaUser = userManagerService.lookupUserByPath(userKey);
+                if (jahiaUser == null || !isInAdministeredScope(jahiaUser.getPath())) {
+                    context.addMessage(new MessageBuilder().error().code(
+                            "siteSettings.user.remove.unsuccessful").arg(userKey).build());
+                    return false;
+                }
                 String displayName = PrincipalViewHelper.getDisplayName(jahiaUser);
                 if (userManagerService.deleteUser(jahiaUser.getPath(), session)) {
                     context.addMessage(new MessageBuilder().info().code(
@@ -289,6 +311,11 @@ public class UsersFlowHandler implements Serializable {
             @Override
             public Boolean doInJCR(JCRSessionWrapper session) throws RepositoryException {
                 JCRUserNode jahiaUser = userManagerService.lookupUserByPath(userProperties.getUserKey(), session);
+                if (jahiaUser == null || !isInAdministeredScope(jahiaUser.getPath())) {
+                    context.addMessage(new MessageBuilder().error().source("userName").code(
+                            "siteSettings.user.edit.errors.property").arg("userName").build());
+                    return false;
+                }
                 boolean hasErrors = false;
                 Set<String> readOnlyProps = userProperties.getReadOnlyProperties();
                 if (jahiaUser != null) {
