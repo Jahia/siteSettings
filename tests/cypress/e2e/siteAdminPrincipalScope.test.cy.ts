@@ -12,8 +12,11 @@ import { generateRandomID } from '../utils/utils'
 
 describe('Site-administrator principal scope enforcement', () => {
     const siteKey = 'scopeGuardSite' + generateRandomID()
+    const otherSite = 'scopeOtherSite' + generateRandomID()
     const siteAdmin = 'scopeadmin_' + generateRandomID()
     const outsider = 'scopeoutsider_' + generateRandomID()
+    const otherSiteUser = 'scopeother_' + generateRandomID()
+    const siteGroup = 'scopegrp_' + generateRandomID()
 
     before(() => {
         createSite(siteKey, {
@@ -22,10 +25,25 @@ describe('Site-administrator principal scope enforcement', () => {
             serverName: 'localhost',
             locale: 'en',
         })
+        createSite(otherSite, {
+            languages: 'en',
+            templateSet: 'dx-base-demo-templates',
+            serverName: 'localhost',
+            locale: 'en',
+        })
         // both users are created at the server-global store (/users/…)
         createUser(siteAdmin, 'password', [{ name: 'j:firstName', value: 'scope' }])
         createUser(outsider, 'password', [{ name: 'j:firstName', value: 'outsider' }])
-        // siteAdmin administers ONLY this site
+        // a SITE-scoped user living under ANOTHER site (/sites/<otherSite>/users/…)
+        cy.executeGroovy('groovy/createSiteUserWithTitle.groovy', {
+            USER_NAME: otherSiteUser,
+            SITE_KEY: otherSite,
+            PASSWORD: 'password',
+            TITLE_VALUE: 'other site user',
+        })
+        // a group inside the administered site (/sites/<siteKey>/groups/…)
+        cy.executeGroovy('groovy/createSiteGroup.groovy', { GROUP_NAME: siteGroup, SITE_KEY: siteKey })
+        // siteAdmin administers ONLY siteKey
         grantRoles(`/sites/${siteKey}`, ['site-administrator'], siteAdmin, 'USER')
     })
 
@@ -33,7 +51,51 @@ describe('Site-administrator principal scope enforcement', () => {
         deleteUser(siteAdmin)
         deleteUser(outsider)
         deleteSite(siteKey)
+        deleteSite(otherSite)
     })
+
+    const nodePathByName = (name: string, type: string, under: string) =>
+        cy
+            .apollo({
+                query: gql`
+                    {
+                        jcr(workspace: EDIT) {
+                            q: nodesByQuery(
+                                query: "select * from [${type}] where localname()='${name}' and isdescendantnode('${under}')"
+                            ) {
+                                nodes {
+                                    path
+                                }
+                            }
+                        }
+                    }
+                `,
+            })
+            .then((res) => res?.data?.jcr?.q?.nodes?.[0]?.path as string)
+
+    const groupMemberNames = (groupPath: string) =>
+        cy
+            .apollo({
+                query: gql`
+                    {
+                        jcr(workspace: EDIT) {
+                            nodeByPath(path: "${groupPath}") {
+                                members: descendants(typesFilter: { types: ["jnt:member"] }) {
+                                    nodes {
+                                        name
+                                    }
+                                }
+                            }
+                        }
+                    }
+                `,
+            })
+            .then((res) => (res?.data?.jcr?.nodeByPath?.members?.nodes || []).map((n: { name: string }) => n.name))
+
+    const extractGroupsAction = (html: string) => {
+        const m = html.match(/action="([^"]*manageGroups\.html\?[^"]*webflowexecution[^"]*)"/)
+        return m ? m[1].replace(/&amp;/g, '&') : undefined
+    }
 
     const globalUserPath = (name: string) =>
         cy
@@ -95,6 +157,55 @@ describe('Site-administrator principal scope enforcement', () => {
             cy.login()
             globalUserPath(outsider).then((stillThere) => {
                 expect(stillThere, 'out-of-scope user must survive the crafted action').to.match(/^\/users\//)
+            })
+        })
+    })
+
+    it('adds a global member to a site group but rejects a member from another site', () => {
+        cy.login()
+        nodePathByName(siteGroup, 'jnt:group', `/sites/${siteKey}`).then((groupPath) => {
+            expect(groupPath, 'site group path').to.match(new RegExp(`^/sites/${siteKey}/`))
+            globalUserPath(outsider).then((globalPath) => {
+                nodePathByName(otherSiteUser, 'jnt:user', `/sites/${otherSite}`).then((otherPath) => {
+                    expect(otherPath, 'other-site user path').to.match(new RegExp(`^/sites/${otherSite}/`))
+                    cy.logout()
+
+                    // as the siteKey administrator, try to add BOTH a global user (allowed) and a
+                    // user from another site (must be rejected) to a group in the administered site
+                    cy.login(siteAdmin, 'password')
+                    cy.request(`/cms/render/default/en/sites/${siteKey}.manageGroups.html`).then((page) => {
+                        const action = extractGroupsAction(page.body)
+                        expect(action, 'manage groups flow action').to.be.a('string')
+                        cy.request({
+                            method: 'POST',
+                            url: action,
+                            form: true,
+                            body: { _eventId: 'editGroupMembers', selectedGroup: groupPath },
+                            failOnStatusCode: false,
+                        }).then((afterSelect) => {
+                            const saveAction = extractGroupsAction(afterSelect.body) || action
+                            cy.request({
+                                method: 'POST',
+                                url: saveAction,
+                                form: true,
+                                body: {
+                                    _eventId: 'save',
+                                    addedMembers: [`u:${globalPath}`, `u:${otherPath}`],
+                                    removedMembers: '',
+                                },
+                                failOnStatusCode: false,
+                            })
+                        })
+                    })
+                    cy.logout()
+
+                    // global member accepted; cross-site member rejected
+                    cy.login()
+                    groupMemberNames(groupPath).then((names: string[]) => {
+                        expect(names, 'global user must be an accepted member').to.include(outsider)
+                        expect(names, 'cross-site user must be rejected as member').to.not.include(otherSiteUser)
+                    })
+                })
             })
         })
     })
