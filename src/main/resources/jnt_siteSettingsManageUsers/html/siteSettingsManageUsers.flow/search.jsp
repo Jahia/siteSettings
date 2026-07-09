@@ -248,7 +248,7 @@
                                     </c:otherwise>
                                 </c:choose>
                             </td>
-                            <td><a href="#" onclick="doUserAction('editUser', '${fn:escapeXml(curUser.path)}')">${user:displayName(curUser)}</a></td>
+                            <td><a href="#" onclick="doUserAction('editUser', '${fn:escapeXml(curUser.path)}')">${fn:escapeXml(user:displayName(curUser))}</a></td>
                             <td>${user:fullName(curUser)}</td>
                             <c:if test="${multipleProvidersAvailable}">
                                 <fmt:message var="i18nProviderLabel" key="providers.${curUser.providerName}.label"/>
