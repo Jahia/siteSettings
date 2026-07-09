@@ -145,10 +145,6 @@ public class ManageGroupsFlowHandler implements Serializable {
                 logger.warn("Unable to lookup principal for key {}", member);
                 continue;
             }
-            if (!isInAdministeredScope(principal.getPath())) {
-                logger.warn("Ignoring out-of-scope principal {} for group {}", member, group.getPath());
-                continue;
-            }
 
             // do not add group to itself and check if the principal is not yet a member of the group
             if (!group.equals(principal) && !group.isMember(principal) && (!(principal instanceof JCRGroupNode) || !((JCRGroupNode)principal).isMember(group))) {
