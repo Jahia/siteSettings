@@ -60,4 +60,41 @@ describe('GraphQL API calls', () => {
             expect(result?.data?.admin?.availableLocales).length(727)
         })
     })
+
+    // the count(path) argument must stay scoped to the given path — a crafted value must not be
+    // able to alter the query structure and count content outside that path.
+    it('keeps languages count scoped to the given path (rejects crafted path breakout)', () => {
+        const countFor = (path: string) =>
+            cy
+                .apollo({
+                    query: gql`
+                        {
+                            jcr(workspace: EDIT) {
+                                nodeByPath(path: "/sites/${siteKey}") {
+                                    site {
+                                        languages {
+                                            language
+                                            count(path: ${JSON.stringify(path)})
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    `,
+                })
+                .then((result) => {
+                    const langs = result?.data?.jcr?.nodeByPath?.site?.languages || []
+                    return langs.find((l) => l.language === locale)?.count
+                })
+
+        countFor(`/sites/${siteKey}`).then((scoped) => {
+            expect(scoped, 'scoped count under the site').to.be.a('number')
+            // A crafted path that tries to break out of ISDESCENDANTNODE and count the whole repository.
+            countFor(`/sites/${siteKey}']) OR ISDESCENDANTNODE(['/`).then((crafted) => {
+                if (crafted !== null && crafted !== undefined) {
+                    expect(crafted, 'crafted path must not count beyond its scope').to.be.at.most(Number(scoped))
+                }
+            })
+        })
+    })
 })

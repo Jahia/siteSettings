@@ -31,7 +31,7 @@ public class GqlSiteLanguageExtension {
         return BundleUtils.getOsgiService(JCRTemplate.class, null).doExecuteWithSystemSessionAsUser(null, Constants.EDIT_WORKSPACE, null, session ->
                 session.getWorkspace().getQueryManager()
                         .createQuery("SELECT count AS [rep:count(skipChecks=1)] FROM [jnt:translation]" +
-                                        " WHERE ISDESCENDANTNODE(['" + path + "'])" +
+                                        " WHERE ISDESCENDANTNODE(['" + JCRContentUtils.sqlEncode(path) + "'])" +
                                         " AND [jcr:language] = '" + JCRContentUtils.sqlEncode(gqlSiteLanguage.getLanguage()) + "'",
                                 Query.JCR_SQL2)
                         .execute().getRows().nextRow().getValue("count").getLong());
