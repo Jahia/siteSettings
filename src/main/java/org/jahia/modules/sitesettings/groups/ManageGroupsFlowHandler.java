@@ -80,6 +80,24 @@ public class ManageGroupsFlowHandler implements Serializable {
     }
 
     /**
+     * Membership rule (hybrid, less strict than {@link #isInAdministeredScope}): a group may legitimately
+     * hold server-global principals (under /users or /groups) as members, but a site-scoped realm must not
+     * pull in a principal that belongs to a DIFFERENT site. So a member is allowed when it is a global
+     * principal, or a principal of the administered site itself; a principal living under another site's
+     * tree (/sites/&lt;other&gt;/...) is rejected. In the server-wide realm (siteKey null) no site-scoped
+     * principal is an allowed member of a global group.
+     */
+    private boolean isAllowedMember(String principalPath) {
+        if (principalPath == null) {
+            return false;
+        }
+        if (!principalPath.startsWith("/sites/")) {
+            return true;
+        }
+        return siteKey != null && principalPath.startsWith("/sites/" + siteKey + "/");
+    }
+
+    /**
      * Performs the creation of a new group for the site.
      * 
      * @param group
@@ -143,6 +161,10 @@ public class ManageGroupsFlowHandler implements Serializable {
             JCRNodeWrapper principal = lookupMember(member);
             if (principal == null) {
                 logger.warn("Unable to lookup principal for key {}", member);
+                continue;
+            }
+            if (!isAllowedMember(principal.getPath())) {
+                logger.warn("Ignoring cross-site principal {} as member of group {}", member, group.getPath());
                 continue;
             }
 
