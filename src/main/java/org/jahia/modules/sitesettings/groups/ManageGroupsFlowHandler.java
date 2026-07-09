@@ -98,6 +98,21 @@ public class ManageGroupsFlowHandler implements Serializable {
     }
 
     /**
+     * A group created/copied from a site-bound realm (siteKey set) must belong to that same site;
+     * the server-wide realm (siteKey null) may target the global group store. Guards the creation
+     * siteKey supplied by the request-bound GroupModel.
+     */
+    private boolean isSiteKeyInScope(String targetSiteKey) {
+        return siteKey == null || siteKey.equals(targetSiteKey);
+    }
+
+    private void addOutOfScopeError(MessageContext context) {
+        context.addMessage(new MessageBuilder().error().defaultText(
+                Messages.get("resources.JahiaSiteSettings", "siteSettings.groups.errors.reservedGroup",
+                        LocaleContextHolder.getLocale())).build());
+    }
+
+    /**
      * Performs the creation of a new group for the site.
      * 
      * @param group
@@ -109,6 +124,11 @@ public class ManageGroupsFlowHandler implements Serializable {
     @SuppressWarnings("deprecation")
     public boolean addGroup(final GroupModel group, final MessageContext context) throws RepositoryException {
         final Locale locale = LocaleContextHolder.getLocale();
+
+        if (!isSiteKeyInScope(group.getSiteKey())) {
+            addOutOfScopeError(context);
+            return false;
+        }
 
         return JCRTemplate.getInstance().doExecuteWithSystemSession(new JCRCallback<Boolean>() {
             @Override
@@ -216,6 +236,11 @@ public class ManageGroupsFlowHandler implements Serializable {
                             Messages.getWithArgs("resources.JahiaSiteSettings",
                                     "siteSettings.groups.errors.create.failed", locale, newGroup.getGroupname()))
                     .build());
+            return;
+        }
+        // the copied-from group must be in the administered scope, and the new group must land in it
+        if (!isInAdministeredScope(selectedGroup.getPath()) || !isSiteKeyInScope(newGroup.getSiteKey())) {
+            addOutOfScopeError(context);
             return;
         }
         // create new group
@@ -448,6 +473,10 @@ public class ManageGroupsFlowHandler implements Serializable {
             return;
         }
         JCRGroupNode group = lookupGroup(groupKey);
+        if (group == null || !isInAdministeredScope(group.getPath())) {
+            addOutOfScopeError(context);
+            return;
+        }
         logger.info("Removing members {} from group {}", members, group.getPath());
         long timer = System.currentTimeMillis();
         int countRemoved = 0;
