@@ -67,16 +67,20 @@ public class UsersFlowHandler implements Serializable {
     }
 
     /**
-     * When the management screen is bound to a specific site (siteKey set from a jnt:virtualsite realm),
-     * a target principal is only in scope if it is stored under that site's principal tree
-     * (/sites/&lt;siteKey&gt;/...). In the server-wide realm (siteKey null) there is no site restriction.
+     * A target principal is only in scope for the realm this management screen is bound to. When bound
+     * to a specific site (siteKey set from a jnt:virtualsite realm) the target must live under that
+     * site's principal tree (/sites/&lt;siteKey&gt;/...); in the server-wide realm (siteKey null) the
+     * target must live in the server-global store (/users/ or /groups/) and never inside a site's tree.
      * This mirrors the store layout used by JahiaUserManagerService ("/users/" vs "/sites/&lt;siteKey&gt;/users/").
      */
     private boolean isInAdministeredScope(String principalPath) {
-        if (siteKey == null) {
-            return true;
+        if (principalPath == null) {
+            return false;
         }
-        return principalPath != null && principalPath.startsWith("/sites/" + siteKey + "/");
+        if (siteKey == null) {
+            return principalPath.startsWith("/users/") || principalPath.startsWith("/groups/");
+        }
+        return principalPath.startsWith("/sites/" + siteKey + "/");
     }
 
     public boolean addUser(final UserProperties userProperties, final MessageContext context) throws RepositoryException {
