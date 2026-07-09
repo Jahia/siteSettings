@@ -63,16 +63,20 @@ public class ManageGroupsFlowHandler implements Serializable {
     }
 
     /**
-     * When the management screen is bound to a specific site (siteKey set from a jnt:virtualsite realm),
-     * a target group or member principal is only in scope if it is stored under that site's principal
-     * tree (/sites/&lt;siteKey&gt;/...). In the server-wide realm (siteKey null) there is no site
-     * restriction. Mirrors the store layout used by Jahia{User,Group}ManagerService.
+     * A target group or member principal is only in scope for the realm this management screen is bound
+     * to. When bound to a specific site (siteKey set from a jnt:virtualsite realm) the target must live
+     * under that site's principal tree (/sites/&lt;siteKey&gt;/...); in the server-wide realm (siteKey
+     * null) the target must live in the server-global store (/users/ or /groups/) and never inside a
+     * site's tree. Mirrors the store layout used by Jahia{User,Group}ManagerService.
      */
     private boolean isInAdministeredScope(String principalPath) {
-        if (siteKey == null) {
-            return true;
+        if (principalPath == null) {
+            return false;
         }
-        return principalPath != null && principalPath.startsWith("/sites/" + siteKey + "/");
+        if (siteKey == null) {
+            return principalPath.startsWith("/users/") || principalPath.startsWith("/groups/");
+        }
+        return principalPath.startsWith("/sites/" + siteKey + "/");
     }
 
     /**
