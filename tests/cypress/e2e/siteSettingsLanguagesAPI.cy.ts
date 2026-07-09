@@ -67,6 +67,7 @@ describe('GraphQL API calls', () => {
         const countFor = (path: string) =>
             cy
                 .apollo({
+                    errorPolicy: 'all',
                     query: gql`
                         {
                             jcr(workspace: EDIT) {
@@ -90,8 +91,11 @@ describe('GraphQL API calls', () => {
         countFor(`/sites/${siteKey}`).then((scoped) => {
             expect(scoped, 'scoped count under the site').to.be.a('number')
             // A crafted path that tries to break out of ISDESCENDANTNODE and count the whole repository.
+            // When contained, the crafted value is treated as a single (invalid) path: it yields no
+            // count (null) or a query error — both fine. Only a numeric count exceeding the scoped
+            // count would signal a breakout.
             countFor(`/sites/${siteKey}']) OR ISDESCENDANTNODE(['/`).then((crafted) => {
-                if (crafted !== null && crafted !== undefined) {
+                if (typeof crafted === 'number') {
                     expect(crafted, 'crafted path must not count beyond its scope').to.be.at.most(Number(scoped))
                 }
             })
