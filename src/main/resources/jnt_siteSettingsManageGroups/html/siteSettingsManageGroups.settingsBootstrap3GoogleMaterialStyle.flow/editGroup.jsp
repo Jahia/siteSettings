@@ -220,7 +220,7 @@
                                   <i class="material-icons" style="vertical-align:middle">${principalIcon}</i>
                                 </td>
                                 <td>
-                                    ${user:displayName(member)}
+                                    ${fn:escapeXml(user:displayName(member))}
                                 </td>
                                 <td>
                                     ${user:fullName(member)}
