@@ -23,6 +23,11 @@ JCRTemplate.getInstance().doExecuteWithSystemSessionAsUser(null, Constants.EDIT_
         if (site.hasNode(markupName)) {
             return null // already planted
         }
+        // truly idempotent: drop a probe left behind by a run that failed between addNode() and rename()
+        if (site.hasNode("pageModelProbe")) {
+            site.getNode("pageModelProbe").remove()
+            session.save()
+        }
         JCRNodeWrapper page = site.addNode("pageModelProbe", "jnt:page")
         page.addMixin("jmix:canBeUseAsTemplateModel")
         page.setProperty("jcr:title", "Page model probe")

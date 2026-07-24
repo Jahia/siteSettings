@@ -36,22 +36,28 @@ describe('Manage Page Models - path rendering', () => {
     // Open the Page Models admin screen and reload until the planted page-model surfaces in the list.
     // The row is populated by a JCR-SQL2 query served from Oak's async index, which lags a fresh plant
     // by a few seconds; without this the list can render empty and the assertions would be vacuous.
-    const openUntilRowPresent = (attempt = 0) => {
+    const MAX_ATTEMPTS = 10
+    const openUntilRowPresent = (attempt = 0): Cypress.Chainable => {
         cy.visit(`/cms/editframe/default/en/sites/${SITE}.page-models.html`, {
             onBeforeLoad(win) {
                 ;(win as unknown as Record<string, unknown>).__pageModelsPathHandlerFired = undefined
             },
         })
-        cy.get('#pageModelsTable', { timeout: 10000 })
-        cy.get('body').then(($b) => {
-            const rowText = $b.find('#pageModelsTable tbody').text()
-            if (!rowText.includes(SITE_PATH) && attempt < 10) {
-                // deliberate pacing: the row is served from Oak's async index, which has no
-                // deterministic client-side signal to wait on.
-                // eslint-disable-next-line cypress/no-unnecessary-waiting
-                cy.wait(3000)
-                openUntilRowPresent(attempt + 1)
+        // return the chain so the caller's assertions are queued strictly after the retries
+        return cy.get('#pageModelsTable tbody', { timeout: 10000 }).then(($tbody) => {
+            if ($tbody.text().includes(SITE_PATH)) {
+                return
             }
+            if (attempt >= MAX_ATTEMPTS) {
+                throw new Error(
+                    `page-model row (${SITE_PATH}) never appeared in the Page Models list after ${attempt + 1} loads`,
+                )
+            }
+            // deliberate pacing: the row is served from Oak's async index, which has no
+            // deterministic client-side signal to wait on.
+            // eslint-disable-next-line cypress/no-unnecessary-waiting
+            cy.wait(3000)
+            return openUntilRowPresent(attempt + 1)
         })
     }
 
