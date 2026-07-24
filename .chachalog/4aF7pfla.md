@@ -2,4 +2,4 @@
 siteSettings: patch
 ---
 
-Render the Page Models page path column consistently with the page name and model name columns
+Fixed display of page paths containing special characters in the Page Models administration screen.
