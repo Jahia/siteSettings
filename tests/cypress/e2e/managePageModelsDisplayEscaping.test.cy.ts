@@ -46,6 +46,9 @@ describe('Manage Page Models - path rendering', () => {
         cy.get('body').then(($b) => {
             const rowText = $b.find('#pageModelsTable tbody').text()
             if (!rowText.includes(SITE_PATH) && attempt < 10) {
+                // deliberate pacing: the row is served from Oak's async index, which has no
+                // deterministic client-side signal to wait on.
+                // eslint-disable-next-line cypress/no-unnecessary-waiting
                 cy.wait(3000)
                 openUntilRowPresent(attempt + 1)
             }
