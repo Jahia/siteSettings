@@ -62,7 +62,7 @@
             <td>
                 <a href="<c:url value='${url.base}${pageModel.path}.html'/>"><c:out value='${pageModel.properties["j:pageTemplateTitle"].string}'/></a>
             </td>
-            <td>  <a href="<c:url value='${url.base}${pageModel.path}.html'/>">${pageModel.path}</a></td>
+            <td>  <a href="<c:url value='${url.base}${pageModel.path}.html'/>"><c:out value='${pageModel.path}'/></a></td>
 
         </tr>
         <c:set var="isEmpty" value="false"/>
