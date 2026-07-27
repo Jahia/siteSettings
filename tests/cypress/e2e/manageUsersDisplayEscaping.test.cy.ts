@@ -9,8 +9,10 @@ describe('Manage Users - display name rendering', () => {
     const SITE = 'manageUsersEscapingSite'
     const USER = 'displaynameuser'
     const REMOVED_USER = 'removaltargetuser'
+    const BULK_REMOVED_USER = 'bulkremovaluser'
     const PAYLOAD = '<img src=x onerror=window.__sec064fired=1>'
     const REMOVED_PAYLOAD = '<img src=x onerror=window.__markupExecuted=1>'
+    const BULK_REMOVED_PAYLOAD = '<img src=x onerror=window.__bulkMarkupExecuted=1>'
 
     before(() => {
         createSite(SITE, {
@@ -35,6 +37,17 @@ describe('Manage Users - display name rendering', () => {
             SITE_KEY: SITE,
             PASSWORD: 'DisplayNamePass123!',
             TITLE_VALUE: REMOVED_PAYLOAD,
+        }).then((raw) => {
+            if (String(raw ?? '').includes('.failed')) {
+                throw new Error(`createSiteUserWithTitle failed: ${raw}`)
+            }
+        })
+        // a third one for the bulk-delete test — that path builds its own message, so it needs its own subject
+        cy.executeGroovy('groovy/createSiteUserWithTitle.groovy', {
+            USER_NAME: BULK_REMOVED_USER,
+            SITE_KEY: SITE,
+            PASSWORD: 'DisplayNamePass123!',
+            TITLE_VALUE: BULK_REMOVED_PAYLOAD,
         }).then((raw) => {
             if (String(raw ?? '').includes('.failed')) {
                 throw new Error(`createSiteUserWithTitle failed: ${raw}`)
@@ -97,6 +110,39 @@ describe('Manage Users - display name rendering', () => {
         cy.window().then((win) => {
             expect((win as unknown as Record<string, unknown>).__markupExecuted, 'the onerror handler must not fire').to
                 .be.undefined
+        })
+    })
+
+    // bulk delete reaches the same message through a different flow transition (its own view-state and
+    // confirm event). It only shares the escaping because bulkDeleteUser() delegates to removeUser() —
+    // this pins that, so a refactor that stops delegating goes red here.
+    it('reports a bulk removal of a user whose display name contains markup as literal text', () => {
+        cy.login()
+        cy.visit(`/cms/editframe/default/en/sites/${SITE}.manageUsers.html`, {
+            onBeforeLoad(win) {
+                ;(win as unknown as Record<string, unknown>).__bulkMarkupExecuted = undefined
+            },
+        })
+
+        cy.get('#searchString').clear()
+        cy.get('#searchString').type(BULK_REMOVED_USER)
+        cy.get('[name="_eventId_search"]').first().click()
+
+        // select the row, then fire the bulk action (collects the ticked boxes into `selectedUsers`)
+        cy.get('input.userCheckbox', { timeout: 10000 }).first().check()
+        cy.get('[onclick*="bulkDeleteUser"]').first().click()
+
+        // the confirmation view-state pre-ticks its own `userToDelete` boxes; confirm submits them
+        cy.get('[name="_eventId_confirm"]', { timeout: 10000 }).first().click({ force: true })
+
+        cy.contains('.alert', BULK_REMOVED_PAYLOAD, { timeout: 10000 }).should('be.visible')
+        cy.get('.alert img[onerror]').should('not.exist')
+
+        cy.window().then((win) => {
+            expect(
+                (win as unknown as Record<string, unknown>).__bulkMarkupExecuted,
+                'the onerror handler must not fire',
+            ).to.be.undefined
         })
     })
 })

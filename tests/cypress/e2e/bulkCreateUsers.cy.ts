@@ -2,6 +2,10 @@ import { deleteNode } from '@jahia/cypress'
 import { SiteSettingsUsers } from '../page-object/siteSettingsUsers'
 
 describe('Bulk Create Users XSS Prevention', () => {
+    const MANAGE_USERS_FRAME = '[src="/cms/adminframe/default/en/settings.manageUsers.html"]'
+    // no comma: it would split the CSV row
+    const INVALID_NAME_PAYLOAD = '<img src=x onerror=window.__bulkAddMarkupExecuted=1>'
+
     beforeEach(() => {
         cy.login()
     })
@@ -60,6 +64,31 @@ describe('Bulk Create Users XSS Prevention', () => {
             deleteNode(
                 response.data.admin.userAdmin.users.nodes.find((user) => user.node.displayName === 'steven').node.uuid,
             )
+        })
+    })
+
+    // A name that fails the syntax check is reported back verbatim in the "skipped" message, so it is the
+    // one value on this path guaranteed not to be constrained. The message itself carries intentional
+    // markup (<span style="font:bold;">{0}</span>), so only the argument may be escaped, not the message.
+    it('reports a rejected user name containing markup as literal text', () => {
+        const usersPage = SiteSettingsUsers.visitGlobal()
+        let bulkUserCreationPage
+        cy.iframe(MANAGE_USERS_FRAME).within(() => {
+            bulkUserCreationPage = usersPage.startBulkUserCreation()
+            cy.get('#csvFile').should('exist')
+        })
+        cy.iframe(MANAGE_USERS_FRAME).within(() => {
+            bulkUserCreationPage.setCsvFile('csv/bulkCreateUsersInvalidName.csv')
+            bulkUserCreationPage.setSeparator(',')
+            bulkUserCreationPage.save()
+        })
+
+        cy.iframe(MANAGE_USERS_FRAME).within(() => {
+            // the name must appear as text inside the message, not as a live element
+            cy.contains('.alert', INVALID_NAME_PAYLOAD, { timeout: 10000 }).should('be.visible')
+            cy.get('.alert img[onerror]').should('not.exist')
+            // the message's own <span> markup must survive — it is not the argument
+            cy.get('.alert span').should('exist')
         })
     })
 })
