@@ -128,8 +128,9 @@ describe('Manage Users - display name rendering', () => {
         cy.get('#searchString').type(BULK_REMOVED_USER)
         cy.get('[name="_eventId_search"]').first().click()
 
-        // select the row, then fire the bulk action (collects the ticked boxes into `selectedUsers`)
-        cy.get('input.userCheckbox', { timeout: 10000 }).first().check()
+        // select the row, then fire the bulk action (collects the ticked boxes into `selectedUsers`).
+        // force: true because this skin hides the real input behind its own styled control.
+        cy.get('input.userCheckbox', { timeout: 10000 }).first().check({ force: true })
         cy.get('[onclick*="bulkDeleteUser"]').first().click()
 
         // the confirmation view-state pre-ticks its own `userToDelete` boxes; confirm submits them

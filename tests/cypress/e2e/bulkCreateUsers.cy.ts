@@ -75,14 +75,19 @@ describe('Bulk Create Users XSS Prevention', () => {
         let bulkUserCreationPage
         cy.iframe(MANAGE_USERS_FRAME).within(() => {
             bulkUserCreationPage = usersPage.startBulkUserCreation()
-            cy.get('#csvFile').should('exist')
         })
+        // the iframe reloads into the bulk-create view-state: re-resolve it before scoping into it again
+        //eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(500)
         cy.iframe(MANAGE_USERS_FRAME).within(() => {
             bulkUserCreationPage.setCsvFile('csv/bulkCreateUsersInvalidName.csv')
             bulkUserCreationPage.setSeparator(',')
             bulkUserCreationPage.save()
         })
 
+        // and again on the way back to the listing, where the message is rendered
+        //eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(500)
         cy.iframe(MANAGE_USERS_FRAME).within(() => {
             // the name must appear as text inside the message, not as a live element
             cy.contains('.alert', INVALID_NAME_PAYLOAD, { timeout: 10000 }).should('be.visible')
