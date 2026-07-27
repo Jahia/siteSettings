@@ -17,6 +17,7 @@ package org.jahia.modules.sitesettings.users;
 
 import au.com.bytecode.opencsv.CSVReader;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jahia.data.viewhelper.principal.PrincipalViewHelper;
 import org.jahia.modules.sitesettings.users.management.CsvFile;
@@ -146,10 +147,13 @@ public class UsersFlowHandler implements Serializable {
                         List<String> lineElementList = Arrays.asList(lineElements);
                         Properties properties = buildProperties(headerElementList, lineElementList);
                         String userName = lineElementList.get(userNamePos);
+                        // the name is reported back in HTML-rendered messages before it is known to
+                        // satisfy the name syntax: escape the reported form, keep the raw one for lookups
+                        String userNameText = StringEscapeUtils.escapeXml(userName);
                         String password = lineElementList.get(passwordPos);
                         if (userManagerService.userExists(userName, siteKey)) {
                              context.addMessage(new MessageBuilder().error().code(
-                                   "siteSettings.users.bulk.errors.user.already.exists").arg(userName).build());
+                                   "siteSettings.users.bulk.errors.user.already.exists").arg(userNameText).build());
                              hasErrors = true;
                         } else if (userManagerService.isUsernameSyntaxCorrect(userName)) {
                             PolicyEnforcementResult evalResult = pwdPolicyService.enforcePolicyOnUserCreate(userName, password);
@@ -157,10 +161,10 @@ public class UsersFlowHandler implements Serializable {
                                 JCRUserNode jahiaUser = userManagerService.createUser(userName, siteKey, password, properties, session);
                                 if (jahiaUser != null) {
                                     context.addMessage(new MessageBuilder().info().code(
-                                            "siteSettings.users.bulk.user.creation.successful").arg(userName).build());
+                                            "siteSettings.users.bulk.user.creation.successful").arg(userNameText).build());
                                 } else {
                                     context.addMessage(new MessageBuilder().error().code(
-                                            "siteSettings.users.bulk.errors.user.creation.failed").arg(userName).build());
+                                            "siteSettings.users.bulk.errors.user.creation.failed").arg(userNameText).build());
                                     hasErrors = true;
                                 }
                             } else {
@@ -170,12 +174,12 @@ public class UsersFlowHandler implements Serializable {
                                 }
                                 result.append("</ul>");
                                 context.addMessage(new MessageBuilder().error().code(
-                                        "siteSettings.users.bulk.errors.user.skipped.password").args(new String[]{userName, result.toString()}).build());
+                                        "siteSettings.users.bulk.errors.user.skipped.password").args(new String[]{userNameText, result.toString()}).build());
                                 hasErrors = true;
                             }
                         } else {
                             context.addMessage(new MessageBuilder().error().code(
-                                    "siteSettings.users.bulk.errors.user.skipped").arg(userName).build());
+                                    "siteSettings.users.bulk.errors.user.skipped").arg(userNameText).build());
                             hasErrors = true;
                         }
                     }
@@ -235,10 +239,12 @@ public class UsersFlowHandler implements Serializable {
                 JCRUserNode jahiaUser = userManagerService.lookupUserByPath(userKey);
                 if (jahiaUser == null || !isInAdministeredScope(jahiaUser.getPath())) {
                     context.addMessage(new MessageBuilder().error().code(
-                            "siteSettings.user.remove.unsuccessful").arg(userKey).build());
+                            "siteSettings.user.remove.unsuccessful").arg(StringEscapeUtils.escapeXml(userKey)).build());
                     return false;
                 }
-                String displayName = PrincipalViewHelper.getDisplayName(jahiaUser);
+                // messages are rendered as HTML by the flow views: escape the free-text display name,
+                // consistently with UserProperties.populate()
+                String displayName = StringEscapeUtils.escapeXml(PrincipalViewHelper.getDisplayName(jahiaUser));
                 if (userManagerService.deleteUser(jahiaUser.getPath(), session)) {
                     context.addMessage(new MessageBuilder().info().code(
                             "siteSettings.user.remove.successful").arg(displayName).build());
