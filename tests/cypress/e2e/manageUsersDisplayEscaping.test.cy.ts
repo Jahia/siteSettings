@@ -75,8 +75,10 @@ describe('Manage Users - display name rendering', () => {
         cy.get('td img[onerror]').should('not.exist')
 
         cy.window().then((win) => {
-            expect((win as unknown as Record<string, unknown>).__listMarkupExecuted, 'the onerror handler must not fire').to.be
-                .undefined
+            expect(
+                (win as unknown as Record<string, unknown>).__listMarkupExecuted,
+                'the onerror handler must not fire',
+            ).to.be.undefined
         })
     })
 
