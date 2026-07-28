@@ -1,8 +1,6 @@
-// Regression test: user display names containing special characters must render as inert TEXT in
-// the Manage Users administration screen (they must not become live DOM/HTML). Opaque by design.
-// Fully self-contained (CI-ready): creates its own site + a SITE user (via a groovy fixture whose
-// jcr:title carries markup) in before(), tears the site down in after(). Data setup lives in the
-// cypress framework; the UI part only asserts what is rendered.
+// Manage Users renders display names as text: a name containing markup characters shows those
+// characters, it does not become an element. Self-contained — creates its own site and users in
+// before(), tears the site down in after().
 import { createSite, deleteSite } from '@jahia/cypress'
 
 describe('Manage Users - display name rendering', () => {
@@ -74,11 +72,8 @@ describe('Manage Users - display name rendering', () => {
 
         // the display name must appear as escaped literal text in a table cell
         cy.contains('td', MARKUP, { timeout: 10000 }).should('be.visible')
-        // and must NOT have become a live <img> element carrying an onerror handler
         cy.get('td img[onerror]').should('not.exist')
 
-        // definitive live check: the onerror handler must never have executed (by the time the cell
-        // above has rendered as visible text, any onerror would already have fired).
         cy.window().then((win) => {
             expect((win as unknown as Record<string, unknown>).__listMarkupExecuted, 'the onerror handler must not fire').to.be
                 .undefined
@@ -104,7 +99,6 @@ describe('Manage Users - display name rendering', () => {
 
         // back on the listing, the confirmation message must show the display name as literal text
         cy.contains('.alert', REMOVED_MARKUP, { timeout: 10000 }).should('be.visible')
-        // and must not have turned it into a live element carrying a handler
         cy.get('.alert img[onerror]').should('not.exist')
 
         cy.window().then((win) => {
@@ -113,9 +107,8 @@ describe('Manage Users - display name rendering', () => {
         })
     })
 
-    // bulk delete reaches the same message through a different flow transition (its own view-state and
-    // confirm event). It only shares the escaping because bulkDeleteUser() delegates to removeUser() —
-    // this pins that, so a refactor that stops delegating goes red here.
+    // bulk delete builds its message through its own flow transition; it shares removeUser()'s
+    // handling only by delegating to it, which this pins.
     it('reports a bulk removal of a user whose display name contains markup as literal text', () => {
         cy.login()
         cy.visit(`/cms/editframe/default/en/sites/${SITE}.manageUsers.html`, {

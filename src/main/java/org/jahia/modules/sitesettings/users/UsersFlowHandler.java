@@ -147,8 +147,7 @@ public class UsersFlowHandler implements Serializable {
                         List<String> lineElementList = Arrays.asList(lineElements);
                         Properties properties = buildProperties(headerElementList, lineElementList);
                         String userName = lineElementList.get(userNamePos);
-                        // the name is reported back in HTML-rendered messages before it is known to
-                        // satisfy the name syntax: escape the reported form, keep the raw one for lookups
+                        // escaped for reporting; the raw value is what lookups and creation use
                         String userNameText = StringEscapeUtils.escapeXml(userName);
                         String password = lineElementList.get(passwordPos);
                         if (userManagerService.userExists(userName, siteKey)) {
@@ -242,8 +241,7 @@ public class UsersFlowHandler implements Serializable {
                             "siteSettings.user.remove.unsuccessful").arg(StringEscapeUtils.escapeXml(userKey)).build());
                     return false;
                 }
-                // messages are rendered as HTML by the flow views: escape the free-text display name,
-                // consistently with UserProperties.populate()
+                // same encoder UserProperties.populate() applies to this value
                 String displayName = StringEscapeUtils.escapeXml(PrincipalViewHelper.getDisplayName(jahiaUser));
                 if (userManagerService.deleteUser(jahiaUser.getPath(), session)) {
                     context.addMessage(new MessageBuilder().info().code(
