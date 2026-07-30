@@ -1,14 +1,16 @@
-// Regression test: user display names containing special characters must render as inert TEXT in
-// the Manage Users administration screen (they must not become live DOM/HTML). Opaque by design.
-// Fully self-contained (CI-ready): creates its own site + a SITE user (via a groovy fixture whose
-// jcr:title carries markup) in before(), tears the site down in after(). Data setup lives in the
-// cypress framework; the UI part only asserts what is rendered.
+// Manage Users renders display names as text: a name containing markup characters shows those
+// characters, it does not become an element. Self-contained — creates its own site and users in
+// before(), tears the site down in after().
 import { createSite, deleteSite } from '@jahia/cypress'
 
 describe('Manage Users - display name rendering', () => {
     const SITE = 'manageUsersEscapingSite'
     const USER = 'displaynameuser'
-    const PAYLOAD = '<img src=x onerror=window.__sec064fired=1>'
+    const REMOVED_USER = 'removaltargetuser'
+    const BULK_REMOVED_USER = 'bulkremovaluser'
+    const MARKUP = '<img src=x onerror=window.__listMarkupExecuted=1>'
+    const REMOVED_MARKUP = '<img src=x onerror=window.__markupExecuted=1>'
+    const BULK_REMOVED_MARKUP = '<img src=x onerror=window.__bulkMarkupExecuted=1>'
 
     before(() => {
         createSite(SITE, {
@@ -21,7 +23,29 @@ describe('Manage Users - display name rendering', () => {
             USER_NAME: USER,
             SITE_KEY: SITE,
             PASSWORD: 'DisplayNamePass123!',
-            TITLE_VALUE: PAYLOAD,
+            TITLE_VALUE: MARKUP,
+        }).then((raw) => {
+            if (String(raw ?? '').includes('.failed')) {
+                throw new Error(`createSiteUserWithTitle failed: ${raw}`)
+            }
+        })
+        // a second user, deleted by the removal test below, so the listing test keeps its own subject
+        cy.executeGroovy('groovy/createSiteUserWithTitle.groovy', {
+            USER_NAME: REMOVED_USER,
+            SITE_KEY: SITE,
+            PASSWORD: 'DisplayNamePass123!',
+            TITLE_VALUE: REMOVED_MARKUP,
+        }).then((raw) => {
+            if (String(raw ?? '').includes('.failed')) {
+                throw new Error(`createSiteUserWithTitle failed: ${raw}`)
+            }
+        })
+        // a third one for the bulk-delete test — that path builds its own message, so it needs its own subject
+        cy.executeGroovy('groovy/createSiteUserWithTitle.groovy', {
+            USER_NAME: BULK_REMOVED_USER,
+            SITE_KEY: SITE,
+            PASSWORD: 'DisplayNamePass123!',
+            TITLE_VALUE: BULK_REMOVED_MARKUP,
         }).then((raw) => {
             if (String(raw ?? '').includes('.failed')) {
                 throw new Error(`createSiteUserWithTitle failed: ${raw}`)
@@ -37,7 +61,7 @@ describe('Manage Users - display name rendering', () => {
         cy.login()
         cy.visit(`/cms/editframe/default/en/sites/${SITE}.manageUsers.html`, {
             onBeforeLoad(win) {
-                ;(win as unknown as Record<string, unknown>).__sec064fired = undefined
+                ;(win as unknown as Record<string, unknown>).__listMarkupExecuted = undefined
             },
         })
 
@@ -47,15 +71,74 @@ describe('Manage Users - display name rendering', () => {
         cy.get('[name="_eventId_search"]').first().click()
 
         // the display name must appear as escaped literal text in a table cell
-        cy.contains('td', PAYLOAD, { timeout: 10000 }).should('be.visible')
-        // and must NOT have become a live <img> element carrying an onerror handler
+        cy.contains('td', MARKUP, { timeout: 10000 }).should('be.visible')
         cy.get('td img[onerror]').should('not.exist')
 
-        // definitive live check: the onerror handler must never have executed (by the time the cell
-        // above has rendered as visible text, any onerror would already have fired).
         cy.window().then((win) => {
-            expect((win as unknown as Record<string, unknown>).__sec064fired, 'the onerror handler must not fire').to.be
-                .undefined
+            expect(
+                (win as unknown as Record<string, unknown>).__listMarkupExecuted,
+                'the onerror handler must not fire',
+            ).to.be.undefined
+        })
+    })
+
+    it('reports the removal of a user whose display name contains markup as literal text', () => {
+        cy.login()
+        cy.visit(`/cms/editframe/default/en/sites/${SITE}.manageUsers.html`, {
+            onBeforeLoad(win) {
+                ;(win as unknown as Record<string, unknown>).__markupExecuted = undefined
+            },
+        })
+
+        cy.get('#searchString').clear()
+        cy.get('#searchString').type(REMOVED_USER)
+        cy.get('[name="_eventId_search"]').first().click()
+
+        // drive the real removal: the row action leads to the confirmation view-state, whose confirm
+        // button posts the delete. force: true because one settings skin nests it in a modal.
+        cy.get('a[href="#delete"]', { timeout: 10000 }).first().click()
+        cy.get('[name="_eventId_confirm"]', { timeout: 10000 }).first().click({ force: true })
+
+        // back on the listing, the confirmation message must show the display name as literal text
+        cy.contains('.alert', REMOVED_MARKUP, { timeout: 10000 }).should('be.visible')
+        cy.get('.alert img[onerror]').should('not.exist')
+
+        cy.window().then((win) => {
+            expect((win as unknown as Record<string, unknown>).__markupExecuted, 'the onerror handler must not fire').to
+                .be.undefined
+        })
+    })
+
+    // bulk delete builds its message through its own flow transition; it shares removeUser()'s
+    // handling only by delegating to it, which this pins.
+    it('reports a bulk removal of a user whose display name contains markup as literal text', () => {
+        cy.login()
+        cy.visit(`/cms/editframe/default/en/sites/${SITE}.manageUsers.html`, {
+            onBeforeLoad(win) {
+                ;(win as unknown as Record<string, unknown>).__bulkMarkupExecuted = undefined
+            },
+        })
+
+        cy.get('#searchString').clear()
+        cy.get('#searchString').type(BULK_REMOVED_USER)
+        cy.get('[name="_eventId_search"]').first().click()
+
+        // select the row, then fire the bulk action (collects the ticked boxes into `selectedUsers`).
+        // force: true because this skin hides the real input behind its own styled control.
+        cy.get('input.userCheckbox', { timeout: 10000 }).first().check({ force: true })
+        cy.get('[onclick*="bulkDeleteUser"]').first().click()
+
+        // the confirmation view-state pre-ticks its own `userToDelete` boxes; confirm submits them
+        cy.get('[name="_eventId_confirm"]', { timeout: 10000 }).first().click({ force: true })
+
+        cy.contains('.alert', BULK_REMOVED_MARKUP, { timeout: 10000 }).should('be.visible')
+        cy.get('.alert img[onerror]').should('not.exist')
+
+        cy.window().then((win) => {
+            expect(
+                (win as unknown as Record<string, unknown>).__bulkMarkupExecuted,
+                'the onerror handler must not fire',
+            ).to.be.undefined
         })
     })
 })
