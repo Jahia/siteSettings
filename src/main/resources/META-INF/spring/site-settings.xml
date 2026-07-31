@@ -12,16 +12,4 @@
         <entry key="memberDisplayLimit" value="${jahia.settings.memberDisplayLimit:100}"/>
     </util:map>
 
-    <!-- The settings components are reached from the site-scoped administration route (main resource:
-         the site) and from the server-wide one (main resource: the global settings node), so either
-         administration permission is accepted. -->
-    <bean id="siteSettingsComponentPermissionFilter"
-          class="org.jahia.modules.sitesettings.render.SettingsComponentPermissionFilter">
-        <property name="priority" value="22"/>
-        <property name="description"
-                  value="Renders a site settings component only for a caller holding an administration permission on the main resource"/>
-        <property name="applyOnNodeTypes"
-                  value="jnt:siteSettingsManageUsers,jnt:siteSettingsManageGroups,jnt:siteSettingsManageModules,jnt:siteSettingsManagePageModels,jnt:siteSettingsWcagCompliance,jnt:siteSettingsHtmlFiltering"/>
-        <property name="requiredPermissions" value="site-admin,admin"/>
-    </bean>
 </beans>
