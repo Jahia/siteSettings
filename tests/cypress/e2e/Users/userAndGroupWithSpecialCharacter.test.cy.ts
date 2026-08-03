@@ -1,8 +1,11 @@
 import { createSite, deleteSite } from '@jahia/cypress'
-import { generateRandomID } from '../utils/utils'
-import { SiteSettingsUsers } from '../page-object/siteSettingsUsers'
-import { SiteSettingsGroups } from '../page-object/siteSettingsGroups'
-describe('Create user', () => {
+import { generateRandomID } from '../../utils/utils'
+import { SiteSettingsUsers } from '../../page-object/siteSettingsUsers'
+import { SiteSettingsGroups } from '../../page-object/siteSettingsGroups'
+// Two distinct concerns are covered here: special characters in the profile fields (j:firstName /
+// j:lastName), which must round-trip and render correctly, and special characters in the user name
+// itself, which is constrained by a syntax validation on creation.
+describe('Users and groups with special characters', () => {
     const siteKey = 'siteSettingsSite'
     const languages = ['en', 'fr', 'de']
     const username = 'user' + generateRandomID()
@@ -53,5 +56,33 @@ describe('Create user', () => {
         groupmemberspage.startAddUsers().addUsersToSelection(username).save()
 
         groupmemberspage.verifyUserNameDisplayed(`${firstname} ${lastname}`)
+    })
+
+    it('should create a user with allowed special characters in the username', () => {
+        cy.login()
+
+        const specialUsername = 'user_-.@{}' + generateRandomID()
+
+        const siteSettingsUsers = SiteSettingsUsers.visit(siteKey)
+        siteSettingsUsers
+            .startUserCreation()
+            .setUsername(specialUsername)
+            .setPassword(password)
+            .setPasswordConfirm(password)
+            .save()
+
+        siteSettingsUsers.verifyUserListed(specialUsername)
+    })
+
+    it('should reject a username with not allowed special characters', () => {
+        cy.login()
+
+        SiteSettingsUsers.visit(siteKey)
+            .startUserCreation()
+            .setUsername('invalid#user!')
+            .setPassword(password)
+            .setPasswordConfirm(password)
+            .save()
+            .verifyErrorMessage("only characters (a..z, A..Z, 0..9, _, -, ., @, '{', '}') are valid for the user name.")
     })
 })

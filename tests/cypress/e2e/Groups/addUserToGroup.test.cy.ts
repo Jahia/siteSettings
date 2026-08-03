@@ -1,6 +1,6 @@
 import { createSite, deleteSite, createUser, deleteUser } from '@jahia/cypress'
-import { generateRandomID } from '../utils/utils'
-import { SiteSettingsGroups } from '../page-object/siteSettingsGroups'
+import { generateRandomID } from '../../utils/utils'
+import { SiteSettingsGroups } from '../../page-object/siteSettingsGroups'
 describe('Add user to group', () => {
     const siteKey = 'siteSettingsSite'
     const languages = ['en', 'fr', 'de']

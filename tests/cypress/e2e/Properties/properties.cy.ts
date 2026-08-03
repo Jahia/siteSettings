@@ -1,6 +1,6 @@
 import { createSite, deleteSite } from '@jahia/cypress'
-import { SiteProperties } from '../page-object/siteProperties'
-import { SmallTextField } from '../page-object/fields'
+import { SiteProperties } from '../../page-object/siteProperties'
+import { SmallTextField } from '../../page-object/fields'
 
 describe('Tests for site properties panel', () => {
     const siteKey = 'propertiesTestSite'

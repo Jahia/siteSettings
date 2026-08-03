@@ -7,10 +7,6 @@ export class GroupCreationPage extends BasePage {
     }
     save() {
         cy.get('[name="_eventId_add"]').click()
-    }
-
-    startAddUsers() {
-        cy.get('[name=""]').click()
         return this
     }
 }

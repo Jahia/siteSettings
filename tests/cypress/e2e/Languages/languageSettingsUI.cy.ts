@@ -1,5 +1,5 @@
 import { createSite, deleteSite, getNodeByPath } from '@jahia/cypress'
-import { LanguageSettings } from '../page-object/languageSettings'
+import { LanguageSettings } from '../../page-object/languageSettings'
 
 describe('Tests on UI for language settings', () => {
     before('create sites', () => {
