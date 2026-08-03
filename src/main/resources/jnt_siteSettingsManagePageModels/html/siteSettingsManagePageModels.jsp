@@ -55,15 +55,15 @@
                      scriptInfo="" path="${pageModelPathAttr}" template="hidden.system" dragdrop="false">
                     <table class="table table-bordered">
                         <tr>
-                            <td>${pageModel.displayableName}</td>
+                            <td>${fn:escapeXml(pageModel.displayableName)}</td>
                         </tr>
                     </table>
                 </div>
             </td>
             <td>
-                <a href="<c:url value='${url.base}${pageModelPathAttr}.html'/>">${pageModel.properties["j:pageTemplateTitle"].string}</a>
+                <a href="<c:url value='${url.base}${pageModelPathAttr}.html'/>"><c:out value='${pageModel.properties["j:pageTemplateTitle"].string}'/></a>
             </td>
-            <td>  <a href="<c:url value='${url.base}${pageModelPathAttr}.html'/>">${pageModel.path}</a></td>
+            <td>  <a href="<c:url value='${url.base}${pageModelPathAttr}.html'/>"><c:out value='${pageModel.path}'/></a></td>
 
         </tr>
         <c:set var="isEmpty" value="false"/>
