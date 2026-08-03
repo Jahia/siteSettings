@@ -34,6 +34,19 @@ describe('Manage Groups - member display name rendering', () => {
                 throw new Error(`createSiteUserWithTitle failed: ${raw}`)
             }
         })
+        // give the member a first/last name so the adjacent Name column renders a plain name
+        // instead of falling back to the same display-name value this test asserts on below —
+        // without this, that column would independently satisfy the assertion too.
+        cy.executeGroovy('groovy/setSiteUserName.groovy', {
+            USER_NAME: USER,
+            SITE_KEY: SITE,
+            FIRST_NAME_VALUE: 'Group',
+            LAST_NAME_VALUE: 'Member',
+        }).then((raw) => {
+            if (String(raw ?? '').includes('.failed')) {
+                throw new Error(`setSiteUserName failed: ${raw}`)
+            }
+        })
         cy.executeGroovy('groovy/createSiteGroup.groovy', {
             SITE_KEY: SITE,
             GROUP_NAME: GROUP,
