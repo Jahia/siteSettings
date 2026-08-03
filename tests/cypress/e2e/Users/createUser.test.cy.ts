@@ -7,14 +7,16 @@ describe('Manage Users - Create / Search / Edit / Delete Tests', () => {
     const languages = ['en', 'fr', 'de']
     const password = 'TestPass12&'
 
-    const EXISTING_USER = 'existingTestUser'
-    const SEARCH_USER = 'searchTestUser'
-    const EDIT_USER = 'editTestUser'
-    const DELETE_USER = 'deleteTestUser'
-    const REMOVE_USER = 'removeTestUser'
-    const EXPORT_USER = 'exportTestUser'
-    const LIVE_LOGIN_USER = 'liveLoginTestUser'
-    const LIVE_DELETED_USER = 'liveDeletedTestUser'
+    const uniq = generateRandomID().replace(/[^a-z0-9]/gi, '')
+
+    const EXISTING_USER = 'existingTestUser' + uniq
+    const SEARCH_USER = 'searchTestUser' + uniq
+    const EDIT_USER = 'editTestUser' + uniq
+    const DELETE_USER = 'deleteTestUser' + uniq
+    const REMOVE_USER = 'removeTestUser' + uniq
+    const EXPORT_USER = 'exportTestUser' + uniq
+    const LIVE_LOGIN_USER = 'liveLoginTestUser' + uniq
+    const LIVE_DELETED_USER = 'liveDeletedTestUser' + uniq
     const fixtureUsers = [
         EXISTING_USER,
         SEARCH_USER,
@@ -51,13 +53,14 @@ describe('Manage Users - Create / Search / Edit / Delete Tests', () => {
         })
 
         fixtureUsers.forEach((user) => {
-            cy.executeGroovy('groovy/createSiteUser.groovy', {
+            cy.executeGroovy('groovy/createSiteUserWithTitle.groovy', {
                 USER_NAME: user,
                 SITE_KEY: siteKey,
                 PASSWORD: password,
+                TITLE_VALUE: user,
             }).then((raw) => {
                 if (String(raw ?? '').includes('.failed')) {
-                    throw new Error(`createSiteUser failed for ${user}: ${raw}`)
+                    throw new Error(`createSiteUserWithTitle failed for ${user}: ${raw}`)
                 }
             })
         })
