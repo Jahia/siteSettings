@@ -55,10 +55,24 @@ public class ManageGroupsFlowHandler implements Serializable {
 
     private String siteKey;
 
+    private boolean realmResolved;
+
+    /**
+     * Resolves the principal realm this screen manages from the container it is reached through: a site
+     * node scopes it to that site's principals, the global settings node to the server-global store
+     * (hence a null {@link #siteKey}). Any other container carries no realm, leaving
+     * {@link #realmResolved} false — the state in which every scope check below answers false.
+     */
     public void initRealm(RenderContext renderContext) throws RepositoryException {
         JCRNodeWrapper mainNode = renderContext.getMainResource().getNode();
-        if (mainNode != null && mainNode.isNodeType("jnt:virtualsite")) {
+        if (mainNode == null) {
+            return;
+        }
+        if (mainNode.isNodeType("jnt:virtualsite")) {
             siteKey = ((JCRSiteNode) mainNode).getSiteKey();
+            realmResolved = true;
+        } else if (mainNode.isNodeType("jnt:globalSettings")) {
+            realmResolved = true;
         }
     }
 
@@ -67,10 +81,11 @@ public class ManageGroupsFlowHandler implements Serializable {
      * to. When bound to a specific site (siteKey set from a jnt:virtualsite realm) the target must live
      * under that site's principal tree (/sites/&lt;siteKey&gt;/...); in the server-wide realm (siteKey
      * null) the target must live in the server-global store (/users/ or /groups/) and never inside a
-     * site's tree. Mirrors the store layout used by Jahia{User,Group}ManagerService.
+     * site's tree. Mirrors the store layout used by Jahia{User,Group}ManagerService. With no realm
+     * resolved at all nothing is in scope.
      */
     private boolean isInAdministeredScope(String principalPath) {
-        if (principalPath == null) {
+        if (principalPath == null || !realmResolved) {
             return false;
         }
         if (siteKey == null) {
@@ -85,10 +100,10 @@ public class ManageGroupsFlowHandler implements Serializable {
      * pull in a principal that belongs to a DIFFERENT site. So a member is allowed when it is a global
      * principal, or a principal of the administered site itself; a principal living under another site's
      * tree (/sites/&lt;other&gt;/...) is rejected. In the server-wide realm (siteKey null) no site-scoped
-     * principal is an allowed member of a global group.
+     * principal is an allowed member of a global group. With no realm resolved at all no principal is.
      */
     private boolean isAllowedMember(String principalPath) {
-        if (principalPath == null) {
+        if (principalPath == null || !realmResolved) {
             return false;
         }
         if (!principalPath.startsWith("/sites/")) {
@@ -100,10 +115,10 @@ public class ManageGroupsFlowHandler implements Serializable {
     /**
      * A group created/copied from a site-bound realm (siteKey set) must belong to that same site;
      * the server-wide realm (siteKey null) may target the global group store. Guards the creation
-     * siteKey supplied by the request-bound GroupModel.
+     * siteKey supplied by the request-bound GroupModel. With no realm resolved no target is in scope.
      */
     private boolean isSiteKeyInScope(String targetSiteKey) {
-        return siteKey == null || siteKey.equals(targetSiteKey);
+        return realmResolved && (siteKey == null || siteKey.equals(targetSiteKey));
     }
 
     private void addOutOfScopeError(MessageContext context) {
