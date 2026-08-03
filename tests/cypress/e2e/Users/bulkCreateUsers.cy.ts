@@ -1,5 +1,5 @@
 import { deleteNode } from '@jahia/cypress'
-import { SiteSettingsUsers } from '../page-object/siteSettingsUsers'
+import { SiteSettingsUsers } from '../../page-object/siteSettingsUsers'
 
 describe('Bulk Create Users XSS Prevention', () => {
     beforeEach(() => {

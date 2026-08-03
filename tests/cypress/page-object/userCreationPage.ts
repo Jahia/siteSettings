@@ -2,7 +2,8 @@ import { BasePage } from '@jahia/cypress'
 
 export class UserCreationPage extends BasePage {
     setUsername(username: string) {
-        cy.get('[id="username"]').type(username)
+        // usernames may legitimately contain '{'/'}' - do not let Cypress read them as key sequences
+        cy.get('[id="username"]').type(username, { parseSpecialCharSequences: false })
         return this
     }
     setFirstname(firstName: string) {
@@ -30,7 +31,24 @@ export class UserCreationPage extends BasePage {
         return this
     }
 
+    setOrganization(organization: string) {
+        cy.get('#organization').type(organization)
+        return this
+    }
+
+    setPreferredLanguage(language: string) {
+        cy.get('#preferredLanguage').select(language)
+        return this
+    }
+
     save() {
         cy.get('[name="_eventId_add"]').click()
+        return this
+    }
+
+    /* On a rejected creation the form is re-rendered with the validation message. */
+    verifyErrorMessage(message: string) {
+        cy.get('.alert-danger').should('contain', message)
+        return this
     }
 }

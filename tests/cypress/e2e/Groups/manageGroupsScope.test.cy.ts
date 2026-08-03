@@ -14,8 +14,8 @@
 // Fully self-contained: creates its own administered site, a second (other) site, the site
 // administrator and the principals in before(); tears everything down in after().
 import { createSite, deleteSite, createUser, deleteUser, grantRoles } from '@jahia/cypress'
-import { generateRandomID } from '../utils/utils'
-import { SiteSettingsGroups } from '../page-object/siteSettingsGroups'
+import { generateRandomID } from '../../utils/utils'
+import { SiteSettingsGroups } from '../../page-object/siteSettingsGroups'
 
 describe('Manage Groups - administered-site scope', () => {
     const uniq = generateRandomID().replace(/[^a-z0-9]/gi, '')
