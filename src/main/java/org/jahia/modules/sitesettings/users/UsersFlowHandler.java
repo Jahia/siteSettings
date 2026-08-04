@@ -56,14 +56,29 @@ public class UsersFlowHandler implements Serializable {
 
     private String siteKey;
 
+    private boolean realmResolved;
+
     private transient JahiaPasswordPolicyService pwdPolicyService;
 
     private transient JahiaUserManagerService userManagerService;
 
+    /**
+     * Resolves the principal realm this screen manages from the container it is reached through: a site
+     * node scopes it to that site's principals, the global settings node to the server-global store
+     * (hence a null {@link #siteKey}). Any other container carries no realm, leaving
+     * {@link #realmResolved} false — the state in which every scope check below answers false and the
+     * creation paths that take {@link #siteKey} as their destination decline.
+     */
     public void initRealm(RenderContext renderContext) throws RepositoryException {
         JCRNodeWrapper mainNode = renderContext.getMainResource().getNode();
-        if (mainNode != null && mainNode.isNodeType("jnt:virtualsite")) {
+        if (mainNode == null) {
+            return;
+        }
+        if (mainNode.isNodeType("jnt:virtualsite")) {
             siteKey = ((JCRSiteNode) mainNode).getSiteKey();
+            realmResolved = true;
+        } else if (mainNode.isNodeType("jnt:globalSettings")) {
+            realmResolved = true;
         }
     }
 
@@ -73,9 +88,10 @@ public class UsersFlowHandler implements Serializable {
      * site's principal tree (/sites/&lt;siteKey&gt;/...); in the server-wide realm (siteKey null) the
      * target must live in the server-global store (/users/ or /groups/) and never inside a site's tree.
      * This mirrors the store layout used by JahiaUserManagerService ("/users/" vs "/sites/&lt;siteKey&gt;/users/").
+     * With no realm resolved at all nothing is in scope.
      */
     private boolean isInAdministeredScope(String principalPath) {
-        if (principalPath == null) {
+        if (principalPath == null || !realmResolved) {
             return false;
         }
         if (siteKey == null) {
@@ -86,6 +102,10 @@ public class UsersFlowHandler implements Serializable {
 
     public boolean addUser(final UserProperties userProperties, final MessageContext context) throws RepositoryException {
         logger.info("Adding user");
+        if (!realmResolved) {
+            context.addMessage(new MessageBuilder().error().code("siteSettings.user.create.unsuccessful").build());
+            return false;
+        }
         return JCRTemplate.getInstance().doExecuteWithSystemSession(new JCRCallback<Boolean>() {
             @Override
             public Boolean doInJCR(JCRSessionWrapper session) throws RepositoryException {
@@ -120,6 +140,10 @@ public class UsersFlowHandler implements Serializable {
 
     public boolean bulkAddUser(final CsvFile csvFile, final MessageContext context) throws RepositoryException {
         logger.info("Bulk adding users");
+        if (!realmResolved) {
+            context.addMessage(new MessageBuilder().error().code("siteSettings.user.create.unsuccessful").build());
+            return false;
+        }
 
         long timer = System.currentTimeMillis();
         boolean hasErrors = JCRTemplate.getInstance().doExecuteWithSystemSession(new JCRCallback<Boolean>() {
@@ -257,7 +281,17 @@ public class UsersFlowHandler implements Serializable {
         });
     }
 
+    /**
+     * Lists the principals of the administered realm. The realm is what bounds the listing: a site realm
+     * lists that site's store, the server-wide realm the server-global one. With no realm resolved there
+     * is no store to list, so the result is empty rather than the server-global default a null
+     * {@link #siteKey} would otherwise select.
+     */
     public Set<JCRUserNode> search(SearchCriteria searchCriteria) {
+        if (!realmResolved) {
+            searchCriteria.setNumberOfRemovedJahiaAdministrators(0);
+            return Collections.emptySet();
+        }
         String searchTerm = searchCriteria.getSearchString();
         if (StringUtils.isNotEmpty(searchTerm) && searchTerm.indexOf('*') == -1) {
             searchTerm += '*';
@@ -393,7 +427,15 @@ public class UsersFlowHandler implements Serializable {
         });
     }
 
+    /**
+     * Lists the principal providers mounted for the administered realm. Bounded the same way the listing
+     * is: with no realm resolved there is no realm whose providers to enumerate, so the result is empty
+     * rather than the server-global set a null {@link #siteKey} would otherwise select.
+     */
     public List<String> getProvidersList() throws RepositoryException {
+        if (!realmResolved) {
+            return Collections.emptyList();
+        }
         return JCRTemplate.getInstance().doExecuteWithSystemSession(new JCRCallback<List<String>>() {
             @Override
             public List<String> doInJCR(JCRSessionWrapper session) throws RepositoryException {
