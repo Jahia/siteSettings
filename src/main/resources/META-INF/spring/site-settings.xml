@@ -16,19 +16,4 @@
         <entry key="userDisplayLimit" value="${jahia.settings.userDisplayLimit:100}"/>
         <entry key="memberDisplayLimit" value="${jahia.settings.memberDisplayLimit:100}"/>
     </util:map>
-
-    <!-- The permission requirement belongs on the component, not only on the settings template that
-         normally hosts it: a component's access rule should travel with the component and hold on every
-         render path. Evaluated on the render's main resource, which is the node each administrator role is
-         granted on; either administration permission is accepted, since these screens are reached from both
-         the site-scoped and the server-wide administration route. -->
-    <bean id="settingsComponentPermissionFilter"
-          class="org.jahia.modules.sitesettings.render.SettingsComponentPermissionFilter">
-        <property name="priority" value="22"/>
-        <property name="description"
-                  value="Renders a settings component only for a caller holding an administration permission on the main resource"/>
-        <property name="applyOnNodeTypes"
-                  value="jnt:siteSettingsManageUsers,jnt:siteSettingsManageGroups,jnt:siteSettingsManageModules,jnt:siteSettingsManagePageModels,jnt:siteSettingsWcagCompliance,jnt:siteSettingsHtmlFiltering,jnt:siteSettingsManageLanguages"/>
-        <property name="requiredPermissions" value="site-admin,admin"/>
-    </bean>
 </beans>

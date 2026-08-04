@@ -1,18 +1,3 @@
-/*
- * Copyright (C) 2002-2022 Jahia Solutions Group SA. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.jahia.modules.sitesettings.render;
 
 import org.apache.commons.lang.StringUtils;
@@ -21,8 +6,15 @@ import org.jahia.services.render.RenderContext;
 import org.jahia.services.render.Resource;
 import org.jahia.services.render.filter.AbstractFilter;
 import org.jahia.services.render.filter.RenderChain;
+import org.jahia.services.render.filter.RenderFilter;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Renders a settings component only when the caller holds an administration permission on the resource the
@@ -50,51 +42,56 @@ import org.slf4j.LoggerFactory;
  * this filter is an additional condition and never a replacement. Failing to resolve a main resource yields
  * an empty fragment rather than a rendered component.
  * <p>
- * Registered as a Spring bean, matching how this maintenance line wires its module components; the
- * development line registers the same filter through OSGi Declarative Services.
+ * Registered via OSGi Declarative Services, matching the development line. NOTE: this requires the
+ * {@code <_dsannotations>*</_dsannotations>} bnd instruction added to this module's pom — without it an
+ * {@code @Component} class compiles and ships but emits no {@code OSGI-INF} descriptor, so the component
+ * never registers and this filter silently does not run. Confirm the descriptor is present in the built jar
+ * rather than assuming it.
  */
-// equals/hashCode are deliberately NOT overridden for the field below: AbstractFilter defines
-// equality as (concrete class, priority), which is the key RenderService.addFilter uses to replace an
-// already-registered filter. Widening it to the configuration would break that re-registration.
-@SuppressWarnings("java:S2160")
+@Component(service = RenderFilter.class, immediate = true)
 public class SettingsComponentPermissionFilter extends AbstractFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(SettingsComponentPermissionFilter.class);
 
-    private String[] requiredPermissions = new String[0];
-    private String requiredPermissionsLabel = "";
+    /** Node types gated by this filter — every settings screen this module ships on this line. */
+    private static final String APPLY_ON_NODE_TYPES =
+            "jnt:siteSettingsManageUsers," +
+            "jnt:siteSettingsManageGroups," +
+            "jnt:siteSettingsManageModules," +
+            "jnt:siteSettingsManagePageModels," +
+            "jnt:siteSettingsWcagCompliance," +
+            "jnt:siteSettingsHtmlFiltering," +
+            "jnt:siteSettingsManageLanguages";
 
-    /**
-     * Sets the permissions accepted by this filter, as a comma-separated list. A caller holding any
-     * one of them on the main resource may render the component.
-     *
-     * @param requiredPermissions comma-separated list of permission names
-     */
-    public void setRequiredPermissions(String requiredPermissions) {
-        String[] parsed = StringUtils.split(StringUtils.defaultString(requiredPermissions), ',');
-        for (int i = 0; i < parsed.length; i++) {
-            parsed[i] = parsed[i].trim();
-        }
-        this.requiredPermissions = parsed;
-        this.requiredPermissionsLabel = StringUtils.join(parsed, ", ");
+    /** Any one of these on the main resource is sufficient. */
+    private static final List<String> REQUIRED_PERMISSIONS =
+            Collections.unmodifiableList(Arrays.asList("site-admin", "admin"));
+
+    private static final String REQUIRED_PERMISSIONS_LABEL = StringUtils.join(REQUIRED_PERMISSIONS, ", ");
+
+    @Activate
+    public void activate() {
+        // Priority 22: immediately after core's own permission check (TemplatePermissionCheckFilter, 21) and
+        // before the fragment is produced or cached, so a refusal cannot populate a cache entry that a
+        // differently-privileged caller could later be served.
+        setPriority(22);
+        setApplyOnNodeTypes(APPLY_ON_NODE_TYPES);
+        setDescription("Renders a settings component only for a caller holding an administration permission "
+                + "on the main resource");
+        logger.debug("SettingsComponentPermissionFilter active on {}", APPLY_ON_NODE_TYPES);
     }
 
     @Override
     public String prepare(RenderContext renderContext, Resource resource, RenderChain chain) throws Exception {
-        if (requiredPermissions.length == 0) {
-            logger.error("No permission configured for {}; refusing to render {}",
-                    getClass().getName(), resource.getNodePath());
-            return StringUtils.EMPTY;
-        }
-
         Resource mainResource = renderContext.getMainResource();
         JCRNodeWrapper contextNode = mainResource != null ? mainResource.getNode() : null;
         if (contextNode == null) {
+            // Fail closed: with no main resource there is nothing to evaluate the permission against.
             logger.warn("No main resource to evaluate {} against; not rendering it", resource.getNodePath());
             return StringUtils.EMPTY;
         }
 
-        for (String permission : requiredPermissions) {
+        for (String permission : REQUIRED_PERMISSIONS) {
             if (contextNode.hasPermission(permission)) {
                 return null;
             }
@@ -103,7 +100,7 @@ public class SettingsComponentPermissionFilter extends AbstractFilter {
         if (logger.isWarnEnabled()) {
             logger.warn("Not rendering {}: {} holds none of {} on {}", resource.getNodePath(),
                     renderContext.getUser() != null ? renderContext.getUser().getName() : "the current user",
-                    requiredPermissionsLabel, contextNode.getPath());
+                    REQUIRED_PERMISSIONS_LABEL, contextNode.getPath());
         }
         return StringUtils.EMPTY;
     }
