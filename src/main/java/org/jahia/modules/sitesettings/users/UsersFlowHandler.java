@@ -277,7 +277,17 @@ public class UsersFlowHandler implements Serializable {
         });
     }
 
+    /**
+     * Lists the principals of the administered realm. The realm is what bounds the listing: a site realm
+     * lists that site's store, the server-wide realm the server-global one. With no realm resolved there
+     * is no store to list, so the result is empty rather than the server-global default a null
+     * {@link #siteKey} would otherwise select.
+     */
     public Set<JCRUserNode> search(SearchCriteria searchCriteria) {
+        if (!realmResolved) {
+            searchCriteria.setNumberOfRemovedJahiaAdministrators(0);
+            return Collections.emptySet();
+        }
         String searchTerm = searchCriteria.getSearchString();
         if (StringUtils.isNotEmpty(searchTerm) && searchTerm.indexOf('*') == -1) {
             searchTerm += '*';
@@ -412,7 +422,15 @@ public class UsersFlowHandler implements Serializable {
         });
     }
 
+    /**
+     * Lists the principal providers mounted for the administered realm. Bounded the same way the listing
+     * is: with no realm resolved there is no realm whose providers to enumerate, so the result is empty
+     * rather than the server-global set a null {@link #siteKey} would otherwise select.
+     */
     public List<String> getProvidersList() throws RepositoryException {
+        if (!realmResolved) {
+            return Collections.emptyList();
+        }
         return JCRTemplate.getInstance().doExecuteWithSystemSession(new JCRCallback<List<String>>() {
             @Override
             public List<String> doInJCR(JCRSessionWrapper session) throws RepositoryException {
