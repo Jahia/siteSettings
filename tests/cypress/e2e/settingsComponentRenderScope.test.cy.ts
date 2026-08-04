@@ -1,8 +1,8 @@
-// Render scope of the site settings components. These screens are ordinary, instantiable content
-// types, so the settings container they were designed for is not the only place they can be rendered
-// from. This spec places one of them in a plain page content area — i.e. outside that container — and
-// asserts that the web flow behind it, and the user creation it performs, are only available to a
-// caller that actually administers the site. Opaque by design.
+// Render scope of the site settings components. A component's access rule should travel with the
+// component and hold on every render path, regardless of where the component is placed — not only on the
+// settings template that normally hosts it. This spec renders one of these components through an ordinary
+// resource and asserts that its web flow, and the user creation it performs, remain available only to a
+// caller that administers the site.
 //
 // Non-vacuity: every negative assertion is paired with a POSITIVE CONTROL that goes through the exact
 // same request shape and asserts the flow IS served, and a user IS created, for the site
