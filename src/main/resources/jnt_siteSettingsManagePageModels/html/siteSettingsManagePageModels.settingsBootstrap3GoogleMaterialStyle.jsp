@@ -49,10 +49,11 @@
             <tbody>
             <c:forEach items="${moduleMap.currentList}" var="pageModel" begin="${moduleMap.begin}" end="${moduleMap.end}"
                        varStatus="status">
+                <c:set var="pageModelPathAttr" value="${fn:escapeXml(pageModel.path)}"/>
                 <tr class="${status.index % 2 == 0 ? 'evenLine' : 'oddLine'}">
                     <td>
                         <div class="jahia-template-gxt" jahiatype="module" id="module${pageModel.identifier}" type="existingNode"
-                             scriptInfo="" path="${fn:escapeXml(pageModel.path)}" template="hidden.system" dragdrop="false">
+                             scriptInfo="" path="${pageModelPathAttr}" template="hidden.system" dragdrop="false">
                             <table class="table table-bordered">
                                 <tr>
                                     <td>${fn:escapeXml(pageModel.displayableName)}</td>
@@ -61,10 +62,10 @@
                         </div>
                     </td>
                     <td>
-                        <a href="<c:url value='${url.base}${fn:escapeXml(pageModel.path)}.html'/>"><c:out value='${pageModel.properties["j:pageTemplateTitle"].string}'/></a>
+                        <a href="<c:url value='${url.base}${pageModelPathAttr}.html'/>"><c:out value='${pageModel.properties["j:pageTemplateTitle"].string}'/></a>
                     </td>
                     <td>
-                        <a href="<c:url value='${url.base}${fn:escapeXml(pageModel.path)}.html'/>"><c:out value='${pageModel.path}'/></a>
+                        <a href="<c:url value='${url.base}${pageModelPathAttr}.html'/>"><c:out value='${pageModel.path}'/></a>
                     </td>
                 </tr>
                 <c:set var="isEmpty" value="false"/>
