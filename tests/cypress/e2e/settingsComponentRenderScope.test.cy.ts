@@ -20,6 +20,7 @@ describe('Site settings components - render scope', () => {
     const site = 'renderScope' + uniq
 
     const siteAdmin = 'renderscopeadmin' + uniq // administers the site
+    const serverAdmin = 'renderscopesrvadmin' + uniq // administers the whole server
     const lowPriv = 'renderscopelow' + uniq // ordinary account, administers nothing
 
     // the settings component, placed OUTSIDE the settings container
@@ -30,17 +31,24 @@ describe('Site settings components - render scope', () => {
 
     // accounts the component's own creation flow would produce if it were served and driven
     const byAdmin = 'renderscopebyadmin' + uniq
+    const bySrvAdmin = 'renderscopebysrvadmin' + uniq
     const byLowPriv = 'renderscopebylow' + uniq
 
     before(() => {
         createSite(site, { languages: 'en', templateSet: 'templates-system', serverName: 'localhost', locale: 'en' })
 
         createUser(siteAdmin, 'password', [{ name: 'j:firstName', value: 'admin' }])
+        createUser(serverAdmin, 'password', [{ name: 'j:firstName', value: 'srvadmin' }])
         createUser(lowPriv, 'password', [{ name: 'j:firstName', value: 'low' }])
 
         // the administrator administers this site; the low-privilege user only gets to read/edit content
         grantRoles(`/sites/${site}`, ['site-administrator'], siteAdmin, 'USER')
         grantRoles(`/sites/${site}`, ['editor'], lowPriv, 'USER')
+        // granted at the root, so this caller holds `admin` — the filter's other accepted permission — on the
+        // site that is the main resource of the render below. It also needs to be able to READ the hosting
+        // page, or its positive control would measure the site's read ACL instead of the component.
+        grantRoles('/', ['server-administrator'], serverAdmin, 'USER')
+        grantRoles(`/sites/${site}`, ['editor'], serverAdmin, 'USER')
 
         // an ordinary content area on the home page, then the settings component inside it
         addNode({ parentPathOrId: `/sites/${site}/home`, primaryNodeType: 'jnt:contentList', name: 'pagecontent' })
@@ -49,8 +57,9 @@ describe('Site settings components - render scope', () => {
 
     after(() => {
         cy.login()
-        ;[byAdmin, byLowPriv].forEach((name) => userPath(name).then((p) => p && deleteUser(name)))
+        ;[byAdmin, bySrvAdmin, byLowPriv].forEach((name) => userPath(name).then((p) => p && deleteUser(name)))
         deleteUser(siteAdmin)
+        deleteUser(serverAdmin)
         deleteUser(lowPriv)
         deleteSite(site)
     })
@@ -165,6 +174,22 @@ describe('Site settings components - render scope', () => {
         cy.login()
         userPath(byAdmin).then((path) => {
             expect(path, 'the administrator must still be able to create a user through the component').to.not.be.null
+        })
+    })
+
+    // The filter accepts either accepted permission, so each one needs its own positive control: with only the
+    // site-scoped case asserted, `admin` could be the wrong permission and this spec would stay green while
+    // server administrators were refused.
+    it('serves the placed component and creates a user for the server administrator (positive control)', () => {
+        cy.login(serverAdmin, 'password')
+        attemptCreate(bySrvAdmin).then((outcome: { served: number; reached: boolean }) => {
+            expect(outcome.served, 'the server administrator must still be served the flow').to.be.greaterThan(0)
+            expect(outcome.reached, 'the server administrator must still reach the creation form').to.be.true
+        })
+        cy.login()
+        userPath(bySrvAdmin).then((path) => {
+            expect(path, 'the server administrator must still be able to create a user through the component').to.not.be
+                .null
         })
     })
 
