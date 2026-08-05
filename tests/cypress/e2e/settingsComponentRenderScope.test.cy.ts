@@ -1,16 +1,24 @@
 // Render scope of the site settings components. A component's access rule should travel with the
 // component and hold on every render path, regardless of where the component is placed — not only on the
-// settings template that normally hosts it. This spec renders one of these components through an ordinary
-// resource and asserts that its web flow, and the user creation it performs, remain available only to a
-// caller that administers the site.
+// settings template that normally hosts it. This spec places one of these components in an ordinary
+// content area and asserts that its web flow is served only to a caller that administers the resource.
 //
-// Non-vacuity: every negative assertion is paired with a POSITIVE CONTROL that goes through the exact
-// same request shape and asserts the flow IS served, and a user IS created, for the site
-// administrator. A fixture that simply renders nothing, or a driver that posts the wrong shape,
-// therefore cannot produce a false green. A first test also proves the low-privilege session is
-// authenticated and can read the page it renders, so a refusal is a refusal and not a read failure.
+// What this spec asserts, and what it deliberately does NOT. The invariant under test is whether the
+// component's flow is SERVED. It does not assert that driving the flow to completion creates an account:
+// since the screens were bound to the realm of their container, a placement outside a site or the global
+// settings node resolves no realm and the creation paths decline for EVERY caller, administrator or not.
+// That is a separate, independently tested control, and asserting it here would be vacuous — it would
+// hold whether or not this component's own condition worked.
 //
-// Fully self-contained: creates its own site, the site administrator, the low-privilege user and the
+// Non-vacuity: each negative assertion is paired with a POSITIVE CONTROL that goes through the exact same
+// request shape and asserts the flow IS served and its creation form IS reachable. A fixture that simply
+// renders nothing, or a driver that posts the wrong shape, therefore cannot produce a false green. Both
+// accepted permissions get their own control: with only the site-scoped one asserted, the server-wide
+// permission could be wrong and this spec would stay green while server administrators were refused.
+// A first test also proves the low-privilege session is authenticated and can read the page it renders,
+// so a refusal is a refusal and not a read failure.
+//
+// Fully self-contained: creates its own site, the two administrators, the low-privilege user and the
 // placed component in before(); tears everything down in after().
 import { createSite, deleteSite, createUser, deleteUser, grantRoles, addNode } from '@jahia/cypress'
 import { generateRandomID } from '../utils/utils'
@@ -20,6 +28,7 @@ describe('Site settings components - render scope', () => {
     const site = 'renderScope' + uniq
 
     const siteAdmin = 'renderscopeadmin' + uniq // administers the site
+    const serverAdmin = 'renderscopesrvadmin' + uniq // administers the whole server
     const lowPriv = 'renderscopelow' + uniq // ordinary account, administers nothing
 
     // the settings component, placed OUTSIDE the settings container
@@ -28,19 +37,21 @@ describe('Site settings components - render scope', () => {
     // the page that hosts it — this is the URL that gets rendered
     const pageUrl = `/cms/render/default/en/sites/${site}/home.html`
 
-    // accounts the component's own creation flow would produce if it were served and driven
-    const byAdmin = 'renderscopebyadmin' + uniq
-    const byLowPriv = 'renderscopebylow' + uniq
-
     before(() => {
         createSite(site, { languages: 'en', templateSet: 'templates-system', serverName: 'localhost', locale: 'en' })
 
         createUser(siteAdmin, 'password', [{ name: 'j:firstName', value: 'admin' }])
+        createUser(serverAdmin, 'password', [{ name: 'j:firstName', value: 'srvadmin' }])
         createUser(lowPriv, 'password', [{ name: 'j:firstName', value: 'low' }])
 
         // the administrator administers this site; the low-privilege user only gets to read/edit content
         grantRoles(`/sites/${site}`, ['site-administrator'], siteAdmin, 'USER')
         grantRoles(`/sites/${site}`, ['editor'], lowPriv, 'USER')
+        // granted at the root, so this caller holds the server-wide permission — the condition's other
+        // accepted one — on the site that is the main resource of the render below. It also needs to be able
+        // to READ the hosting page, or its control would measure the site's read ACL and not the component.
+        grantRoles('/', ['server-administrator'], serverAdmin, 'USER')
+        grantRoles(`/sites/${site}`, ['editor'], serverAdmin, 'USER')
 
         // an ordinary content area on the home page, then the settings component inside it
         addNode({ parentPathOrId: `/sites/${site}/home`, primaryNodeType: 'jnt:contentList', name: 'pagecontent' })
@@ -49,26 +60,11 @@ describe('Site settings components - render scope', () => {
 
     after(() => {
         cy.login()
-        ;[byAdmin, byLowPriv].forEach((name) => userPath(name).then((p) => p && deleteUser(name)))
         deleteUser(siteAdmin)
+        deleteUser(serverAdmin)
         deleteUser(lowPriv)
         deleteSite(site)
     })
-
-    // ---- out-of-band verification, as root, independent of the driving session ----
-
-    const userPath = (name: string) =>
-        cy
-            .request({
-                method: 'POST',
-                url: '/modules/graphql',
-                headers: { Origin: Cypress.config().baseUrl as string },
-                auth: { username: 'root', password: Cypress.env('SUPER_USER_PASSWORD') as string },
-                body: {
-                    query: `{jcr(workspace:EDIT){q:nodesByQuery(query:"select * from [jnt:user] where localname()='${name}'"){nodes{path}}}}`,
-                },
-            })
-            .then((res) => (res.body?.data?.jcr?.q?.nodes?.[0]?.path ?? null) as string | null)
 
     // ---- driving the component the way its own screen does ----
 
@@ -91,9 +87,10 @@ describe('Site settings components - render scope', () => {
             .request({ url, failOnStatusCode: false, qs: { ec: generateRandomID() } })
             .then((res) => (typeof res.body === 'string' ? res.body : ''))
 
-    // Attempts the component's user-creation flow as whoever is currently logged in. Resolves to the
-    // number of flow execution keys the render served, so the caller can assert on exposure too.
-    const attemptCreate = (username: string) =>
+    // Renders the hosting page as whoever is logged in and tries to advance the component's flow one
+    // transition. Resolves to the number of flow execution keys the render served, and whether the
+    // creation form behind the first transition was reachable.
+    const driveFlow = () =>
         render(pageUrl).then((body) => {
             const served = (body.match(/webflowexecution/g) || []).length
             const action = usersFormAction(body)
@@ -110,32 +107,7 @@ describe('Site settings components - render scope', () => {
                 })
                 .then((res) => {
                     const createForm = formContaining(typeof res.body === 'string' ? res.body : '', 'name="username"')
-                    if (!createForm) {
-                        return cy.wrap({ served, reached: false })
-                    }
-                    const a = createForm.match(/action="([^"]+)"/)
-                    const target = a ? a[1].replace(/&amp;/g, '&') : action
-                    return cy
-                        .request({
-                            method: 'POST',
-                            url: target,
-                            form: true,
-                            failOnStatusCode: false,
-                            body: {
-                                username,
-                                password: 'Passw0rd!1',
-                                passwordConfirm: 'Passw0rd!1',
-                                preferredLanguage: 'en',
-                                accountLocked: 'false',
-                                emailNotificationsDisabled: 'false',
-                                firstName: 'render',
-                                lastName: 'scope',
-                                email: 'renderscope@example.invalid',
-                                organization: '',
-                                _eventId: 'add',
-                            },
-                        })
-                        .then(() => cy.wrap({ served, reached: true }))
+                    return cy.wrap({ served, reached: createForm !== null })
                 })
         })
 
@@ -156,33 +128,27 @@ describe('Site settings components - render scope', () => {
         })
     })
 
-    it('serves the placed component and creates a user for the site administrator (positive control)', () => {
+    it('serves the placed component to the site administrator (positive control)', () => {
         cy.login(siteAdmin, 'password')
-        attemptCreate(byAdmin).then((outcome: { served: number; reached: boolean }) => {
+        driveFlow().then((outcome: { served: number; reached: boolean }) => {
             expect(outcome.served, 'the administrator must still be served the flow').to.be.greaterThan(0)
             expect(outcome.reached, 'the administrator must still reach the creation form').to.be.true
         })
-        cy.login()
-        userPath(byAdmin).then((path) => {
-            expect(path, 'the administrator must still be able to create a user through the component').to.not.be.null
+    })
+
+    it('serves the placed component to the server administrator (positive control)', () => {
+        cy.login(serverAdmin, 'password')
+        driveFlow().then((outcome: { served: number; reached: boolean }) => {
+            expect(outcome.served, 'the server administrator must still be served the flow').to.be.greaterThan(0)
+            expect(outcome.reached, 'the server administrator must still reach the creation form').to.be.true
         })
     })
 
-    it('serves nothing and creates no user for a caller that administers nothing', () => {
-        cy.login()
-        userPath(byLowPriv).then((existing) => {
-            expect(existing, 'baseline: the account must not exist yet').to.be.null
-        })
-
+    it('serves nothing for a caller that administers nothing', () => {
         cy.login(lowPriv, 'password')
-        attemptCreate(byLowPriv).then((outcome: { served: number; reached: boolean }) => {
+        driveFlow().then((outcome: { served: number; reached: boolean }) => {
             expect(outcome.served, 'no flow may be served to a caller that administers nothing').to.eq(0)
             expect(outcome.reached, 'the creation form must not be reachable').to.be.false
-        })
-
-        cy.login()
-        userPath(byLowPriv).then((path) => {
-            expect(path, 'no account may be created through the placed component').to.be.null
         })
     })
 })
