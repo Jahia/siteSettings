@@ -1,6 +1,6 @@
 {
   "name": "@jahia/site-settings",
-  "version": "8.12.3-SNAPSHOT",
+  "version": "8.12.3",
   "husky": {
     "hooks": {
       "pre-push": "yarn lint:fix"
