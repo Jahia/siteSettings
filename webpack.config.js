@@ -27,7 +27,7 @@ module.exports = (env, argv) => {
         },
         resolve: {
             mainFields: ['module', 'main'],
-            extensions: ['.mjs', '.js', '.jsx', 'json']
+            extensions: ['.mjs', '.js', '.jsx', '.json']
         },
         module: {
             rules: [
@@ -87,7 +87,7 @@ module.exports = (env, argv) => {
             ]
         },
         plugins: [
-            new ModuleFederationPlugin(getModuleFederationConfig(packageJson)),
+            new ModuleFederationPlugin(getModuleFederationConfig(packageJson, {}, ['@jahia/moonstone'])),
             new CleanWebpackPlugin({verbose: false}),
             new CopyWebpackPlugin({patterns: [{from: './package.json', to: ''}]}),
             new CycloneDxWebpackPlugin(cycloneDxWebpackPluginOptions)
