@@ -26,7 +26,7 @@
     </parent>
 
     <artifactId>siteSettings</artifactId>
-    <version>8.12.0</version>
+    <version>8.12.2-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>Jahia Site Settings</name>
     <description>Settings (groups,tools, etc) for site.</description>
