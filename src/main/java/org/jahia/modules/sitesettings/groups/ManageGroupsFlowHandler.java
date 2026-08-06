@@ -378,15 +378,16 @@ public class ManageGroupsFlowHandler implements Serializable {
     }
 
     /**
-     * Looks up the specified group by key, within the administered realm. With no realm resolved there is
-     * no store to look the key up in, so the answer is none.
+     * Looks up the specified group by key. Resolution is not itself realm-bound: the callers that act on
+     * the result carry the scope check ({@link #isInAdministeredScope}), and the views that render it
+     * expect a resolved group — same division of labour as {@code UsersFlowHandler}.
      *
      * @param selectedGroup
      *            the group key
      * @return up the specified group by key
      */
     public JCRGroupNode lookupGroup(String selectedGroup) {
-        return realmResolved && selectedGroup != null ? groupManagerService.lookupGroupByPath(selectedGroup) : null;
+        return selectedGroup != null ? groupManagerService.lookupGroupByPath(selectedGroup) : null;
     }
 
     /**
