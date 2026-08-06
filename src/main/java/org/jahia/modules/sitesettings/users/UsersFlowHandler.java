@@ -17,6 +17,7 @@ package org.jahia.modules.sitesettings.users;
 
 import au.com.bytecode.opencsv.CSVReader;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jahia.data.viewhelper.principal.PrincipalViewHelper;
 import org.jahia.modules.sitesettings.users.management.CsvFile;
@@ -259,7 +260,7 @@ public class UsersFlowHandler implements Serializable {
                 JCRUserNode jahiaUser = userManagerService.lookupUserByPath(userKey);
                 if (jahiaUser == null || !isInAdministeredScope(jahiaUser.getPath())) {
                     context.addMessage(new MessageBuilder().error().code(
-                            "siteSettings.user.remove.unsuccessful").arg(userKey).build());
+                            "siteSettings.user.remove.unsuccessful").arg(StringEscapeUtils.escapeXml(userKey)).build());
                     return false;
                 }
                 String displayName = PrincipalViewHelper.getDisplayName(jahiaUser);
