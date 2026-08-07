@@ -594,14 +594,9 @@ public class ManageGroupsFlowHandler implements Serializable {
     }
 
     /**
-     * Lists the users of the administered realm as candidate members, flagged with their current
-     * membership. Bounded by the realm the same way {@link #search()} is: with no realm resolved there
-     * is no store to offer candidates from, so the result is empty.
-     *
-     * The store searched is the one this screen administers — {@link #siteKey} — while the criteria
-     * supply the filters applied within it (searchIn, searchString, properties, storedOn, providers).
-     * Same split as {@code UsersFlowHandler.search(SearchCriteria)}, and the same one the membership
-     * flag below already uses.
+     * Lists candidate members for the group, flagged with their current membership. Requires a resolved
+     * realm the same way {@link #search()} does: with none, there is no store to offer candidates from,
+     * so the result is empty. The store the criteria select within is their own concern.
      *
      * @return the list of users, matching the specified search criteria
      */
@@ -626,7 +621,7 @@ public class ManageGroupsFlowHandler implements Serializable {
 
         // Load all users, they will be displayed in the user selector for the group.
         Set<JCRUserNode> users = PrincipalViewHelper.getSearchResult(searchCriteria.getSearchIn(),
-                siteKey, searchCriteria.getSearchString(), searchCriteria.getProperties(), searchCriteria.getStoredOn(),
+                searchCriteria.getSiteKey(), searchCriteria.getSearchString(), searchCriteria.getProperties(), searchCriteria.getStoredOn(),
                 searchCriteria.getProviders());
 
         // Flag current group users
