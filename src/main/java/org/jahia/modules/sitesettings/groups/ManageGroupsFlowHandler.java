@@ -596,6 +596,11 @@ public class ManageGroupsFlowHandler implements Serializable {
      * membership. Bounded by the realm the same way {@link #search()} is: with no realm resolved there
      * is no store to offer candidates from, so the result is empty.
      *
+     * The store searched is the one this screen administers — {@link #siteKey} — while the criteria
+     * supply the filters applied within it (searchIn, searchString, properties, storedOn, providers).
+     * Same split as {@code UsersFlowHandler.search(SearchCriteria)}, and the same one the membership
+     * flag below already uses.
+     *
      * @return the list of users, matching the specified search criteria
      */
     public Map<JahiaUser, Boolean> searchNewUserMembers(String groupKey, SearchCriteria searchCriteria) {
@@ -618,7 +623,7 @@ public class ManageGroupsFlowHandler implements Serializable {
         });
 
         Set<JCRUserNode> users = PrincipalViewHelper.getSearchResult(searchCriteria.getSearchIn(),
-                searchCriteria.getSiteKey(), searchCriteria.getSearchString(), searchCriteria.getProperties(), searchCriteria.getStoredOn(),
+                siteKey, searchCriteria.getSearchString(), searchCriteria.getProperties(), searchCriteria.getStoredOn(),
                 searchCriteria.getProviders());
 
         String groupName = groupNode.getName();
