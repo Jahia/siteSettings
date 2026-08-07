@@ -55,11 +55,76 @@ public class ManageGroupsFlowHandler implements Serializable {
 
     private String siteKey;
 
+    private boolean realmResolved;
+
+    /**
+     * Resolves the principal realm this screen manages from the container it is reached through: a site
+     * node scopes it to that site's principals, the global settings node to the server-global store
+     * (hence a null {@link #siteKey}). Any other container carries no realm, leaving
+     * {@link #realmResolved} false — the state in which every scope check below answers false.
+     */
     public void initRealm(RenderContext renderContext) throws RepositoryException {
         JCRNodeWrapper mainNode = renderContext.getMainResource().getNode();
-        if (mainNode != null && mainNode.isNodeType("jnt:virtualsite")) {
-            siteKey = ((JCRSiteNode) mainNode).getSiteKey();
+        if (mainNode == null) {
+            return;
         }
+        if (mainNode.isNodeType("jnt:virtualsite")) {
+            siteKey = ((JCRSiteNode) mainNode).getSiteKey();
+            realmResolved = true;
+        } else if (mainNode.isNodeType("jnt:globalSettings")) {
+            realmResolved = true;
+        }
+    }
+
+    /**
+     * A target group or member principal is only in scope for the realm this management screen is bound
+     * to. When bound to a specific site (siteKey set from a jnt:virtualsite realm) the target must live
+     * under that site's principal tree (/sites/&lt;siteKey&gt;/...); in the server-wide realm (siteKey
+     * null) the target must live in the server-global store (/users/ or /groups/) and never inside a
+     * site's tree. Mirrors the store layout used by Jahia{User,Group}ManagerService. With no realm
+     * resolved at all nothing is in scope.
+     */
+    private boolean isInAdministeredScope(String principalPath) {
+        if (principalPath == null || !realmResolved) {
+            return false;
+        }
+        if (siteKey == null) {
+            return principalPath.startsWith("/users/") || principalPath.startsWith("/groups/");
+        }
+        return principalPath.startsWith("/sites/" + siteKey + "/");
+    }
+
+    /**
+     * Membership rule (hybrid, less strict than {@link #isInAdministeredScope}): a group may legitimately
+     * hold server-global principals (under /users or /groups) as members, but a site-scoped realm must not
+     * pull in a principal that belongs to a DIFFERENT site. So a member is allowed when it is a global
+     * principal, or a principal of the administered site itself; a principal living under another site's
+     * tree (/sites/&lt;other&gt;/...) is rejected. In the server-wide realm (siteKey null) no site-scoped
+     * principal is an allowed member of a global group. With no realm resolved at all no principal is.
+     */
+    private boolean isAllowedMember(String principalPath) {
+        if (principalPath == null || !realmResolved) {
+            return false;
+        }
+        if (!principalPath.startsWith("/sites/")) {
+            return true;
+        }
+        return siteKey != null && principalPath.startsWith("/sites/" + siteKey + "/");
+    }
+
+    /**
+     * A group created/copied from a site-bound realm (siteKey set) must belong to that same site;
+     * the server-wide realm (siteKey null) may target the global group store. Guards the creation
+     * siteKey supplied by the request-bound GroupModel. With no realm resolved no target is in scope.
+     */
+    private boolean isSiteKeyInScope(String targetSiteKey) {
+        return realmResolved && (siteKey == null || siteKey.equals(targetSiteKey));
+    }
+
+    private void addOutOfScopeError(MessageContext context) {
+        context.addMessage(new MessageBuilder().error().defaultText(
+                Messages.get("resources.JahiaSiteSettings", "siteSettings.groups.errors.reservedGroup",
+                        LocaleContextHolder.getLocale())).build());
     }
 
     /**
@@ -74,6 +139,11 @@ public class ManageGroupsFlowHandler implements Serializable {
     @SuppressWarnings("deprecation")
     public boolean addGroup(final GroupModel group, final MessageContext context) throws RepositoryException {
         final Locale locale = LocaleContextHolder.getLocale();
+
+        if (!isSiteKeyInScope(group.getSiteKey())) {
+            addOutOfScopeError(context);
+            return false;
+        }
 
         return JCRTemplate.getInstance().doExecuteWithSystemSession(new JCRCallback<Boolean>() {
             @Override
@@ -113,6 +183,12 @@ public class ManageGroupsFlowHandler implements Serializable {
             return;
         }
         JCRGroupNode group = lookupGroup(groupKey);
+        if (group == null || !isInAdministeredScope(group.getPath())) {
+            context.addMessage(new MessageBuilder().error().defaultText(
+                    Messages.get("resources.JahiaSiteSettings", "siteSettings.groups.errors.reservedGroup",
+                            LocaleContextHolder.getLocale())).build());
+            return;
+        }
         logger.info("Adding members {} to group {}", members, group.getPath());
         long timer = System.currentTimeMillis();
         List<JCRNodeWrapper> candidates = new LinkedList<JCRNodeWrapper>();
@@ -120,6 +196,10 @@ public class ManageGroupsFlowHandler implements Serializable {
             JCRNodeWrapper principal = lookupMember(member);
             if (principal == null) {
                 logger.warn("Unable to lookup principal for key {}", member);
+                continue;
+            }
+            if (!isAllowedMember(principal.getPath())) {
+                logger.warn("Ignoring cross-site principal {} as member of group {}", member, group.getPath());
                 continue;
             }
 
@@ -171,6 +251,11 @@ public class ManageGroupsFlowHandler implements Serializable {
                             Messages.getWithArgs("resources.JahiaSiteSettings",
                                     "siteSettings.groups.errors.create.failed", locale, newGroup.getGroupname()))
                     .build());
+            return;
+        }
+        // the copied-from group must be in the administered scope, and the new group must land in it
+        if (!isInAdministeredScope(selectedGroup.getPath()) || !isSiteKeyInScope(newGroup.getSiteKey())) {
+            addOutOfScopeError(context);
             return;
         }
         // create new group
@@ -345,6 +430,14 @@ public class ManageGroupsFlowHandler implements Serializable {
      */
     public void removeGroup(final String selectedGroup, final MessageContext context) throws RepositoryException {
         final JCRGroupNode grp = lookupGroup(selectedGroup);
+        if (grp == null || !isInAdministeredScope(grp.getPath())) {
+            context.addMessage(new MessageBuilder()
+                    .error()
+                    .defaultText(
+                            Messages.get("resources.JahiaSiteSettings", "siteSettings.groups.errors.reservedGroup",
+                                    LocaleContextHolder.getLocale())).build());
+            return;
+        }
         if (isReadOnly(grp)) {
             context.addMessage(new MessageBuilder()
                     .error()
@@ -395,6 +488,10 @@ public class ManageGroupsFlowHandler implements Serializable {
             return;
         }
         JCRGroupNode group = lookupGroup(groupKey);
+        if (group == null || !isInAdministeredScope(group.getPath())) {
+            addOutOfScopeError(context);
+            return;
+        }
         logger.info("Removing members {} from group {}", members, group.getPath());
         long timer = System.currentTimeMillis();
         int countRemoved = 0;
