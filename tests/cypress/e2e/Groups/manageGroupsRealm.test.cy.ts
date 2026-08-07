@@ -155,6 +155,13 @@ describe('Manage Groups - realm resolution', () => {
                         'string',
                     )
 
+                    // Same response, read for what it lists. noRealmGroup lives in the server-global
+                    // store, which is the store a null site key selects, so this is non-vacuous: the
+                    // listing is rendered from an unbounded c:forEach, never truncated.
+                    expect(res.body as string, 'a container carrying no realm must list no group').not.to.contain(
+                        noRealmGroup,
+                    )
+
                     cy.request({
                         method: 'POST',
                         url: action as string,
