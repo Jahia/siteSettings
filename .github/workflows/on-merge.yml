@@ -6,7 +6,6 @@ name: On merge to master
 on:
   push:
     branches:
-      - 'main'
       - '8_7_x'
     tags-ignore:
       - '**'
@@ -43,7 +42,7 @@ jobs:
   publish:
     name: Publish module
     needs: build
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/8_7_x'
+    if: github.ref == 'refs/heads/8_7_x'
     runs-on: ubuntu-latest
     container:
       image: jahia/cimg-mvn-cache:ga_cimg_openjdk_8.0.312-node
