@@ -125,9 +125,10 @@ public class ManageGroupsFlowHandler implements Serializable {
     }
 
     /**
-     * A group created/copied from a site-bound realm (siteKey set) must belong to that same site;
-     * the server-wide realm (siteKey null) may target the global group store. Guards the creation
-     * siteKey supplied by the request-bound GroupModel. With no realm resolved no target is in scope.
+     * A group created/copied from a site-bound realm (siteKey set) must belong to that same site; the
+     * server-wide realm (siteKey null) administers every store, so it may target the global group store
+     * or any site. Guards the creation siteKey supplied by the request-bound GroupModel. With no realm
+     * resolved no target is in scope.
      * <p>
      * Visible for testing.
      */
@@ -269,7 +270,7 @@ public class ManageGroupsFlowHandler implements Serializable {
                     .build());
             return;
         }
-        // the copied-from group must be in the administered scope, and the new group must land in it
+        // the copied-from group must be in the administered scope, and the new group in a scope the realm may target
         if (!isInAdministeredScope(selectedGroup.getPath()) || !isSiteKeyInScope(newGroup.getSiteKey())) {
             addOutOfScopeError(context);
             return;
