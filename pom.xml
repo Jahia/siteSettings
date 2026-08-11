@@ -46,6 +46,8 @@
         <jahia-module-signature>MCwCFCAs7JLMLVxub9V9mutZZZH3VTFSAhQFNUzPDvcLoc+48cZpxcYtrsW3xg==</jahia-module-signature>
         <require-capability>osgi.extender;filter:="(osgi.extender=org.jahia.bundles.blueprint.extender.config)"</require-capability>
         <yarn.arguments>build:production</yarn.arguments>
+        <junit.version>4.13.2</junit.version>
+        <mockito.version>4.11.0</mockito.version>
     </properties>
 
     <dependencies>
@@ -66,6 +68,18 @@
             <artifactId>graphql-java-annotations</artifactId>
             <version>${graphql-java-annotations.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
