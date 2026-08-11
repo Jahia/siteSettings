@@ -292,11 +292,16 @@ public class ManageGroupsFlowHandler implements Serializable {
     }
 
     /**
-     * Returns a map of all group providers currently registered.
+     * Returns the principal providers mounted for the administered realm. Bounded the same way the
+     * listing is: with no realm resolved there is no realm whose providers to enumerate, so the result
+     * is empty rather than the server-global set a null {@link #siteKey} would otherwise select.
      *
-     * @return a map of all group providers currently registered
+     * @return the providers of the administered realm
      */
     public Set<String> getProviders(final boolean isUsers, final boolean includeGlobals) throws RepositoryException {
+        if (!realmResolved) {
+            return Collections.emptySet();
+        }
         return JCRTemplate.getInstance().doExecuteWithSystemSession(new JCRCallback<Set<String>>() {
             @Override
             public Set<String> doInJCR(JCRSessionWrapper session) throws RepositoryException {
@@ -375,7 +380,9 @@ public class ManageGroupsFlowHandler implements Serializable {
     }
 
     /**
-     * Looks up the specified group by key.
+     * Looks up the specified group by key. Resolution is not itself realm-bound: the callers that act on
+     * the result carry the scope check ({@link #isInAdministeredScope}), and the views that render it
+     * expect a resolved group — same division of labour as {@code UsersFlowHandler}.
      *
      * @param selectedGroup
      *            the group key
@@ -389,10 +396,13 @@ public class ManageGroupsFlowHandler implements Serializable {
      * Return the count of members for a group, only working on jcr groups
      * if an external group is used it will return 0
      * @param group the group to get the members from
-     * @return the count of members for a group, 0 if group is external
+     * @return the count of members for a group, 0 if group is external or none was resolved
      * @throws RepositoryException
      */
     public long lookupGroupMembersCount(JCRGroupNode group) throws RepositoryException {
+        if (group == null) {
+            return 0;
+        }
         if (!group.getProperty("j:external").getBoolean()) {
             QueryResult result = group.getSession().getWorkspace().getQueryManager()
                     .createQuery("select * from [jnt:member] as member where " +
@@ -531,11 +541,17 @@ public class ManageGroupsFlowHandler implements Serializable {
     }
 
     /**
-     * Performs the group search.
+     * Lists the groups of the administered realm. The realm is what bounds the listing: a site realm
+     * lists that site's store, the server-wide realm the server-global one. With no realm resolved there
+     * is no store to list, so the result is empty rather than the server-global default a null
+     * {@link #siteKey} would otherwise select.
      *
      * @return the list of groups, matching the specified search criteria
      */
     public Set<JCRGroupNode> search() {
+        if (!realmResolved) {
+            return Collections.emptySet();
+        }
         long timer = System.currentTimeMillis();
         Set<JCRGroupNode> searchResult = PrincipalViewHelper.getGroupSearchResult(null, siteKey, null, null, null, null, false);
         logger.info("Found {} groups in {} ms", searchResult.size(), System.currentTimeMillis() - timer);
@@ -543,10 +559,16 @@ public class ManageGroupsFlowHandler implements Serializable {
     }
 
     /**
-     * Performs the group search with the specified search criteria and returns the list of matching groups.
+     * Lists the groups of the administered realm as candidate members, flagged with their current
+     * membership. Bounded by the realm the same way {@link #search()} is: with no realm resolved there
+     * is no store to offer candidates from, so the result is empty.
+     *
      * @return the list of groups, matching the specified search criteria
      */
     public Map<JahiaGroup, Boolean> searchNewGroupMembers(JCRGroupNode groupNode) {
+        if (!realmResolved || groupNode == null) {
+            return Collections.emptyMap();
+        }
         long timer = System.currentTimeMillis();
 
         Map<JCRGroupNode, Boolean> sortedResults = new TreeMap<>(new Comparator<JCRNodeWrapper>() {
@@ -571,11 +593,24 @@ public class ManageGroupsFlowHandler implements Serializable {
         return results;
     }
 
+    /**
+     * Lists candidate members for the group, flagged with their current membership. Requires a resolved
+     * realm the same way {@link #search()} does: with none, there is no store to offer candidates from,
+     * so the result is empty. The store the criteria select within is their own concern.
+     *
+     * @return the list of users, matching the specified search criteria
+     */
     public Map<JahiaUser, Boolean> searchNewUserMembers(String groupKey, SearchCriteria searchCriteria) {
+        if (!realmResolved) {
+            return Collections.emptyMap();
+        }
 
         long timer = System.currentTimeMillis();
 
         JCRGroupNode groupNode = lookupGroup(groupKey);
+        if (groupNode == null) {
+            return Collections.emptyMap();
+        }
 
         Map<JCRUserNode, Boolean> sortedResults = new TreeMap<>(new Comparator<JCRNodeWrapper>(){
             @Override
