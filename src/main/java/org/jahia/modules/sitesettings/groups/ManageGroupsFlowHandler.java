@@ -596,7 +596,9 @@ public class ManageGroupsFlowHandler implements Serializable {
     /**
      * Lists candidate members for the group, flagged with their current membership. Requires a resolved
      * realm the same way {@link #search()} does: with none, there is no store to offer candidates from,
-     * so the result is empty. The store the criteria select within is their own concern.
+     * so the result is empty. The store the candidates come from is the administered realm's, exactly as
+     * in {@link #searchNewGroupMembers}; the criteria carry the filters applied WITHIN that store, not
+     * the choice of store.
      *
      * @return the list of users, matching the specified search criteria
      */
@@ -619,9 +621,11 @@ public class ManageGroupsFlowHandler implements Serializable {
             }
         });
 
-        // Load all users, they will be displayed in the user selector for the group.
+        // Load the users to display in the group's selector, from the administered realm's store. The
+        // store follows the resolved realm, like every other listing on this screen; the criteria only
+        // filter within it.
         Set<JCRUserNode> users = PrincipalViewHelper.getSearchResult(searchCriteria.getSearchIn(),
-                searchCriteria.getSiteKey(), searchCriteria.getSearchString(), searchCriteria.getProperties(), searchCriteria.getStoredOn(),
+                siteKey, searchCriteria.getSearchString(), searchCriteria.getProperties(), searchCriteria.getStoredOn(),
                 searchCriteria.getProviders());
 
         // Flag current group users
