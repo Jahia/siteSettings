@@ -70,7 +70,15 @@ public class UsersFlowHandler implements Serializable {
      * creation paths that take {@link #siteKey} as their destination decline.
      */
     public void initRealm(RenderContext renderContext) throws RepositoryException {
-        JCRNodeWrapper mainNode = renderContext.getMainResource().getNode();
+        resolveRealm(renderContext.getMainResource().getNode());
+    }
+
+    /**
+     * The container half of {@link #initRealm(RenderContext)}, taking the resolved main-resource node.
+     * <p>
+     * Visible for testing.
+     */
+    void resolveRealm(JCRNodeWrapper mainNode) throws RepositoryException {
         if (mainNode == null) {
             return;
         }
@@ -89,8 +97,10 @@ public class UsersFlowHandler implements Serializable {
      * target must live in the server-global store (/users/ or /groups/) and never inside a site's tree.
      * This mirrors the store layout used by JahiaUserManagerService ("/users/" vs "/sites/&lt;siteKey&gt;/users/").
      * With no realm resolved at all nothing is in scope.
+     * <p>
+     * Visible for testing.
      */
-    private boolean isInAdministeredScope(String principalPath) {
+    boolean isInAdministeredScope(String principalPath) {
         if (principalPath == null || !realmResolved) {
             return false;
         }

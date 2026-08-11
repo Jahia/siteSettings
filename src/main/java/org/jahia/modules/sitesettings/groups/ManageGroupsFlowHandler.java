@@ -64,7 +64,15 @@ public class ManageGroupsFlowHandler implements Serializable {
      * {@link #realmResolved} false — the state in which every scope check below answers false.
      */
     public void initRealm(RenderContext renderContext) throws RepositoryException {
-        JCRNodeWrapper mainNode = renderContext.getMainResource().getNode();
+        resolveRealm(renderContext.getMainResource().getNode());
+    }
+
+    /**
+     * The container half of {@link #initRealm(RenderContext)}, taking the resolved main-resource node.
+     * <p>
+     * Visible for testing.
+     */
+    void resolveRealm(JCRNodeWrapper mainNode) throws RepositoryException {
         if (mainNode == null) {
             return;
         }
@@ -83,8 +91,10 @@ public class ManageGroupsFlowHandler implements Serializable {
      * null) the target must live in the server-global store (/users/ or /groups/) and never inside a
      * site's tree. Mirrors the store layout used by Jahia{User,Group}ManagerService. With no realm
      * resolved at all nothing is in scope.
+     * <p>
+     * Visible for testing.
      */
-    private boolean isInAdministeredScope(String principalPath) {
+    boolean isInAdministeredScope(String principalPath) {
         if (principalPath == null || !realmResolved) {
             return false;
         }
@@ -101,8 +111,10 @@ public class ManageGroupsFlowHandler implements Serializable {
      * principal, or a principal of the administered site itself; a principal living under another site's
      * tree (/sites/&lt;other&gt;/...) is rejected. In the server-wide realm (siteKey null) no site-scoped
      * principal is an allowed member of a global group. With no realm resolved at all no principal is.
+     * <p>
+     * Visible for testing.
      */
-    private boolean isAllowedMember(String principalPath) {
+    boolean isAllowedMember(String principalPath) {
         if (principalPath == null || !realmResolved) {
             return false;
         }
@@ -116,8 +128,10 @@ public class ManageGroupsFlowHandler implements Serializable {
      * A group created/copied from a site-bound realm (siteKey set) must belong to that same site;
      * the server-wide realm (siteKey null) may target the global group store. Guards the creation
      * siteKey supplied by the request-bound GroupModel. With no realm resolved no target is in scope.
+     * <p>
+     * Visible for testing.
      */
-    private boolean isSiteKeyInScope(String targetSiteKey) {
+    boolean isSiteKeyInScope(String targetSiteKey) {
         return realmResolved && (siteKey == null || siteKey.equals(targetSiteKey));
     }
 
