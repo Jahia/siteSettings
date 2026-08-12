@@ -215,7 +215,6 @@
                         </manageSiteRoles>
                         <page-models j:applyOn="jnt:virtualsite"
                             j:icon="/modules/siteSettings/templates/files/page_models.png"
-                            j:requiredPermissionNames="siteAdminTemplates"
                             jcr:primaryType="jnt:contentTemplate">
                             <j:translation_en jcr:language="en"
                                     jcr:primaryType="jnt:translation"
@@ -321,7 +320,6 @@
                         </manageSiteRoles-jahia-anthracite>
                         <page-models-jahia-anthracite j:applyOn="jnt:virtualsite"
                             j:icon="/modules/siteSettings/templates/files/page_models.png"
-                            j:requiredPermissionNames="siteAdminTemplates"
                             jcr:primaryType="jnt:contentTemplate">
                             <j:translation_en jcr:language="en"
                                     jcr:primaryType="jnt:translation"
