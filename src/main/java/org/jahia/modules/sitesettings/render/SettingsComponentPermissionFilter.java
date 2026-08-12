@@ -165,7 +165,7 @@ public class SettingsComponentPermissionFilter extends AbstractFilter {
      * The resource the access rule is evaluated against: the ajax resource of an ajax sub-render, otherwise
      * the main resource of the render.
      */
-    private static JCRNodeWrapper contextNode(RenderContext renderContext) throws RepositoryException {
+    private static JCRNodeWrapper contextNode(RenderContext renderContext) {
         Resource contextResource = renderContext.getAjaxResource() != null
                 ? renderContext.getAjaxResource()
                 : renderContext.getMainResource();
