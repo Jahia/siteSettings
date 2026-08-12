@@ -2,14 +2,13 @@
 // principals of the realm it is reached through, and it is reached through exactly two containers:
 // the global settings node, which carries the server-wide realm and its server-global principal
 // store, and a site node, which carries that site's realm and store. A container of any other type
-// carries no realm, and no membership write happens there.
+// carries no realm, and the screen performs no membership write there.
 //
-// This spec asserts all three: the two realms it manages mutate through the screen's own web flow,
-// and a container carrying no realm is served no flow to drive and leaves the store as it was.
-// Opaque by design.
+// This spec asserts all three, each through the screen's own web flow: the two realms it manages
+// mutate, and a container carrying no realm does not. Opaque by design.
 //
-// Non-vacuity: the two realm cases ARE the positive controls for the third — they render the screen
-// and mutate through the same session and the same verification instrument, so a driver that had
+// Non-vacuity: the two realm cases ARE the positive controls for the third — they mutate through
+// the same flow, the same transition and the same verification instrument, so a driver that had
 // stopped working, or a read-back that looked in the wrong place, would take them red too. Group
 // members are read at full depth (see memberNames): they live several levels below the group, so a
 // children-only query reads a successful write as an absent one.
@@ -133,34 +132,55 @@ describe('Manage Groups - realm resolution', () => {
         })
     })
 
-    it('a container carrying no realm: is served no flow, and adds no member', () => {
+    it('a container carrying no realm: adds no member', () => {
         cy.login()
         nodePath('jnt:group', noRealmGroup, '/groups').then((groupPath) => {
             memberNames(groupPath as string).then((before: string[]) => {
                 expect(before, 'baseline: the group holds no member').to.be.empty
             })
 
-            // The component is addressed on its own, in the same session the two cases above drive.
-            // A container of this type is not one of the two the screen is reached through, so the
-            // render carries neither a flow to drive nor a listing. Driving a transition is therefore
-            // not part of this case: there is no execution key to post to.
-            const render = `/cms/render/default/en${componentPath}.html.ajax?ec=${uniq}`
-            const flowAction = (body: string) => {
-                const m = /action\s*=\s*"([^"]*webflowexecution[^"]*)"/.exec(body || '')
-                return m ? m[1].replace(/&amp;/g, '&') : null
-            }
+            nodePath('jnt:user', noRealmMember).then((memberPath) => {
+                // Driven with direct form posts: the component is addressed on its own, so the page
+                // scripts the two cases above rely on are not part of the response. cy.request keeps
+                // the same session, the same flow and the same transition as those two.
+                const render = `/cms/render/default/en${componentPath}.html.ajax?ec=${uniq}`
+                const flowAction = (body: string) => {
+                    const m = /action\s*=\s*"([^"]*webflowexecution[^"]*)"/.exec(body || '')
+                    return m ? m[1].replace(/&amp;/g, '&') : null
+                }
 
-            cy.request({ method: 'GET', url: render, failOnStatusCode: false }).then((res) => {
-                const body = (res.body as string) || ''
-                expect(flowAction(body), 'a container carrying no realm hands out no flow').to.be.null
+                cy.request({ method: 'GET', url: render }).then((res) => {
+                    const action = flowAction(res.body as string)
+                    expect(action, 'the screen must hand out a live flow, or this case proves nothing').to.be.a(
+                        'string',
+                    )
 
-                // The same response, read for what it lists. noRealmGroup lives in the server-global
-                // store, which is the store a null site key selects.
-                expect(body, 'a container carrying no realm must list no group').not.to.contain(noRealmGroup)
-            })
+                    // Same response, read for what it lists. noRealmGroup lives in the server-global
+                    // store, which is the store a null site key selects, so this is non-vacuous: the
+                    // listing is rendered from an unbounded c:forEach, never truncated.
+                    expect(res.body as string, 'a container carrying no realm must list no group').not.to.contain(
+                        noRealmGroup,
+                    )
 
-            memberNames(groupPath as string).then((after: string[]) => {
-                expect(after, 'a container carrying no realm must add no member').to.be.empty
+                    cy.request({
+                        method: 'POST',
+                        url: action as string,
+                        form: true,
+                        body: { _eventId_editGroupMembers: '', selectedGroup: groupPath },
+                    }).then((step) => {
+                        const saveAction = flowAction(step.body as string) || (action as string)
+                        cy.request({
+                            method: 'POST',
+                            url: saveAction,
+                            form: true,
+                            body: { _eventId_save: '', addedMembers: `u:${memberPath}`, removedMembers: '' },
+                        })
+                    })
+                })
+
+                memberNames(groupPath as string).then((after: string[]) => {
+                    expect(after, 'a container carrying no realm must add no member').to.be.empty
+                })
             })
         })
     })
