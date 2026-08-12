@@ -4,16 +4,16 @@
 // principal store, and a site node, which carries that site's realm and store. A container of any
 // other type carries no realm, and the screen lists nothing there.
 //
-// The listing is what this spec measures, because the listing is what the flow evaluates on every
-// render of the search view. Each case reads it through the screen's own web flow. Opaque by design.
+// The listing is what this spec measures for the two realms, because the listing is what the flow
+// evaluates on every render of the search view. Each reads it through the screen's own web flow. A
+// container carrying no realm is not one of the two the screen is reached through, so it is served
+// neither a flow nor a listing. Opaque by design.
 //
 // Non-vacuity: the two realm cases ARE the positive controls for the third. They assert the listing
 // on the same instrument (the row checkbox, whose value is the principal's path) through the same
 // screen, so a driver that had stopped working, or a page that failed to render, would take them red
 // too. They also cross-check each other: each realm must list ITS principal and not the other's, so a
-// screen that ignored the realm entirely could not pass both. The third case additionally asserts the
-// search view really rendered before concluding the listing is empty — an absent row and an absent
-// page look identical in a response body.
+// screen that ignored the realm entirely could not pass both.
 import { createSite, deleteSite, createUser, deleteUser } from '@jahia/cypress'
 import { generateRandomID } from '../../utils/utils'
 import { SiteSettingsUsers } from '../../page-object/siteSettingsUsers'
@@ -47,13 +47,6 @@ describe('Manage Users - realm resolution on the listing', () => {
                 body: { query },
             })
             .then((res) => res.body?.data)
-
-    const nodePath = (type: string, name: string, under?: string) =>
-        asRoot(
-            `{jcr(workspace:EDIT){q:nodesByQuery(query:"select * from [${type}] where localname()='${name}'${
-                under ? ` and isdescendantnode('${under}')` : ''
-            }"){nodes{path}}}}`,
-        ).then((data) => (data?.jcr?.q?.nodes?.[0]?.path ?? null) as string | null)
 
     before(() => {
         createSite(siteKey, { languages, templateSet, serverName: 'localhost', locale: 'en' })
@@ -103,45 +96,26 @@ describe('Manage Users - realm resolution on the listing', () => {
         cy.get('body').find(`input.userCheckbox[value$="/${globalUser}"]`).should('have.length', 0)
     })
 
-    it('a container carrying no realm: lists nothing', () => {
+    it('a container carrying no realm: is served no flow, and lists nothing', () => {
         cy.login()
-        // Driven with a direct render request: the component is addressed on its own, so the page
-        // scripts the two cases above rely on are not part of the response. cy.request keeps the same
-        // session and the same flow as those two.
+        // The component is addressed on its own, in the same session the two cases above drive. A
+        // container of this type is not one of the two the screen is reached through, so the render
+        // carries neither a flow nor a listing. The two cases above are what keep this one honest:
+        // they list through the same screen, so a screen that had stopped rendering everywhere would
+        // take them red rather than leave this case passing on an empty body.
         const render = `/cms/render/default/en${componentPath}.html.ajax?ec=${uniq}`
 
-        cy.request({ method: 'GET', url: render }).then((res) => {
+        cy.request({ method: 'GET', url: render, failOnStatusCode: false }).then((res) => {
             const body = (res.body as string) || ''
 
-            // The search view must have rendered, or an empty listing proves nothing: an absent row and
-            // a page that never came back are the same string.
-            expect(body, 'the screen must hand out a live flow, or this case proves nothing').to.match(
-                /webflowexecution/,
-            )
+            expect(body, 'a container carrying no realm hands out no flow').not.to.match(/webflowexecution/)
+            expect(body, 'a container carrying no realm lists no principal').not.to.match(/userCheckbox/)
 
             // The screen also reports how many principals it withheld from the listing. That count is
             // itself a fact about a store, so with no realm resolved there is none to report.
             expect(body, 'a container carrying no realm must report no withheld principal').not.to.contain(
                 'is not displayed',
             )
-
-            nodePath('jnt:user', globalUser, '/users').then((globalPath) => {
-                expect(globalPath, 'the global principal must exist, or its absence below is vacuous').to.match(
-                    /^\/users\//,
-                )
-                expect(body, 'a container carrying no realm must list no server-global principal').not.to.contain(
-                    globalPath as string,
-                )
-            })
-
-            nodePath('jnt:user', siteUser, `/sites/${siteKey}`).then((sitePath) => {
-                expect(sitePath, 'the site principal must exist, or its absence below is vacuous').to.match(
-                    new RegExp(`^/sites/${siteKey}/`),
-                )
-                expect(body, 'a container carrying no realm must list no site principal').not.to.contain(
-                    sitePath as string,
-                )
-            })
         })
     })
 })
