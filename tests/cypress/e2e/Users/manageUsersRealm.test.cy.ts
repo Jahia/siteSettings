@@ -11,9 +11,13 @@
 // on the same instrument (the row checkbox, whose value is the principal's path) through the same
 // screen, so a driver that had stopped working, or a page that failed to render, would take them red
 // too. They also cross-check each other: each realm must list ITS principal and not the other's, so a
-// screen that ignored the realm entirely could not pass both. The third case additionally asserts the
-// search view really rendered before concluding the listing is empty — an absent row and an absent
-// page look identical in a response body.
+// screen that ignored the realm entirely could not pass both.
+//
+// The third case reaches its container by placing the component on an ordinary page, and a component
+// of this module is served only from inside a module, so nothing is served there at all. That is a
+// stronger statement than the empty listing this case used to assert, and it is the one asserted now:
+// no body, no flow, and no transition accepted. The two realm cases remain its positive controls,
+// because they prove the screen does render and does list when it is reached legitimately.
 import { createSite, deleteSite, createUser, deleteUser } from '@jahia/cypress'
 import { generateRandomID } from '../../utils/utils'
 import { SiteSettingsUsers } from '../../page-object/siteSettingsUsers'
@@ -29,6 +33,9 @@ describe('Manage Users - realm resolution on the listing', () => {
     // the Manage Users component, held by the site's home page — a container carrying no realm
     const component = 'usrRealmComponent' + uniq
     const componentPath = `/sites/${siteKey}/home/${component}`
+    // `ec` only skips the fragment cache when it carries the rendered node's own identifier, so the
+    // uuid the placement returns is kept rather than a random string.
+    let componentUuid = ''
 
     const languages = 'en'
     const templateSet = 'templates-system'
@@ -72,6 +79,7 @@ describe('Manage Users - realm resolution on the listing', () => {
             `mutation{jcr(workspace:EDIT){addNode(parentPathOrId:"/sites/${siteKey}/home",name:"${component}",primaryNodeType:"jnt:siteSettingsManageUsers"){uuid}}}`,
         ).then((data) => {
             expect(data?.jcr?.addNode?.uuid, 'the component must be in place').to.be.a('string')
+            componentUuid = data.jcr.addNode.uuid
         })
     })
 
@@ -105,43 +113,43 @@ describe('Manage Users - realm resolution on the listing', () => {
 
     it('a container carrying no realm: lists nothing', () => {
         cy.login()
-        // Driven with a direct render request: the component is addressed on its own, so the page
-        // scripts the two cases above rely on are not part of the response. cy.request keeps the same
-        // session and the same flow as those two.
-        const render = `/cms/render/default/en${componentPath}.html.ajax?ec=${uniq}`
+        // Addressed on its own rather than through a page, so the page scripts the two cases above rely
+        // on are not part of the response. cy.request keeps the same session as those two.
+        const render = `/cms/render/default/en${componentPath}.html.ajax?ec=${componentUuid}`
 
-        cy.request({ method: 'GET', url: render }).then((res) => {
-            const body = (res.body as string) || ''
-
-            // The search view must have rendered, or an empty listing proves nothing: an absent row and
-            // a page that never came back are the same string.
-            expect(body, 'the screen must hand out a live flow, or this case proves nothing').to.match(
-                /webflowexecution/,
-            )
-
-            // The screen also reports how many principals it withheld from the listing. That count is
-            // itself a fact about a store, so with no realm resolved there is none to report.
-            expect(body, 'a container carrying no realm must report no withheld principal').not.to.contain(
-                'is not displayed',
-            )
-
-            nodePath('jnt:user', globalUser, '/users').then((globalPath) => {
-                expect(globalPath, 'the global principal must exist, or its absence below is vacuous').to.match(
-                    /^\/users\//,
-                )
-                expect(body, 'a container carrying no realm must list no server-global principal').not.to.contain(
-                    globalPath as string,
-                )
-            })
-
-            nodePath('jnt:user', siteUser, `/sites/${siteKey}`).then((sitePath) => {
-                expect(sitePath, 'the site principal must exist, or its absence below is vacuous').to.match(
-                    new RegExp(`^/sites/${siteKey}/`),
-                )
-                expect(body, 'a container carrying no realm must list no site principal').not.to.contain(
-                    sitePath as string,
-                )
-            })
+        // The principals must exist, or their absence from the listing below is vacuous.
+        nodePath('jnt:user', globalUser, '/users').then((globalPath) => {
+            expect(globalPath, 'the global principal must exist').to.match(/^\/users\//)
         })
+        nodePath('jnt:user', siteUser, `/sites/${siteKey}`).then((sitePath) => {
+            expect(sitePath, 'the site principal must exist').to.match(new RegExp(`^/sites/${siteKey}/`))
+        })
+
+        cy.request({ method: 'GET', url: render, failOnStatusCode: false }).then((res) => {
+            // Reachable in live, or "serves nothing" is indistinguishable from "never got there".
+            expect(res.status, 'the component must be reachable for this case to mean anything').to.eq(200)
+            expect(String(res.body || '').trim(), 'a container carrying no realm must serve nothing').to.eq('')
+        })
+
+        // The transition names its component in the parameter's own name, so it is built rather than
+        // read off a screen that served none. Without this the case would go quiet exactly when the
+        // rule holds.
+        cy.then(() =>
+            cy
+                .request({
+                    method: 'POST',
+                    url: `/cms/render/default/en${componentPath}.html.ajax`,
+                    form: true,
+                    body: { [`webflowexecution${componentUuid.replace(/-/g, '_')}`]: 'e1s1' },
+                    followRedirect: false,
+                    failOnStatusCode: false,
+                })
+                .then((driven) => {
+                    // A transition a flow took answers a redirect naming the next step. One that reached
+                    // no flow answers 200 and names none, so `followRedirect` has to stay off.
+                    expect(driven.status, 'a transition on this container must reach no flow').to.eq(200)
+                    expect(String(driven.body || '').trim(), 'and it must serve nothing').to.eq('')
+                }),
+        )
     })
 })

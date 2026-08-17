@@ -12,6 +12,12 @@
 // stopped working, or a read-back that looked in the wrong place, would take them red too. Group
 // members are read at full depth (see memberNames): they live several levels below the group, so a
 // children-only query reads a successful write as an absent one.
+//
+// The third case reaches its container by placing the component on an ordinary page, and a component
+// of this module is served only from inside a module, so nothing is served there at all. It therefore
+// asserts three things rather than the one it used to: the render serves nothing, a transition built
+// for that component reaches no flow, and the group still holds no member. The last of those is the
+// same read-back the two realm cases prove works.
 import { createSite, deleteSite, createUser, deleteUser } from '@jahia/cypress'
 import { generateRandomID } from '../../utils/utils'
 import { SiteSettingsGroups } from '../../page-object/siteSettingsGroups'
@@ -31,6 +37,9 @@ describe('Manage Groups - realm resolution', () => {
     // the Manage Groups component, held by the site's home page — a container carrying no realm
     const component = 'grpRealmComponent' + uniq
     const componentPath = `/sites/${siteKey}/home/${component}`
+    // `ec` only skips the fragment cache when it carries the rendered node's own identifier, so the
+    // uuid the placement returns is kept rather than a random string.
+    let componentUuid = ''
 
     const languages = 'en'
     const templateSet = 'templates-system'
@@ -80,6 +89,7 @@ describe('Manage Groups - realm resolution', () => {
             `mutation{jcr(workspace:EDIT){addNode(parentPathOrId:"/sites/${siteKey}/home",name:"${component}",primaryNodeType:"jnt:siteSettingsManageGroups"){uuid}}}`,
         ).then((data) => {
             expect(data?.jcr?.addNode?.uuid, 'the component must be in place').to.be.a('string')
+            componentUuid = data.jcr.addNode.uuid
         })
     })
 
@@ -140,43 +150,44 @@ describe('Manage Groups - realm resolution', () => {
             })
 
             nodePath('jnt:user', noRealmMember).then((memberPath) => {
-                // Driven with direct form posts: the component is addressed on its own, so the page
-                // scripts the two cases above rely on are not part of the response. cy.request keeps
-                // the same session, the same flow and the same transition as those two.
-                const render = `/cms/render/default/en${componentPath}.html.ajax?ec=${uniq}`
-                const flowAction = (body: string) => {
-                    const m = /action\s*=\s*"([^"]*webflowexecution[^"]*)"/.exec(body || '')
-                    return m ? m[1].replace(/&amp;/g, '&') : null
-                }
+                expect(memberPath, 'the member must exist, or the write below could not have happened').to.be.a(
+                    'string',
+                )
 
-                cy.request({ method: 'GET', url: render }).then((res) => {
-                    const action = flowAction(res.body as string)
-                    expect(action, 'the screen must hand out a live flow, or this case proves nothing').to.be.a(
-                        'string',
-                    )
+                // Addressed on its own rather than through a page, so the page scripts the two cases
+                // above rely on are not part of the response.
+                const render = `/cms/render/default/en${componentPath}.html.ajax?ec=${componentUuid}`
 
-                    // Same response, read for what it lists. noRealmGroup lives in the server-global
-                    // store, which is the store a null site key selects, so this is non-vacuous: the
-                    // listing is rendered from an unbounded c:forEach, never truncated.
-                    expect(res.body as string, 'a container carrying no realm must list no group').not.to.contain(
-                        noRealmGroup,
-                    )
-
-                    cy.request({
-                        method: 'POST',
-                        url: action as string,
-                        form: true,
-                        body: { _eventId_editGroupMembers: '', selectedGroup: groupPath },
-                    }).then((step) => {
-                        const saveAction = flowAction(step.body as string) || (action as string)
-                        cy.request({
-                            method: 'POST',
-                            url: saveAction,
-                            form: true,
-                            body: { _eventId_save: '', addedMembers: `u:${memberPath}`, removedMembers: '' },
-                        })
-                    })
+                cy.request({ method: 'GET', url: render, failOnStatusCode: false }).then((res) => {
+                    // Reachable in live, or "serves nothing" is indistinguishable from "never got there".
+                    expect(res.status, 'the component must be reachable for this case to mean anything').to.eq(200)
+                    expect(String(res.body || '').trim(), 'a container carrying no realm must serve nothing').to.eq('')
                 })
+
+                // The transition names its component in the parameter's own name, so it is built rather
+                // than read off a screen that served none. Without this the case would go quiet exactly
+                // when the rule holds, and the read-back below would pass for the wrong reason.
+                cy.then(() =>
+                    cy
+                        .request({
+                            method: 'POST',
+                            url: `/cms/render/default/en${componentPath}.html.ajax`,
+                            form: true,
+                            body: {
+                                [`webflowexecution${componentUuid.replace(/-/g, '_')}`]: 'e1s1',
+                                _eventId_save: '',
+                                addedMembers: `u:${memberPath}`,
+                                removedMembers: '',
+                            },
+                            followRedirect: false,
+                            failOnStatusCode: false,
+                        })
+                        .then((driven) => {
+                            // A transition a flow took answers a redirect naming the next step. One that
+                            // reached no flow answers 200 and names none, so `followRedirect` stays off.
+                            expect(driven.status, 'a transition on this container must reach no flow').to.eq(200)
+                        }),
+                )
 
                 memberNames(groupPath as string).then((after: string[]) => {
                     expect(after, 'a container carrying no realm must add no member').to.be.empty

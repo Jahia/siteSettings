@@ -2,8 +2,10 @@
 // The population is asked of the instance rather than listed here, so a screen added later is covered;
 // a hardcoded list in this module had already rotted, naming a nodetype absent from the CND.
 //
-// jnt:tagsManager is the control: same shape, same marker, another module. It separates "scoped to this
-// module's components" from "refuses every marked component".
+// jnt:siteLink is the control: same marker, another module, and its view is not a webflow. That last part
+// matters, because core applies its own placement rule to a marked component whose view IS a webflow, so a
+// flow-backed control would be refused by core and prove nothing about this filter's scope. It separates
+// "scoped to this module's components" from "refuses every marked component".
 import { createSite, deleteSite, createUser, deleteUser, grantRoles, publishAndWaitJobEnding } from '@jahia/cypress'
 import { generateRandomID } from '../utils/utils'
 
@@ -21,7 +23,7 @@ describe('Settings components render only from inside a module', () => {
     /** The floor under the derived population, not its extent. */
     const expectedScreens = ['jnt:siteSettingsManageUsers', 'jnt:siteSettingsManageGroups']
 
-    const otherModuleScreen = 'jnt:tagsManager'
+    const otherModuleComponent = 'jnt:siteLink'
 
     const area = `/sites/${siteKey}/home`
     let placed: Record<string, string> = {}
@@ -66,14 +68,14 @@ describe('Settings components render only from inside a module', () => {
                 expect(derived, `the derived population must contain ${screen}`).to.include(screen)
             })
 
-            asRoot(`{jcr{nodeTypes(filter:{includeTypes:["${otherModuleScreen}"]}){nodes{name}}}}`).then((data) => {
+            asRoot(`{jcr{nodeTypes(filter:{includeTypes:["${otherModuleComponent}"]}){nodes{name}}}}`).then((data) => {
                 expect(
                     (data?.jcr?.nodeTypes?.nodes || []).map((n: { name: string }) => n.name),
-                    `${otherModuleScreen} must be deployed — it is the control for module scoping`,
-                ).to.include(otherModuleScreen)
+                    `${otherModuleComponent} must be deployed — it is the control for module scoping`,
+                ).to.include(otherModuleComponent)
             })
 
-            const population = [...derived, otherModuleScreen]
+            const population = [...derived, otherModuleComponent]
             population.forEach((nodeType, index) => {
                 place(nodeType, `c${index}${uniq}`)
             })
@@ -88,7 +90,7 @@ describe('Settings components render only from inside a module', () => {
                     placed[n.primaryNodeType.name] = `${area}/${n.name}`
                 })
 
-                expectedScreens.concat(otherModuleScreen).forEach((nodeType) => {
+                expectedScreens.concat(otherModuleComponent).forEach((nodeType) => {
                     expect(placed[nodeType], `${nodeType} must have been placed in the page`).to.be.a('string')
                 })
 
@@ -107,7 +109,7 @@ describe('Settings components render only from inside a module', () => {
         const served: string[] = []
         cy.then(() => {
             Object.entries(placed).forEach(([nodeType, path]) => {
-                if (nodeType === otherModuleScreen) {
+                if (nodeType === otherModuleComponent) {
                     return
                 }
                 renderAnonymously(path).then((response) => {
@@ -126,10 +128,10 @@ describe('Settings components render only from inside a module', () => {
         })
     })
 
-    it(`keeps rendering ${otherModuleScreen}, a marked screen another module defines`, () => {
+    it(`keeps rendering ${otherModuleComponent}, a marked component another module defines`, () => {
         cy.logout()
         cy.then(() =>
-            renderAnonymously(placed[otherModuleScreen]).then((response) => {
+            renderAnonymously(placed[otherModuleComponent]).then((response) => {
                 expect(response.status).to.eq(200)
                 expect(
                     String(response.body || '').trim().length,
