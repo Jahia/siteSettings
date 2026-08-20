@@ -8,67 +8,21 @@ on:
     types: [opened, reopened, synchronize]
 
 jobs:
-  update-signature:
-    name: Update module signature
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: jahia/jahia-modules-action/update-signature@v2
-        with:
-          nexus_username: ${{ secrets.NEXUS_USERNAME }}
-          nexus_password: ${{ secrets.NEXUS_PASSWORD }}
-
-  static-analysis:
-    name: Static Analysis (linting, vulns)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: Jahia/jahia-modules-action/static-analysis@v2
-        with:
-          node_version: 18
-          auditci_level: critical
-
-  build:
-    name: Build Module
-    needs: update-signature
-    runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/jahia/jahia-docker-mvn-cache:11-jdk-noble-mvn-loaded
-      credentials:
-        username: ${{ secrets.GH_PACKAGES_USERNAME }}
-        password: ${{ secrets.GH_PACKAGES_TOKEN }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: jahia/jahia-modules-action/build@v2
-        with:
-          nexus_username: ${{ secrets.NEXUS_USERNAME }}
-          nexus_password: ${{ secrets.NEXUS_PASSWORD }}
-
-  sonar-analysis:
-    name: Sonar Analysis
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: jahia/jahia-modules-action/sonar-analysis@v2
-        with:
-          primary_release_branch: main
-          github_pr_id: ${{github.event.number}}
-          sonar_url: ${{ secrets.SONAR_URL }}
-          sonar_token: ${{ secrets.SONAR_TOKEN }}
-
-  integration-tests:
-    name: Integration Tests
-    needs: build
+  on-code-change:
+    uses: Jahia/jahia-modules-action/.github/workflows/reusable-on-code-change.yml@v2
     secrets: inherit
-    uses: Jahia/jahia-modules-action/.github/workflows/reusable-integration-tests.yml@v2
     with:
       module_id: siteSettings
-      provisioning_manifest: provisioning-manifest-build.yml
-      jahia_image: ghcr.io/jahia/jahia-ee-dev:8-SNAPSHOT
-      should_use_build_artifacts: true
-      should_skip_testrail: true
-      artifact_prefix: siteSettings
-      testrail_project: Site Settings
-      timeout_job: 45
       module_branch: ${{ github.ref }}
+      update_signature_execute: true
+      static_analysis_auditci_level: critical
+      sonar_analysis_primary_release_branch: main
+      integration_tests_standalone_execute: true
+      integration_tests_jahia_image: ghcr.io/jahia/jahia-ee-dev:8-SNAPSHOT
+      integration_tests_provisioning_manifest: provisioning-manifest-build.yml
+      integration_tests_artifact_prefix: siteSettings
+      integration_tests_testrail_project: Site Settings
+      integration_tests_should_use_build_artifacts: true
+      integration_tests_should_skip_testrail: true
+      integration_tests_pagerduty_skip_notification: false
+      integration_tests_timeout: 45
