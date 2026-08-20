@@ -5,7 +5,6 @@ describe('Site settings - Modules', () => {
     const siteKey = 'ssModulesSite'
 
     before(function () {
-        // In case a previous run failed before its teardown.
         deleteSite(siteKey)
 
         createSite(siteKey, {
@@ -40,5 +39,6 @@ describe('Site settings - Modules', () => {
         modules.verifyModuleListed('default', 'Default Jahia Templates')
         modules.verifyModuleListed('linkchecker', 'Jahia Link Checker')
         modules.verifyModuleListed('siteSettings', 'Jahia Site Settings')
+        modules.verifyModuleListed('graphql-dxm-provider', 'Jahia GraphQL Core Provider')
     })
 })
