@@ -32,13 +32,13 @@ describe('Site settings - Modules', () => {
 
         modules.verifyTitle(siteKey)
 
-        modules.verifySectionWithModules('Modules')
-        modules.verifySectionWithModules('Required dependent modules')
+        modules.verifySection('Modules')
+        modules.verifySection('Required dependent modules')
 
-        modules.verifyModuleListed('assets', 'Jahia Static Assets')
-        modules.verifyModuleListed('default', 'Default Jahia Templates')
-        modules.verifyModuleListed('linkchecker', 'Jahia Link Checker')
-        modules.verifyModuleListed('siteSettings', 'Jahia Site Settings')
-        modules.verifyModuleListed('graphql-dxm-provider', 'Jahia GraphQL Core Provider')
+        modules.verifyModuleListed('Jahia Static Assets')
+        modules.verifyModuleListed('Default Jahia Templates')
+        modules.verifyModuleListed('Jahia Link Checker')
+        modules.verifyModuleListed('Jahia Site Settings')
+        modules.verifyModuleListed('Jahia GraphQL Core Provider')
     })
 })
