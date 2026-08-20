@@ -146,9 +146,10 @@ describe('Manage Users - realm resolution on the listing', () => {
                 })
                 .then((driven) => {
                     // A transition a flow took answers a redirect naming the next step. One that reached
-                    // no flow answers 200 and names none, so `followRedirect` has to stay off.
+                    // no flow answers 200 and names none, so `followRedirect` has to stay off. The status
+                    // carries the case on its own: WebflowAction discards the render result, so the body is
+                    // empty whatever the transition did and asserting on it could not fail.
                     expect(driven.status, 'a transition on this container must reach no flow').to.eq(200)
-                    expect(String(driven.body || '').trim(), 'and it must serve nothing').to.eq('')
                 }),
         )
     })

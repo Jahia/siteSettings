@@ -90,9 +90,12 @@ describe('Settings components render only from inside a module', () => {
                     placed[n.primaryNodeType.name] = `${area}/${n.name}`
                 })
 
-                expectedScreens.concat(otherModuleComponent).forEach((nodeType) => {
-                    expect(placed[nodeType], `${nodeType} must have been placed in the page`).to.be.a('string')
-                })
+                // Every member of the population, not just the named ones: the sweep iterates what landed,
+                // so a placement that did not land would drop out of the sweep and leave the run green.
+                expect(
+                    population.filter((nodeType) => typeof placed[nodeType] !== 'string'),
+                    'every placed type must be readable back, or the sweep quietly covers less',
+                ).to.deep.eq([])
 
                 publishAndWaitJobEnding(area, [languages])
             })
