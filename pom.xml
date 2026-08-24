@@ -26,7 +26,7 @@
     </parent>
 
     <artifactId>siteSettings</artifactId>
-    <version>8.12.0</version>
+    <version>8.12.1-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>Jahia Site Settings</name>
     <description>Settings (groups,tools, etc) for site.</description>
@@ -117,7 +117,7 @@
                             <goal>install-node-and-yarn</goal>
                         </goals>
                         <configuration>
-                            <nodeVersion>v18.16.0</nodeVersion>
+                            <nodeVersion>v24.19.0</nodeVersion>
                             <yarnVersion>v1.22.19</yarnVersion>
                         </configuration>
                     </execution>

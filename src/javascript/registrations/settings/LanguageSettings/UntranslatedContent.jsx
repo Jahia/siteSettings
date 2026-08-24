@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {useTranslation} from 'react-i18next';
 import {useMutation} from '@apollo/client';
 import {Button, Edit, Modal, ModalBody, ModalFooter, ModalHeader, Paper, RadioGroup, RadioItem, Typography} from '@jahia/moonstone';
-import styles from './LanguageSettings.scss';
+import styles from './LanguageSettings.module.scss';
 import * as LanguageGraphQL from './Language.gql-queries';
 import {LanguageModalError} from './LanguageModalError';
 import {useLanguageSettingsContext} from './LanguageSettings.context';

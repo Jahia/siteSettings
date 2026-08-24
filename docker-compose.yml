@@ -1,0 +1,42 @@
+name: sitesettings
+
+services:
+  jahia:
+    image: jahia/jahia-ee:8.2.2.0
+    restart: "no"
+    # Without a limit, MAX_RAM_PERCENTAGE=80 sizes the heap against the whole Docker
+    # VM rather than this container: the instance was previously starting with a
+    # ~18.7 GB max heap. 4g leaves room for the other Jahia instances on the same VM.
+    mem_limit: 4gb
+    # Jahia resolves its own hostname while booting -- log4j for the %host pattern, and
+    # Quartz's SimpleInstanceIdGenerator to build the scheduler instance id. The default
+    # hostname is the container id, which only resolves through the /etc/hosts entry
+    # Docker writes when a network endpoint exists. If the container ever starts without
+    # one, getLocalHost() throws, Quartz fails with "Cannot run without an instance id",
+    # and the whole Jahia Spring context dies while Tomcat still reports a clean startup.
+    # A fixed hostname plus a loopback entry makes resolution independent of the network.
+    hostname: jahia
+    extra_hosts:
+      - jahia:127.0.0.1
+    environment:
+      # Embedded Derby; the database itself lives in the jahia-data volume below.
+      DB_VENDOR: derby_embedded
+      SUPER_USER_PASSWORD: ${JAHIA_SUPER_USER_PASSWORD:-root1234}
+    ports:
+      - "${JAHIA_PORT:-8080}:8080"
+    volumes:
+      # Everything stateful sits under DATA_FOLDER=/var/jahia: the embedded Derby
+      # database (jahiadb/), the JCR repository and its Lucene indexes (repository/),
+      # deployed modules (modules/, bundles-deployed/) and the Karaf state. Without this
+      # volume the entire instance is thrown away whenever the container is recreated.
+      - jahia-data:/var/jahia
+    healthcheck:
+      # Jahia takes minutes to boot; start_period keeps it out of "unhealthy" until then.
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/cms/login >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 5m
+
+volumes:
+  jahia-data:

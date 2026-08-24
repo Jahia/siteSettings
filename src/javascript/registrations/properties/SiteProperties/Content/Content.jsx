@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {Paper, Typography, Chip} from '@jahia/moonstone';
 import clsx from 'clsx';
-import styles from './Content.scss';
+import styles from './Content.module.scss';
 import dayjs from 'dayjs';
 import {useTranslation} from 'react-i18next';
 import {useNodeChecks} from '@jahia/data-helper';

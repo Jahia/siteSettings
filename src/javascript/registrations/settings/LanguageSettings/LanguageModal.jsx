@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {useTranslation} from 'react-i18next';
 import {useMutation} from '@apollo/client';
 import {Button, CheckboxGroup, CheckboxItem, Dropdown, Modal, ModalBody, ModalFooter, ModalHeader, Pill, Typography} from '@jahia/moonstone';
-import styles from './LanguageSettings.scss';
+import styles from './LanguageSettings.module.scss';
 import * as LanguageGraphQL from './Language.gql-queries';
 import * as LanguageHelper from './LanguageHelper';
 import {LanguageModalError} from './LanguageModalError';
