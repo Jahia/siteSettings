@@ -25,6 +25,7 @@
   "main": "index.js",
   "license": "MIT",
   "jahia": {
+    "required-version": "8.2.2.0",
     "remotes": {
       "jahia": "javascript/apps/remoteEntry.js"
     }
