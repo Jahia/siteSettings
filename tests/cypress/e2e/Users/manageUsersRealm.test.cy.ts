@@ -145,11 +145,14 @@ describe('Manage Users - realm resolution on the listing', () => {
                     failOnStatusCode: false,
                 })
                 .then((driven) => {
-                    // A transition a flow took answers a redirect naming the next step. One that reached
-                    // no flow answers 200 and names none, so `followRedirect` has to stay off. The status
-                    // carries the case on its own: WebflowAction discards the render result, so the body is
-                    // empty whatever the transition did and asserting on it could not fail.
-                    expect(driven.status, 'a transition on this container must reach no flow').to.eq(200)
+                    // A transition a flow took answers a redirect naming the next step, so the absence of one
+                    // is what says no flow was reached, and `followRedirect` has to stay off. The status
+                    // cannot carry the case: a platform carrying the guard on the unset redirect answers 200,
+                    // one without it answers 500 on the null it sends on, and neither of them took the flow.
+                    // The body carries even less: WebflowAction discards the render result, so it is empty
+                    // whatever the transition did. Reachability is established by the GET above.
+                    expect(driven.redirectedToUrl, 'a transition on this container must reach no flow').to.be
+                        .undefined
                 }),
         )
     })
