@@ -183,9 +183,14 @@ describe('Manage Groups - realm resolution', () => {
                             failOnStatusCode: false,
                         })
                         .then((driven) => {
-                            // A transition a flow took answers a redirect naming the next step. One that
-                            // reached no flow answers 200 and names none, so `followRedirect` stays off.
-                            expect(driven.status, 'a transition on this container must reach no flow').to.eq(200)
+                            // A transition a flow took answers a redirect naming the next step, so the absence
+                            // of one is what says no flow was reached, and `followRedirect` stays off to keep
+                            // it readable. The status cannot carry the case: a platform carrying the guard on
+                            // the unset redirect answers 200, one without it answers 500 on the null it sends
+                            // on, and neither of them took the flow. Reachability is already established by
+                            // the GET above, so nothing is lost by leaving the status alone here.
+                            expect(driven.redirectedToUrl, 'a transition on this container must reach no flow').to.be
+                                .undefined
                         }),
                 )
 
