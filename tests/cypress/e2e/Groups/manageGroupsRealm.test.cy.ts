@@ -189,8 +189,8 @@ describe('Manage Groups - realm resolution', () => {
                             // the unset redirect answers 200, one without it answers 500 on the null it sends
                             // on, and neither of them took the flow. Reachability is already established by
                             // the GET above, so nothing is lost by leaving the status alone here.
-                            expect(driven.redirectedToUrl, 'a transition on this container must reach no flow').to
-                                .be.undefined
+                            expect(driven.redirectedToUrl, 'a transition on this container must reach no flow').to.be
+                                .undefined
                         }),
                 )
 

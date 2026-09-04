@@ -151,8 +151,7 @@ describe('Manage Users - realm resolution on the listing', () => {
                     // one without it answers 500 on the null it sends on, and neither of them took the flow.
                     // The body carries even less: WebflowAction discards the render result, so it is empty
                     // whatever the transition did. Reachability is established by the GET above.
-                    expect(driven.redirectedToUrl, 'a transition on this container must reach no flow').to.be
-                        .undefined
+                    expect(driven.redirectedToUrl, 'a transition on this container must reach no flow').to.be.undefined
                 }),
         )
     })
