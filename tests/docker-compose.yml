@@ -7,8 +7,11 @@ services:
             resources:
                 limits:
                     memory: 1gb
+        extra_hosts:
+          - "mariadb:172.18.0.5"
         networks:
-            - stack
+          default:
+            ipv4_address: 172.18.0.5
         command: --max_allowed_packet=1073741824 --transaction-isolation=READ-UNCOMMITTED --innodb-lock-wait-timeout=10
         environment:
             MYSQL_ROOT_PASSWORD: root1234
@@ -27,14 +30,17 @@ services:
                     memory: 4gb
         depends_on:
             - mariadb
+        extra_hosts:
+          - "jahia:172.18.0.10"
+          - "jahia-browsing-a:172.18.0.11"
+          - "jahia-browsing-b:172.18.0.12"
         networks:
-            - stack
+          default:
+            ipv4_address: 172.18.0.10
         ports:
             - "8080:8080"
             - "8101:8101"
             - "8000:8000"
-        extra_hosts:
-            - jahia:127.0.0.1
         environment:
             jahia_cfg_karaf_remoteShellHost: 0.0.0.0
             DB_VENDOR: mariadb
@@ -66,8 +72,13 @@ services:
         depends_on:
             - mariadb
             - jahia
+        extra_hosts:
+          - "jahia:172.18.0.10"
+          - "jahia-browsing-a:172.18.0.11"
+          - "jahia-browsing-b:172.18.0.12"
         networks:
-            - stack
+          default:
+            ipv4_address: 172.18.0.11
         ports:
             - '8081:8080'
             - '8102:8101'
@@ -102,8 +113,13 @@ services:
         depends_on:
             - mariadb
             - jahia
+        extra_hosts:
+          - "jahia:172.18.0.10"
+          - "jahia-browsing-a:172.18.0.11"
+          - "jahia-browsing-b:172.18.0.12"
         networks:
-            - stack
+          default:
+            ipv4_address: 172.18.0.12
         ports:
             - '8082:8080'
             - '8103:8101'
@@ -152,6 +168,14 @@ services:
         JAHIA_CLUSTER_ENABLED: '${JAHIA_CLUSTER_ENABLED}'
         TZ: ${TIMEZONE}
       networks:
-        - stack
+        default:
+          ipv4_address: 172.18.0.20
+      extra_hosts:
+        - "jahia:172.18.0.10"
+        - "jahia-browsing-a:172.18.0.11"
+        - "jahia-browsing-b:172.18.0.12"
 networks:
-    stack:
+  default:
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
