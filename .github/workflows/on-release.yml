@@ -37,7 +37,9 @@ jobs:
         name: Release Module
         with:
           github_slug: Jahia/siteSettings
-          primary_release_branch: master
+          # This maintenance line releases from 8_7_x; the repository's old
+          # default branch (master) no longer exists.
+          primary_release_branch: 8_7_x
           release_id: ${{ github.event.release.id }}
           release_version: ${{ github.event.release.tag_name }}
           github_api_token: ${{ secrets.GH_API_TOKEN }}
@@ -50,19 +52,3 @@ jobs:
           nexus_password: ${{ secrets.NEXUS_PASSWORD }}
           nexus_enterprise_releases_url: ${{ secrets.NEXUS_ENTERPRISE_RELEASES_URL }}
           force_signature: true
-
-      - uses: jahia/jahia-modules-action/release-publication@v2
-        name: Publish Module
-        with:
-          module_id: siteSettings
-          release_version: ${{ github.event.release.tag_name }}
-          nexus_username: ${{ secrets.NEXUS_USERNAME }}
-          nexus_password: ${{ secrets.NEXUS_PASSWORD }}
-
-      # Tmate only starts if any of the previous steps fails.
-      # Be careful since it also means that if a step fails the workflow will
-      # keep running until it reaches the timeout
-      - name: Setup tmate session
-        if: ${{ failure() }}
-        uses: mxschmitt/action-tmate@v3
-        timeout-minutes: 15
