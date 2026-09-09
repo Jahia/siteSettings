@@ -5,11 +5,23 @@
 // seconds and exposes no deterministic client-side signal to wait on; the reloads are paced until the
 // row's site path appears in the table. `handlerFlag` is the window property the caller asserts on: it is
 // reset to undefined before each load so the check reflects only the current render.
+//
+// `view` selects which of the two sibling content-templates siteSettings registers to render: the
+// content-level markup is identical between them (same #pageModelsTable id, same escaped attribute/text
+// fields — this only swaps the DataTables init call and adds a wrapping panel div), so callers exercise
+// both purely by naming the other content-template — no different site setup is needed for either.
+export type PageModelsView = 'page-models' | 'page-models-jahia-anthracite'
+
 const MAX_ATTEMPTS = 10
 
-export const openPageModelsUntilRow = (siteKey: string, handlerFlag: string, attempt = 0): Cypress.Chainable => {
+export const openPageModelsUntilRow = (
+    siteKey: string,
+    handlerFlag: string,
+    view: PageModelsView = 'page-models',
+    attempt = 0,
+): Cypress.Chainable => {
     const sitePath = `/sites/${siteKey}`
-    cy.visit(`/cms/editframe/default/en/sites/${siteKey}.page-models.html`, {
+    cy.visit(`/cms/editframe/default/en/sites/${siteKey}.${view}.html`, {
         onBeforeLoad(win) {
             ;(win as unknown as Record<string, unknown>)[handlerFlag] = undefined
         },
@@ -28,6 +40,6 @@ export const openPageModelsUntilRow = (siteKey: string, handlerFlag: string, att
         // client-side signal to wait on.
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(3000)
-        return openPageModelsUntilRow(siteKey, handlerFlag, attempt + 1)
+        return openPageModelsUntilRow(siteKey, handlerFlag, view, attempt + 1)
     })
 }
