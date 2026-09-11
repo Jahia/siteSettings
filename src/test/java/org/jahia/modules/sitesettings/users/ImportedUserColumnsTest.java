@@ -11,14 +11,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
- * The columns a CSV bulk user import writes, in {@link UsersFlowHandler}.
+ * The columns a CSV bulk user import writes, in {@link ImportedUserColumns}.
  * <p>
  * A column whose header carries one of the namespaces the product reserves is written when it names a profile
  * property of {@code jnt:user}; a column in any other namespace carries profile data of the deployment's own
  * making and is written as it stands. Both directions are asserted for each namespace, so a check wired to
  * answer the same thing for everything could not satisfy this class.
  */
-public class UsersFlowHandlerImportColumnsTest {
+public class ImportedUserColumnsTest {
 
     @Test
     public void profilePropertiesOfTheReservedNamespaceAreWritten() {
@@ -96,33 +96,33 @@ public class UsersFlowHandlerImportColumnsTest {
                 "j:external");
 
         assertEquals(Arrays.asList("j:accountLocked", "jcr:createdBy", "j:external"),
-                UsersFlowHandler.columnsLeftOut(headers));
+                ImportedUserColumns.leftOut(headers));
     }
 
     @Test
     public void theReportNamesNothingWhenEveryColumnIsWritten() {
         List<String> headers = Arrays.asList("j:nodename", "j:password", "j:firstName", "employeeId");
 
-        assertEquals(Collections.<String>emptyList(), UsersFlowHandler.columnsLeftOut(headers));
+        assertEquals(Collections.<String>emptyList(), ImportedUserColumns.leftOut(headers));
     }
 
     @Test
     public void theReportNamesTheColumnsWithoutTheSpaceTheFileStatesAroundThem() {
         assertEquals(Collections.singletonList("j:external"),
-                UsersFlowHandler.columnsLeftOut(Arrays.asList(" j:nodename ", " j:password ", " j:external ")));
+                ImportedUserColumns.leftOut(Arrays.asList(" j:nodename ", " j:password ", " j:external ")));
     }
 
     @Test
     public void theReportHasNoNameToGiveForAColumnWithNoHeader() {
         assertEquals(Collections.<String>emptyList(),
-                UsersFlowHandler.columnsLeftOut(Arrays.asList("j:nodename", "j:password", "", "   ")));
+                ImportedUserColumns.leftOut(Arrays.asList("j:nodename", "j:password", "", "   ")));
     }
 
     private static void assertWritten(String header) {
-        assertTrue("the import must write the column '" + header + "'", UsersFlowHandler.isImportedColumn(header));
+        assertTrue("the import must write the column '" + header + "'", ImportedUserColumns.isImported(header));
     }
 
     private static void assertLeftOut(String header) {
-        assertFalse("the import must leave out the column '" + header + "'", UsersFlowHandler.isImportedColumn(header));
+        assertFalse("the import must leave out the column '" + header + "'", ImportedUserColumns.isImported(header));
     }
 }
