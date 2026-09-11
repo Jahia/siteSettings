@@ -54,6 +54,20 @@ public class UsersFlowHandler implements Serializable {
     private static Logger logger = LoggerFactory.getLogger(UsersFlowHandler.class);
     private static final long serialVersionUID = -7240178997123886031L;
 
+    /** The columns the file must state, which the import reads as the user name and the password. */
+    private static final Set<String> MANDATORY_COLUMNS =
+            Collections.unmodifiableSet(new HashSet<String>(Arrays.asList("j:nodename", JCRUserNode.J_PASSWORD)));
+
+    /** The namespaces the product reserves for the properties it gives a meaning of its own. */
+    private static final String[] RESERVED_NAMESPACES = {"j:", "jcr:"};
+
+    /** The profile properties of {@code jnt:user} the import writes from a column in a reserved namespace. */
+    private static final Set<String> IMPORTED_RESERVED_COLUMNS =
+            Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
+                    "j:firstName", "j:lastName", "j:email", "j:organization", "j:function", "j:title",
+                    "j:gender", "j:birthDate", "j:about", "j:skypeID", "j:twitterID", "j:facebookID",
+                    "j:linkedinID")));
+
     private String siteKey;
 
     private boolean realmResolved;
@@ -141,8 +155,51 @@ public class UsersFlowHandler implements Serializable {
         for (int i = 0; i < headerElementList.size(); i++) {
             String currentHeader = headerElementList.get(i);
             String currentValue = lineElementList.get(i);
-            if (!"j:nodename".equals(currentHeader) && !JCRUserNode.J_PASSWORD.equals(currentHeader)) {
+            if (isImportedColumn(currentHeader)) {
                 result.setProperty(currentHeader.trim(), currentValue);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * States whether the import writes the column under this header. A header in one of the namespaces the
+     * product reserves carries product meaning, so it is written only when it names one of the profile
+     * properties {@code jnt:user} declares; a header in any other namespace carries profile data of the
+     * deployment's own making, and is written as it stands.
+     * <p>
+     * The reserved set is stated here rather than read from the node type, because {@code jnt:user} also
+     * declares a residual {@code * (string)} definition that accepts every name. The node type therefore
+     * answers "yes" for a reserved name it never declares.
+     * <p>
+     * Visible for testing.
+     */
+    static boolean isImportedColumn(String header) {
+        String name = header != null ? header.trim() : null;
+        if (StringUtils.isEmpty(name)) {
+            return false;
+        }
+        for (String namespace : RESERVED_NAMESPACES) {
+            if (name.startsWith(namespace)) {
+                return IMPORTED_RESERVED_COLUMNS.contains(name);
+            }
+        }
+        return true;
+    }
+
+    /**
+     * The headers of the columns the import leaves out, in the order the file states them, so the caller can
+     * report them all at once. The mandatory columns are read as the user name and the password rather than
+     * written as properties, so they are not reported; a column with no header has no name to report.
+     * <p>
+     * Visible for testing.
+     */
+    static List<String> columnsLeftOut(List<String> headerElementList) {
+        List<String> result = new ArrayList<String>();
+        for (String header : headerElementList) {
+            String name = header != null ? header.trim() : "";
+            if (!isImportedColumn(header) && !MANDATORY_COLUMNS.contains(name) && !name.isEmpty()) {
+                result.add(name);
             }
         }
         return result;
@@ -174,6 +231,14 @@ public class UsersFlowHandler implements Serializable {
                         context.addMessage(new MessageBuilder().error().code(
                                 "siteSettings.users.bulk.errors.missing.mandatory").args(new String[]{"j:nodename", JCRUserNode.J_PASSWORD}).build());
                         return false;
+                    }
+
+                    List<String> columnsLeftOut = columnsLeftOut(headerElementList);
+                    if (!columnsLeftOut.isEmpty()) {
+                        // escaped for reporting, as the header text comes from the uploaded file
+                        context.addMessage(new MessageBuilder().warning().code(
+                                "siteSettings.users.bulk.columns.left.out").arg(
+                                StringEscapeUtils.escapeXml(StringUtils.join(columnsLeftOut, ", "))).build());
                     }
 
                     String[] lineElements = null;
