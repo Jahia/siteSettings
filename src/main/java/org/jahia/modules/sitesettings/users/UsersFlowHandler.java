@@ -54,17 +54,23 @@ public class UsersFlowHandler implements Serializable {
     private static Logger logger = LoggerFactory.getLogger(UsersFlowHandler.class);
     private static final long serialVersionUID = -7240178997123886031L;
 
+    private static final String J_NODENAME = "j:nodename";
+    private static final String J_FIRST_NAME = "j:firstName";
+    private static final String J_LAST_NAME = "j:lastName";
+    private static final String J_EMAIL = "j:email";
+    private static final String J_ORGANIZATION = "j:organization";
+
     /** The columns the file must state, which the import reads as the user name and the password. */
     private static final Set<String> MANDATORY_COLUMNS =
-            Collections.unmodifiableSet(new HashSet<String>(Arrays.asList("j:nodename", JCRUserNode.J_PASSWORD)));
+            Collections.unmodifiableSet(new HashSet<>(Arrays.asList(J_NODENAME, JCRUserNode.J_PASSWORD)));
 
     /** The namespaces the product reserves for the properties it gives a meaning of its own. */
     private static final String[] RESERVED_NAMESPACES = {"j:", "jcr:"};
 
     /** The profile properties of {@code jnt:user} the import writes from a column in a reserved namespace. */
     private static final Set<String> IMPORTED_RESERVED_COLUMNS =
-            Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
-                    "j:firstName", "j:lastName", "j:email", "j:organization", "j:function", "j:title",
+            Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+                    J_FIRST_NAME, J_LAST_NAME, J_EMAIL, J_ORGANIZATION, "j:function", "j:title",
                     "j:gender", "j:birthDate", "j:about", "j:skypeID", "j:twitterID", "j:facebookID",
                     "j:linkedinID")));
 
@@ -175,8 +181,11 @@ public class UsersFlowHandler implements Serializable {
      * Visible for testing.
      */
     static boolean isImportedColumn(String header) {
-        String name = header != null ? header.trim() : null;
-        if (StringUtils.isEmpty(name)) {
+        if (header == null) {
+            return false;
+        }
+        String name = header.trim();
+        if (name.isEmpty()) {
             return false;
         }
         for (String namespace : RESERVED_NAMESPACES) {
@@ -195,7 +204,7 @@ public class UsersFlowHandler implements Serializable {
      * Visible for testing.
      */
     static List<String> columnsLeftOut(List<String> headerElementList) {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         for (String header : headerElementList) {
             String name = header != null ? header.trim() : "";
             if (!isImportedColumn(header) && !MANDATORY_COLUMNS.contains(name) && !name.isEmpty()) {
@@ -203,6 +212,17 @@ public class UsersFlowHandler implements Serializable {
             }
         }
         return result;
+    }
+
+    private static void reportColumnsLeftOut(List<String> headerElementList, MessageContext context) {
+        List<String> columnsLeftOut = columnsLeftOut(headerElementList);
+        if (columnsLeftOut.isEmpty()) {
+            return;
+        }
+        // escaped for reporting, as the header text comes from the uploaded file
+        context.addMessage(new MessageBuilder().warning().code(
+                "siteSettings.users.bulk.columns.left.out").arg(
+                StringEscapeUtils.escapeXml(StringUtils.join(columnsLeftOut, ", "))).build());
     }
 
     public boolean bulkAddUser(final CsvFile csvFile, final MessageContext context) throws RepositoryException {
@@ -225,21 +245,15 @@ public class UsersFlowHandler implements Serializable {
                     // the first line contains the column names;
                     String[] headerElements = csvReader.readNext();
                     List<String> headerElementList = Arrays.asList(headerElements);
-                    int userNamePos = headerElementList.indexOf("j:nodename");
+                    int userNamePos = headerElementList.indexOf(J_NODENAME);
                     int passwordPos = headerElementList.indexOf(JCRUserNode.J_PASSWORD);
                     if ((userNamePos < 0) || (passwordPos < 0)) {
                         context.addMessage(new MessageBuilder().error().code(
-                                "siteSettings.users.bulk.errors.missing.mandatory").args(new String[]{"j:nodename", JCRUserNode.J_PASSWORD}).build());
+                                "siteSettings.users.bulk.errors.missing.mandatory").args(new String[]{J_NODENAME, JCRUserNode.J_PASSWORD}).build());
                         return false;
                     }
 
-                    List<String> columnsLeftOut = columnsLeftOut(headerElementList);
-                    if (!columnsLeftOut.isEmpty()) {
-                        // escaped for reporting, as the header text comes from the uploaded file
-                        context.addMessage(new MessageBuilder().warning().code(
-                                "siteSettings.users.bulk.columns.left.out").arg(
-                                StringEscapeUtils.escapeXml(StringUtils.join(columnsLeftOut, ", "))).build());
-                    }
+                    reportColumnsLeftOut(headerElementList, context);
 
                     String[] lineElements = null;
                     while ((lineElements = csvReader.readNext()) != null) {
@@ -408,10 +422,10 @@ public class UsersFlowHandler implements Serializable {
 
     private Properties transformUserProperties(UserProperties userProperties) {
         Properties properties = new Properties();
-        properties.put("j:firstName", userProperties.getFirstName());
-        properties.put("j:lastName", userProperties.getLastName());
-        properties.put("j:email", userProperties.getEmail());
-        properties.put("j:organization", userProperties.getOrganization());
+        properties.put(J_FIRST_NAME, userProperties.getFirstName());
+        properties.put(J_LAST_NAME, userProperties.getLastName());
+        properties.put(J_EMAIL, userProperties.getEmail());
+        properties.put(J_ORGANIZATION, userProperties.getOrganization());
         properties.put("preferredLanguage", userProperties.getPreferredLanguage().toString());
         properties.put("j:accountLocked", userProperties.getAccountLocked().toString());
         properties.put("emailNotificationsDisabled", userProperties.getEmailNotificationsDisabled().toString());
@@ -432,17 +446,17 @@ public class UsersFlowHandler implements Serializable {
                 boolean hasErrors = false;
                 Set<String> readOnlyProps = userProperties.getReadOnlyProperties();
                 if (jahiaUser != null) {
-                    if (!readOnlyProps.contains("j:firstName")) {
-                        hasErrors |= !setUserProperty("j:firstName", userProperties.getFirstName(), "firstName", context, jahiaUser);
+                    if (!readOnlyProps.contains(J_FIRST_NAME)) {
+                        hasErrors |= !setUserProperty(J_FIRST_NAME, userProperties.getFirstName(), "firstName", context, jahiaUser);
                     }
-                    if (!readOnlyProps.contains("j:lastName")) {
-                        hasErrors |= !setUserProperty("j:lastName", userProperties.getLastName(), "lastName", context, jahiaUser);
+                    if (!readOnlyProps.contains(J_LAST_NAME)) {
+                        hasErrors |= !setUserProperty(J_LAST_NAME, userProperties.getLastName(), "lastName", context, jahiaUser);
                     }
-                    if (!readOnlyProps.contains("j:email")) {
-                        hasErrors |= !setUserProperty("j:email", userProperties.getEmail(), "email", context, jahiaUser);
+                    if (!readOnlyProps.contains(J_EMAIL)) {
+                        hasErrors |= !setUserProperty(J_EMAIL, userProperties.getEmail(), "email", context, jahiaUser);
                     }
-                    if (!readOnlyProps.contains("j:organization")) {
-                        hasErrors |= !setUserProperty("j:organization", userProperties.getOrganization(), "organization", context, jahiaUser);
+                    if (!readOnlyProps.contains(J_ORGANIZATION)) {
+                        hasErrors |= !setUserProperty(J_ORGANIZATION, userProperties.getOrganization(), "organization", context, jahiaUser);
                     }
                     if (!readOnlyProps.contains("emailNotificationsDisabled")) {
                         hasErrors |= !setUserProperty("emailNotificationsDisabled", userProperties.getEmailNotificationsDisabled().toString(), "emailNotifications", context, jahiaUser);
