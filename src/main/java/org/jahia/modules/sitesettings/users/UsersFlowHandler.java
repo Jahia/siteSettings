@@ -141,11 +141,22 @@ public class UsersFlowHandler implements Serializable {
         for (int i = 0; i < headerElementList.size(); i++) {
             String currentHeader = headerElementList.get(i);
             String currentValue = lineElementList.get(i);
-            if (!"j:nodename".equals(currentHeader) && !JCRUserNode.J_PASSWORD.equals(currentHeader)) {
+            if (ImportedUserColumns.isImported(currentHeader)) {
                 result.setProperty(currentHeader.trim(), currentValue);
             }
         }
         return result;
+    }
+
+    private static void reportColumnsLeftOut(List<String> headerElementList, MessageContext context) {
+        List<String> columnsLeftOut = ImportedUserColumns.leftOut(headerElementList);
+        if (columnsLeftOut.isEmpty()) {
+            return;
+        }
+        // escaped for reporting, as the header text comes from the uploaded file
+        context.addMessage(new MessageBuilder().warning().code(
+                "siteSettings.users.bulk.columns.left.out").arg(
+                StringEscapeUtils.escapeXml(StringUtils.join(columnsLeftOut, ", "))).build());
     }
 
     public boolean bulkAddUser(final CsvFile csvFile, final MessageContext context) throws RepositoryException {
@@ -175,6 +186,8 @@ public class UsersFlowHandler implements Serializable {
                                 "siteSettings.users.bulk.errors.missing.mandatory").args(new String[]{"j:nodename", JCRUserNode.J_PASSWORD}).build());
                         return false;
                     }
+
+                    reportColumnsLeftOut(headerElementList, context);
 
                     String[] lineElements = null;
                     while ((lineElements = csvReader.readNext()) != null) {
