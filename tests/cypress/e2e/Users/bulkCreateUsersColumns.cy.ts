@@ -12,6 +12,7 @@ import { SiteSettingsUsers } from '../../page-object/siteSettingsUsers'
  */
 describe('Bulk create users - imported columns', () => {
     const USERNAME = 'colonel'
+    const IFRAME = '[src="/cms/adminframe/default/en/settings.manageUsers.html"]'
 
     const readImportedColumns = () =>
         cy.apollo({
@@ -38,12 +39,12 @@ describe('Bulk create users - imported columns', () => {
     it('writes the profile columns and leaves the reserved ones out', () => {
         const usersPage = SiteSettingsUsers.visitGlobal()
         let bulkUserCreationPage
-        cy.iframe('[src="/cms/adminframe/default/en/settings.manageUsers.html"]').within(() => {
+        cy.iframe(IFRAME).within(() => {
             bulkUserCreationPage = usersPage.startBulkUserCreation()
         })
         //eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(500)
-        cy.iframe('[src="/cms/adminframe/default/en/settings.manageUsers.html"]').within(() => {
+        cy.iframe(IFRAME).within(() => {
             bulkUserCreationPage.setCsvFile('csv/bulkCreateUsersColumns.csv')
             bulkUserCreationPage.setSeparator(',')
             bulkUserCreationPage.save()
@@ -66,7 +67,7 @@ describe('Bulk create users - imported columns', () => {
         })
 
         // the screen names the columns it left out, so an administrator sees which ones carried no value
-        cy.iframe('[src="/cms/adminframe/default/en/settings.manageUsers.html"]').within(() => {
+        cy.iframe(IFRAME).within(() => {
             cy.get('.alert-warning').should('contain', 'j:accountLocked').and('contain', 'jcr:title')
         })
     })
@@ -77,23 +78,26 @@ describe('Bulk create users - imported columns', () => {
     it('names the columns it left out on the upload view when a row cannot be created', () => {
         const usersPage = SiteSettingsUsers.visitGlobal()
         let bulkUserCreationPage
-        cy.iframe('[src="/cms/adminframe/default/en/settings.manageUsers.html"]').within(() => {
+        cy.iframe(IFRAME).within(() => {
             bulkUserCreationPage = usersPage.startBulkUserCreation()
         })
         //eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(500)
-        cy.iframe('[src="/cms/adminframe/default/en/settings.manageUsers.html"]').within(() => {
+        cy.iframe(IFRAME).within(() => {
             bulkUserCreationPage.setCsvFile('csv/bulkCreateUsersColumnsWithBadRow.csv')
             bulkUserCreationPage.setSeparator(',')
             bulkUserCreationPage.save()
         })
 
-        cy.iframe('[src="/cms/adminframe/default/en/settings.manageUsers.html"]').within(() => {
-            // the row the import declines, and the column it left out, both on the same screen
-            cy.get('.alert-danger').should('contain', 'bad!name')
-            cy.get('.alert-warning').should('contain', 'j:accountLocked')
-            // the upload view, so the file input is still there: the flow never reached the results view
-            cy.get('#csvFile').should('exist')
-        })
+        /* Re-query the iframe for each assertion rather than scoping one `within` around them. The
+         * submit re-renders the frame, and a body captured while that render is in flight stays
+         * empty for the whole scope. Each call here waits for a body of its own. */
+        //eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(1000)
+        // the file input belongs to the upload view alone, so the flow never reached the results view
+        cy.iframe(IFRAME).find('#csvFile').should('exist')
+        // the row the import declines, and the column it left out, both on the same screen
+        cy.iframe(IFRAME).contains('bad!name').should('exist')
+        cy.iframe(IFRAME).contains('j:accountLocked').should('exist')
     })
 })
