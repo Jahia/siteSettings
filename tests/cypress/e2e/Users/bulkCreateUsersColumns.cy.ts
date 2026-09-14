@@ -70,4 +70,30 @@ describe('Bulk create users - imported columns', () => {
             cy.get('.alert-warning').should('contain', 'j:accountLocked').and('contain', 'jcr:title')
         })
     })
+
+    /* A file the import cannot fully apply keeps the flow on the upload view, because the handler
+     * answers false and Spring Web Flow abandons the transition. The report has to reach that view
+     * too, which is the case where an administrator has the most to read. */
+    it('names the columns it left out on the upload view when a row cannot be created', () => {
+        const usersPage = SiteSettingsUsers.visitGlobal()
+        let bulkUserCreationPage
+        cy.iframe('[src="/cms/adminframe/default/en/settings.manageUsers.html"]').within(() => {
+            bulkUserCreationPage = usersPage.startBulkUserCreation()
+        })
+        //eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(500)
+        cy.iframe('[src="/cms/adminframe/default/en/settings.manageUsers.html"]').within(() => {
+            bulkUserCreationPage.setCsvFile('csv/bulkCreateUsersColumnsWithBadRow.csv')
+            bulkUserCreationPage.setSeparator(',')
+            bulkUserCreationPage.save()
+        })
+
+        cy.iframe('[src="/cms/adminframe/default/en/settings.manageUsers.html"]').within(() => {
+            // the row the import declines, and the column it left out, both on the same screen
+            cy.get('.alert-danger').should('contain', 'bad!name')
+            cy.get('.alert-warning').should('contain', 'j:accountLocked')
+            // the upload view, so the file input is still there: the flow never reached the results view
+            cy.get('#csvFile').should('exist')
+        })
+    })
 })
