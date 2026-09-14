@@ -23,9 +23,12 @@ describe('Bulk create users - imported columns', () => {
         cy.login()
     })
 
+    /* Look the user up by its user name, never by its display name. A user's display name is its
+     * jcr:title where it has one, and jcr:title is one of the columns this file supplies, so a
+     * regression of the guard under test would rename the user and this hook would miss it. */
     after(() => {
-        cy.apollo({ queryFile: 'graphql/getUsersQuery.graphql' }).then((response) => {
-            const created = response.data.admin.userAdmin.users.nodes.find((user) => user.node.displayName === USERNAME)
+        readImportedColumns().then((response) => {
+            const created = response.data.admin.userAdmin.user
             if (created) {
                 deleteNode(created.node.uuid)
             }
@@ -60,6 +63,11 @@ describe('Bulk create users - imported columns', () => {
             // and the repository namespace carries no value at all
             expect(user.accountLocked).to.eq('false')
             expect(user.title).to.eq(null)
+        })
+
+        // the screen names the columns it left out, so an administrator sees which ones carried no value
+        cy.iframe('[src="/cms/adminframe/default/en/settings.manageUsers.html"]').within(() => {
+            cy.get('.alert-warning').should('contain', 'j:accountLocked').and('contain', 'jcr:title')
         })
     })
 })

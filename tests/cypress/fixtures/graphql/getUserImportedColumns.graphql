@@ -3,6 +3,9 @@ query ($username: String!) {
         userAdmin {
             user(username: $username) {
                 name
+                node {
+                    uuid
+                }
                 firstName: property(name: "j:firstName")
                 employeeId: property(name: "employeeId")
                 accountLocked: property(name: "j:accountLocked")

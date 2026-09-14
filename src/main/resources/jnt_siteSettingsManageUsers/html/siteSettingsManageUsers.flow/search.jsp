@@ -178,7 +178,7 @@
         </div>
         </c:if>
         <c:if test="${message.severity eq 'WARNING'}">
-            <div class="alert">
+            <div class="alert alert-warning">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
                     ${message.text}
             </div>
