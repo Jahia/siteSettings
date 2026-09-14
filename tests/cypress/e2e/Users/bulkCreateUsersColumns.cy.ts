@@ -74,7 +74,11 @@ describe('Bulk create users - imported columns', () => {
 
     /* A file the import cannot fully apply keeps the flow on the upload view, because the handler
      * answers false and Spring Web Flow abandons the transition. The report has to reach that view
-     * too, which is the case where an administrator has the most to read. */
+     * too, which is the case where an administrator has the most to read.
+     *
+     * The row names a user that already exists, which is the cheapest row the import declines and
+     * creates nothing. A name the syntax rule declines would do as well, were its own message
+     * formattable. */
     it('names the columns it left out on the upload view when a row cannot be created', () => {
         const usersPage = SiteSettingsUsers.visitGlobal()
         let bulkUserCreationPage
@@ -84,7 +88,7 @@ describe('Bulk create users - imported columns', () => {
         //eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(500)
         cy.iframe(IFRAME).within(() => {
-            bulkUserCreationPage.setCsvFile('csv/bulkCreateUsersColumnsWithBadRow.csv')
+            bulkUserCreationPage.setCsvFile('csv/bulkCreateUsersColumnsDeclinedRow.csv')
             bulkUserCreationPage.setSeparator(',')
             bulkUserCreationPage.save()
         })
@@ -97,7 +101,7 @@ describe('Bulk create users - imported columns', () => {
         // the file input belongs to the upload view alone, so the flow never reached the results view
         cy.iframe(IFRAME).find('#csvFile').should('exist')
         // the row the import declines, and the column it left out, both on the same screen
-        cy.iframe(IFRAME).contains('bad!name').should('exist')
+        cy.iframe(IFRAME).contains('already exists').should('exist')
         cy.iframe(IFRAME).contains('j:accountLocked').should('exist')
     })
 })
