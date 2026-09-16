@@ -26,13 +26,14 @@ const IMPORTED = [
     'j:linkedinID',
 ]
 
-/* Declared by jnt:user and deliberately left out: the first five carry account state rather than profile
- * text, and j:picture is a weakreference to a file that a CSV cell cannot state. */
+/* Declared by jnt:user and deliberately left out: the first six carry account or session state rather
+ * than profile data, and j:picture is a weakreference to a file that a CSV cell cannot state. */
 const KNOWN_NOT_IMPORTED = [
     'j:password',
     'j:external',
     'j:externalSource',
     'j:accountLocked',
+    'j:invalidateSessionTime',
     'j:publicProperties',
     'j:picture',
 ]
