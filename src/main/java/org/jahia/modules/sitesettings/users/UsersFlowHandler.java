@@ -136,9 +136,25 @@ public class UsersFlowHandler implements Serializable {
         });
     }
 
-    private Properties buildProperties(List<String> headerElementList, List<String> lineElementList) {
+    /**
+     * States whether a line reaches the columns the import reads as the user name and the password. Both are
+     * read by their position in the header, so a line that stops short of either states neither.
+     * <p>
+     * Visible for testing.
+     */
+    static boolean statesMandatoryValues(List<String> lineElementList, int userNamePos, int passwordPos) {
+        return lineElementList.size() > Math.max(userNamePos, passwordPos);
+    }
+
+    /**
+     * The properties a line of the file writes, read column by column against the header. A line that states
+     * fewer values than the header has columns writes nothing for the columns it does not reach.
+     * <p>
+     * Visible for testing.
+     */
+    static Properties buildProperties(List<String> headerElementList, List<String> lineElementList) {
         Properties result = new Properties();
-        for (int i = 0; i < headerElementList.size(); i++) {
+        for (int i = 0; i < headerElementList.size() && i < lineElementList.size(); i++) {
             String currentHeader = headerElementList.get(i);
             String currentValue = lineElementList.get(i);
             if (ImportedUserColumns.isImported(currentHeader)) {
@@ -190,8 +206,16 @@ public class UsersFlowHandler implements Serializable {
                     reportColumnsLeftOut(headerElementList, context);
 
                     String[] lineElements = null;
+                    int lineNumber = 1;
                     while ((lineElements = csvReader.readNext()) != null) {
+                        lineNumber++;
                         List<String> lineElementList = Arrays.asList(lineElements);
+                        if (!statesMandatoryValues(lineElementList, userNamePos, passwordPos)) {
+                            context.addMessage(new MessageBuilder().error().code(
+                                    "siteSettings.users.bulk.errors.line.incomplete").arg(String.valueOf(lineNumber)).build());
+                            hasErrors = true;
+                            continue;
+                        }
                         Properties properties = buildProperties(headerElementList, lineElementList);
                         String userName = lineElementList.get(userNamePos);
                         // escaped for reporting; the raw value is what lookups and creation use

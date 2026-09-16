@@ -13,12 +13,23 @@ import java.util.Set;
  * The columns a CSV bulk user import writes on the users it creates.
  * <p>
  * A header in one of the namespaces the product reserves carries product meaning, so the import writes it
- * only when it names one of the profile properties {@code jnt:user} declares. A header in any other namespace
- * carries profile data of the deployment's own making, and the import writes it as it stands.
+ * only when it names one of the TEXT profile properties {@code jnt:user} declares. A header in any other
+ * namespace carries profile data of the deployment's own making, and the import writes it as it stands.
  * <p>
- * The reserved set is stated here rather than read from the node type, because {@code jnt:user} also declares
- * a residual {@code * (string)} definition that accepts every name. The node type therefore answers "yes" for
- * a reserved name it never declares.
+ * The set is written out here rather than derived from the node type, because "declared by {@code jnt:user}"
+ * is not the predicate this class needs. The type declares 19 names, and six of them stay out.
+ * {@code j:password}, {@code j:external}, {@code j:externalSource}, {@code j:accountLocked} and
+ * {@code j:publicProperties} carry account state rather than profile text, and core draws the same line for
+ * its own generic write actions in {@code SettingsBean.DEFAULT_RENDER_ACTION_RESTRICTED_PROPERTIES}.
+ * {@code j:picture} stays out for a different reason: it is a weakreference to a file, which a CSV cell
+ * carries no sensible way to state.
+ * <p>
+ * Two notes for a reader checking this against the node type. That core list also names
+ * {@code j:invalidateSessionTime}, which {@code jnt:user} does not declare at all and which reaches a user
+ * node through the residual {@code * (string)} definition; the namespace rule above leaves it out either way.
+ * And {@code ExtendedNodeType.getDeclaredPropertyDefinitionsAsMap()} does answer which names the type
+ * declares, without that residual, so the node type is readable here. It is the wrong question, not an
+ * unanswerable one.
  */
 final class ImportedUserColumns {
 
