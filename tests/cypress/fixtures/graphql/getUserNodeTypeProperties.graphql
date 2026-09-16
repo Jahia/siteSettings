@@ -1,0 +1,12 @@
+query {
+    jcr {
+        nodeTypeByName(name: "jnt:user") {
+            properties {
+                name
+                declaringNodeType {
+                    name
+                }
+            }
+        }
+    }
+}

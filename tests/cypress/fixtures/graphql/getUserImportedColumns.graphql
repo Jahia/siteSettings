@@ -1,0 +1,16 @@
+query ($username: String!) {
+    admin {
+        userAdmin {
+            user(username: $username) {
+                name
+                node {
+                    uuid
+                }
+                firstName: property(name: "j:firstName")
+                employeeId: property(name: "employeeId")
+                accountLocked: property(name: "j:accountLocked")
+                title: property(name: "jcr:title")
+            }
+        }
+    }
+}

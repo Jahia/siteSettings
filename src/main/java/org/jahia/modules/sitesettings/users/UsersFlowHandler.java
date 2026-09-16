@@ -136,16 +136,68 @@ public class UsersFlowHandler implements Serializable {
         });
     }
 
-    private Properties buildProperties(List<String> headerElementList, List<String> lineElementList) {
+    /**
+     * The header names, each without the space the file lays out around it. Visible for testing.
+     */
+    static List<String> trimmed(String[] headerElements) {
+        List<String> result = new ArrayList<>(headerElements.length);
+        for (String header : headerElements) {
+            result.add(header != null ? header.trim() : "");
+        }
+        return result;
+    }
+
+    /**
+     * States whether a line carries no value at all, which is what a blank line in the file reads as.
+     * <p>
+     * Visible for testing.
+     */
+    static boolean statesNoValue(List<String> lineElementList) {
+        for (String value : lineElementList) {
+            if (StringUtils.isNotBlank(value)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * States whether a line reaches the columns the import reads as the user name and the password. Both are
+     * read by their position in the header, so a line that stops short of either states neither.
+     * <p>
+     * Visible for testing.
+     */
+    static boolean statesMandatoryValues(List<String> lineElementList, int userNamePos, int passwordPos) {
+        return lineElementList.size() > Math.max(userNamePos, passwordPos);
+    }
+
+    /**
+     * The properties a line of the file writes, read column by column against the header. A line that states
+     * fewer values than the header has columns writes nothing for the columns it does not reach.
+     * <p>
+     * Visible for testing.
+     */
+    static Properties buildProperties(List<String> headerElementList, List<String> lineElementList) {
         Properties result = new Properties();
-        for (int i = 0; i < headerElementList.size(); i++) {
+        for (int i = 0; i < headerElementList.size() && i < lineElementList.size(); i++) {
             String currentHeader = headerElementList.get(i);
             String currentValue = lineElementList.get(i);
-            if (!"j:nodename".equals(currentHeader) && !JCRUserNode.J_PASSWORD.equals(currentHeader)) {
+            if (ImportedUserColumns.isImported(currentHeader)) {
                 result.setProperty(currentHeader.trim(), currentValue);
             }
         }
         return result;
+    }
+
+    private static void reportColumnsLeftOut(List<String> headerElementList, MessageContext context) {
+        List<String> columnsLeftOut = ImportedUserColumns.leftOut(headerElementList);
+        if (columnsLeftOut.isEmpty()) {
+            return;
+        }
+        // escaped for reporting, as the header text comes from the uploaded file
+        context.addMessage(new MessageBuilder().warning().code(
+                "siteSettings.users.bulk.columns.left.out").arg(
+                StringEscapeUtils.escapeXml(StringUtils.join(columnsLeftOut, ", "))).build());
     }
 
     public boolean bulkAddUser(final CsvFile csvFile, final MessageContext context) throws RepositoryException {
@@ -167,18 +219,41 @@ public class UsersFlowHandler implements Serializable {
                             csvFile.getCsvSeparator());
                     // the first line contains the column names;
                     String[] headerElements = csvReader.readNext();
-                    List<String> headerElementList = Arrays.asList(headerElements);
+                    if (headerElements == null) {
+                        context.addMessage(new MessageBuilder().error().code(
+                                "siteSettings.users.bulk.errors.missing.import").build());
+                        return true;
+                    }
+                    // the names are read once with the space the file lays out around them removed, so the
+                    // columns the import locates and the columns it writes agree on what each one is called
+                    List<String> headerElementList = trimmed(headerElements);
                     int userNamePos = headerElementList.indexOf("j:nodename");
                     int passwordPos = headerElementList.indexOf(JCRUserNode.J_PASSWORD);
                     if ((userNamePos < 0) || (passwordPos < 0)) {
                         context.addMessage(new MessageBuilder().error().code(
                                 "siteSettings.users.bulk.errors.missing.mandatory").args(new String[]{"j:nodename", JCRUserNode.J_PASSWORD}).build());
-                        return false;
+                        // the callback answers whether the run had errors, and a file missing either
+                        // mandatory column imported nothing
+                        return true;
                     }
 
+                    reportColumnsLeftOut(headerElementList, context);
+
                     String[] lineElements = null;
+                    int lineNumber = 1;
                     while ((lineElements = csvReader.readNext()) != null) {
+                        lineNumber++;
                         List<String> lineElementList = Arrays.asList(lineElements);
+                        if (statesNoValue(lineElementList)) {
+                            // a blank line between rows, or the newline a file ends with
+                            continue;
+                        }
+                        if (!statesMandatoryValues(lineElementList, userNamePos, passwordPos)) {
+                            context.addMessage(new MessageBuilder().error().code(
+                                    "siteSettings.users.bulk.errors.line.incomplete").arg(String.valueOf(lineNumber)).build());
+                            hasErrors = true;
+                            continue;
+                        }
                         Properties properties = buildProperties(headerElementList, lineElementList);
                         String userName = lineElementList.get(userNamePos);
                         // escaped for reporting; the raw value is what lookups and creation use
