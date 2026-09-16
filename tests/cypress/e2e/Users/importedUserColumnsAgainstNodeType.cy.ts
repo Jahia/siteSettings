@@ -44,7 +44,11 @@ describe('Bulk create users - the imported column set against jnt:user', () => {
 
     it('places every j: property jnt:user declares in exactly one of the two lists', () => {
         cy.apollo({ queryFile: 'graphql/getUserNodeTypeProperties.graphql' }).then((response) => {
-            const declared = response.data.jcr.nodeTypeByName.properties
+            const nodeType = response.data.jcr.nodeTypeByName
+            // stated before the filter reads it, so a repository without the type says so
+            expect(nodeType, 'the repository holds jnt:user').to.not.eq(null)
+
+            const declared = nodeType.properties
                 .filter((p) => p.declaringNodeType.name === 'jnt:user' && p.name.startsWith('j:'))
                 .map((p) => p.name)
 

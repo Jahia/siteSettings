@@ -90,6 +90,34 @@ public class UsersFlowHandlerLinesTest {
                 Arrays.asList("Jane", "jdoe"), userNamePos, passwordPos));
     }
 
+    @Test
+    public void aBlankLineStatesNoValue() {
+        assertTrue(UsersFlowHandler.statesNoValue(Collections.singletonList("")));
+        assertTrue(UsersFlowHandler.statesNoValue(Arrays.asList("", "   ", "")));
+        assertTrue(UsersFlowHandler.statesNoValue(Collections.<String>emptyList()));
+    }
+
+    @Test
+    public void aLineCarryingAnyValueStatesOne() {
+        assertFalse(UsersFlowHandler.statesNoValue(Arrays.asList("jdoe", "")));
+        assertFalse(UsersFlowHandler.statesNoValue(Arrays.asList("", "secret")));
+    }
+
+    @Test
+    public void theHeaderIsReadWithoutTheSpaceTheFileLaysOutAroundIt() {
+        List<String> header = UsersFlowHandler.trimmed(new String[]{" j:nodename ", "  j:password", "j:firstName "});
+
+        assertEquals(Arrays.asList("j:nodename", "j:password", "j:firstName"), header);
+        // which is what lets the import locate the mandatory columns in such a file
+        assertEquals(0, header.indexOf("j:nodename"));
+        assertEquals(1, header.indexOf(JCRUserNode.J_PASSWORD));
+    }
+
+    @Test
+    public void aColumnWithNoHeaderReadsAsAnEmptyName() {
+        assertEquals(Arrays.asList("j:nodename", ""), UsersFlowHandler.trimmed(new String[]{"j:nodename", "   "}));
+    }
+
     private static boolean statesMandatory(List<String> line) {
         return UsersFlowHandler.statesMandatoryValues(
                 line, HEADER.indexOf("j:nodename"), HEADER.indexOf(JCRUserNode.J_PASSWORD));

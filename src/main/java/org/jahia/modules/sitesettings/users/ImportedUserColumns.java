@@ -13,7 +13,8 @@ import java.util.Set;
  * The columns a CSV bulk user import writes on the users it creates.
  * <p>
  * A header in one of the namespaces the product reserves carries product meaning, so the import writes it
- * only when it names one of the TEXT profile properties {@code jnt:user} declares. A header in any other
+ * only when it names one of the profile properties {@code jnt:user} declares whose value a CSV cell can
+ * state. A header in any other
  * namespace carries profile data of the deployment's own making, and the import writes it as it stands.
  * <p>
  * The set is written out here rather than derived from the node type, because "declared by {@code jnt:user}"
@@ -23,6 +24,11 @@ import java.util.Set;
  * its own generic write actions in {@code SettingsBean.DEFAULT_RENDER_ACTION_RESTRICTED_PROPERTIES}.
  * {@code j:picture} stays out for a different reason: it is a weakreference to a file, which a CSV cell
  * carries no sensible way to state.
+ * <p>
+ * The thirteen that stay in are not all plain text, and a cell has to state a value each one accepts.
+ * {@code j:birthDate} is a date, {@code j:gender} and {@code j:title} each carry a choice list, and
+ * {@code j:email} carries a pattern. The repository is what rejects a value none of them accepts, and this
+ * class does not screen for it.
  * <p>
  * Two notes for a reader checking this against the node type. That core list also names
  * {@code j:invalidateSessionTime}, which {@code jnt:user} does not declare at all and which reaches a user
