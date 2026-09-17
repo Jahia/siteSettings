@@ -153,7 +153,7 @@ export const LanguageContent = ({openModal, siteLocales, defaultLanguage}) => {
                                 {defaultLanguage === l.language ? <Star color="blue"/> : ''}
                             </TableBodyCell>
                             <TableBodyCell width={columnsWidth.languages}>
-                                {l.displayName} <Pill label={l.language}/>
+                                {l.displayName} <Pill>{l.language}</Pill>
                             </TableBodyCell>
                             <TableBodyCell width={columnsWidth.availability}>
                                 {t(`label.availability.${LanguageHelper.getAvailability(l)}.title`)}
