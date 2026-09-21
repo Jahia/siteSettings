@@ -38,6 +38,12 @@ const KNOWN_NOT_IMPORTED = [
     'j:picture',
 ]
 
+/* j:invalidateSessionTime sits in KNOWN_NOT_IMPORTED, and jnt:user declares it only from Jahia
+ * 8.2.3.0. The module supports 8.2.2.0 and up, so on the 8.2.2 line the repository answers without
+ * that name, and the "still declared" assertion leaves it out. The per-property assertion is
+ * unaffected, because it reads the names the running core declares. */
+const DECLARED_FROM_8_2_3 = ['j:invalidateSessionTime']
+
 describe('Bulk create users - the imported column set against jnt:user', () => {
     beforeEach(() => {
         cy.login()
@@ -65,9 +71,11 @@ describe('Bulk create users - the imported column set against jnt:user', () => {
                 ).to.eq(true)
             })
 
-            IMPORTED.concat(KNOWN_NOT_IMPORTED).forEach((name) => {
-                expect(declared, `${name} is listed here and must still be declared by jnt:user`).to.include(name)
-            })
+            IMPORTED.concat(KNOWN_NOT_IMPORTED)
+                .filter((name) => !DECLARED_FROM_8_2_3.includes(name))
+                .forEach((name) => {
+                    expect(declared, `${name} is listed here and must still be declared by jnt:user`).to.include(name)
+                })
         })
     })
 })
