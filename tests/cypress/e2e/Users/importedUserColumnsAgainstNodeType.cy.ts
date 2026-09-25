@@ -27,7 +27,10 @@ const IMPORTED = [
 ]
 
 /* Declared by jnt:user and deliberately left out: the first six carry account or session state rather
- * than profile data, and j:picture is a weakreference to a file that a CSV cell cannot state. */
+ * than profile data, and j:picture is a weakreference to a file that a CSV cell cannot state.
+ *
+ * jnt:user declares j:invalidateSessionTime only from Jahia 8.2.3.0, and the module supports 8.2.2.0
+ * and up. The test below is gated on 8.2.3 for that reason. */
 const KNOWN_NOT_IMPORTED = [
     'j:password',
     'j:external',
@@ -43,7 +46,7 @@ describe('Bulk create users - the imported column set against jnt:user', () => {
         cy.login()
     })
 
-    it('places every j: property jnt:user declares in exactly one of the two lists', () => {
+    it.since('8.2.3', 'places every j: property jnt:user declares in exactly one of the two lists', () => {
         cy.apollo({ queryFile: 'graphql/getUserNodeTypeProperties.graphql' }).then((response) => {
             const nodeType = response.data.jcr.nodeTypeByName
             // stated before the filter reads it, so a repository without the type says so
