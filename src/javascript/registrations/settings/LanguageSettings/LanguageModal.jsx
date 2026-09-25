@@ -81,7 +81,7 @@ export const LanguageModal = ({
 
     const dropDownData = useMemo(() => availableLocales.map(l => {
         return {
-            iconEnd: <Pill label={l.language.toUpperCase()}/>,
+            iconEnd: <Pill>{l.language.toUpperCase()}</Pill>,
             id: l.language,
             label: l.displayName,
             value: l.language,
