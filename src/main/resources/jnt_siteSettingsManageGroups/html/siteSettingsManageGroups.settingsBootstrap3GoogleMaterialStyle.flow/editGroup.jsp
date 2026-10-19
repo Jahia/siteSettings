@@ -208,7 +208,7 @@
                                     <td>
                                         <div class="checkbox">
                                             <label>
-                                                <input type="checkbox" name="selectedMembers" value="${principalKey}"/>
+                                                <input type="checkbox" name="selectedMembers" value="${fn:escapeXml(principalKey)}"/>
                                             </label>
                                         </div>
                                     </td>
@@ -232,10 +232,10 @@
                                 <c:if test="${isGroupEditable}">
                                     <td>
                                         <fmt:message var="i18RemoveConfirm" key="siteSettings.groups.removeMember.confirm">
-                                            <fmt:param value="${fn:escapeXml(member.name)}"/>
+                                            <fmt:param value="${member.name}"/>
                                         </fmt:message>
                                         <button style="margin-bottom:0;" class="btn btn-danger btn-fab btn-fab-xs" type="submit" name="_eventId_removeMembers"
-                                                onclick="return removeGroupMember('${functions:escapeJavaScript(i18RemoveConfirm)}' + ' ' + '${functions:escapeJavaScript(i18nContinue)}', '${principalKey}')">
+                                                onclick="return removeGroupMember('${fn:escapeXml(functions:escapeJavaScript(i18RemoveConfirm))}' + ' ' + '${fn:escapeXml(functions:escapeJavaScript(i18nContinue))}', '${fn:escapeXml(functions:escapeJavaScript(principalKey))}')">
                                             <i class="material-icons">delete</i>
                                         </button>
                                     </td>

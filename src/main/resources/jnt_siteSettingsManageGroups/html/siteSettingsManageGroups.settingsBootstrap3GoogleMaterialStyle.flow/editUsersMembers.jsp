@@ -136,7 +136,7 @@
                             <td>
                                 <div class="checkbox">
                                     <label>
-                                        <input onchange="selectMember(this)" class="selectedMember" type="checkbox" name="selectedMembers" value="${principal.key.userKey}" ${principal.value ? 'checked="checked"' : ''}/>
+                                        <input onchange="selectMember(this)" class="selectedMember" type="checkbox" name="selectedMembers" value="${fn:escapeXml(principal.key.userKey)}" ${principal.value ? 'checked="checked"' : ''}/>
                                     </label>
                                 </div>
                             </td>

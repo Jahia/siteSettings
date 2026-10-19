@@ -159,7 +159,7 @@ function submitGroupForm(act, group) {
                                            onclick="submitGroupForm('editGroupMembers', '${escapedGroupKey}'); return false;">
                                             <i class="material-icons">people</i>
                                         </a>
-                                        <a class="btn btn-fab btn-fab-xs btn-default" title="${i18nCopy}" href="#copy" onclick="submitGroupForm('copyGroup', '${grp.groupKey}'); return false;">
+                                        <a class="btn btn-fab btn-fab-xs btn-default" title="${i18nCopy}" href="#copy" onclick="submitGroupForm('copyGroup', '${escapedGroupKey}'); return false;">
                                             <i class="material-icons">content_copy</i>
                                         </a>
                                     </c:if>
