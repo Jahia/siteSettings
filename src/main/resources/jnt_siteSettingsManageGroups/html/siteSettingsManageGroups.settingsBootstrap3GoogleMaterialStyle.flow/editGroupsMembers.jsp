@@ -79,7 +79,7 @@
             <c:choose>
                 <c:when test="${!principalsFound}">
                     <tr>
-                        <td><input onchange="selectMember(this)" class="selectedMember" type="checkbox" name="selectedMembers" value="${principal.key.groupKey}" ${principal.value ? 'checked="checked"' : ''}/> </td>
+                        <td><input onchange="selectMember(this)" class="selectedMember" type="checkbox" name="selectedMembers" value="${fn:escapeXml(principal.key.groupKey)}" ${principal.value ? 'checked="checked"' : ''}/> </td>
                         <td>
                                 ${fn:escapeXml(user:displayName(principal.key))}
                         </td>
@@ -97,7 +97,7 @@
                                     <label>
                                         <input onchange="selectMember(this)" class="selectedMember"
                                                type="checkbox" name="selectedMembers" style="display: none;"
-                                               value="${principal.key.groupKey}" ${principal.value ? 'checked="checked"' : ''}/>
+                                               value="${fn:escapeXml(principal.key.groupKey)}" ${principal.value ? 'checked="checked"' : ''}/>
                                     </label>
                                 </div>
                             </td>
