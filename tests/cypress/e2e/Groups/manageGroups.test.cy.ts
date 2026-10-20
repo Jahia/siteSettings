@@ -40,8 +40,7 @@ describe('Manage Groups - Create / Edit members / Delete Tests', () => {
     })
 
     it('should create a group', () => {
-        // FT-004 of the split of the legacy Selenium class ManageGroupsTest (Jahia/selenium#1636)
-        context.tag('testrail-case-2467338', 'manage-groups', 'create-valid')
+        context.tag('manage-groups', 'create-valid')
         const siteSettingsGroups = SiteSettingsGroups.visit(siteKey)
         siteSettingsGroups.startGroupCreation().setGroupname(CREATE_GROUP).save()
 

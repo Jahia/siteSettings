@@ -1,6 +1,5 @@
 // What membership of a site group grants: the role of the group, the site administration of the
-// built-in site-administrators group, and nothing on another site. Migrated from the legacy Selenium
-// class ManageGroupsTest (Jahia/selenium#1636), so each test carries the tags of its row in that split.
+// built-in site-administrators group, and nothing on another site.
 //
 // The legacy class checked access by opening Page Composer, which Jahia 8 no longer ships. Edit
 // access is read here from the edit frame that jContent loads (/cms/editframe), which answers 200
@@ -101,7 +100,7 @@ describe('Manage Groups - access granted by group membership', () => {
     })
 
     it('FT-010: lets every member of a group edit the site the group holds a role on', () => {
-        context.tag('testrail-case-2467338', 'manage-groups', 'group-role-access')
+        context.tag('manage-groups', 'group-role-access')
         loginGlobalUser(outsider)
         statusOf(editFrame(siteKey)).should('eq', 404)
 
@@ -115,7 +114,7 @@ describe('Manage Groups - access granted by group membership', () => {
     // The Edit roles tab lists a role holder only while its group resolves, so the check reads the
     // group store of the site, where that resolution happens.
     it('FT-017: removes a deleted group from the list and from the role holders of the site', () => {
-        context.tag('testrail-case-2467338', 'manage-groups', 'delete-group-roles')
+        context.tag('manage-groups', 'delete-group-roles')
         siteGroupNames().should('include', deletedGroup)
 
         cy.login()
@@ -129,7 +128,7 @@ describe('Manage Groups - access granted by group membership', () => {
     })
 
     it('FT-019: grants site administration to the users added to site-administrators', () => {
-        context.tag('testrail-case-2467338', 'manage-groups', 'site-admin-membership')
+        context.tag('manage-groups', 'site-admin-membership')
         loginGlobalUser(globalAdmin)
         statusOf(manageGroups(siteKey)).should('eq', 404)
 
@@ -151,7 +150,7 @@ describe('Manage Groups - access granted by group membership', () => {
     })
 
     it('FT-020: refuses a user of one site the edit access to another site', () => {
-        context.tag('testrail-case-2467338', 'manage-groups', 'site-user-cross-site-403')
+        context.tag('manage-groups', 'site-user-cross-site-403')
         cy.login()
         statusOf(editFrame(otherSiteKey)).should('eq', 200)
 

@@ -1,6 +1,5 @@
 // Membership of a site group through Manage Groups: adding users of both stores and a subgroup,
-// removing members in bulk, and copying a group with its members. Migrated from the legacy Selenium
-// class ManageGroupsTest (Jahia/selenium#1636), so each test carries the tags of its row in that split.
+// removing members in bulk, and copying a group with its members.
 import { context, createSite, createUser, deleteSite, deleteUser, jfaker } from '@jahia/cypress'
 import { SiteSettingsGroups } from '../../page-object/siteSettingsGroups'
 
@@ -82,7 +81,7 @@ describe('Manage Groups - group membership', () => {
     })
 
     it('FT-007: adds a server-global user and a user of the site as members', () => {
-        context.tag('testrail-case-2467338', 'manage-groups', 'add-user-members')
+        context.tag('manage-groups', 'add-user-members')
         const members = SiteSettingsGroups.visit(siteKey).openGroupByName(addUsersGroup)
         members.startAddUsers().selectCandidate(globalUser).selectCandidate(siteUser).save()
 
@@ -91,7 +90,7 @@ describe('Manage Groups - group membership', () => {
     })
 
     it('FT-008: removes the selected members with the bulk remove action', () => {
-        context.tag('testrail-case-2467338', 'manage-groups', 'bulk-remove-members')
+        context.tag('manage-groups', 'bulk-remove-members')
         const confirm = cy.stub().returns(true)
         cy.on('window:confirm', confirm)
 
@@ -108,7 +107,7 @@ describe('Manage Groups - group membership', () => {
     })
 
     it('FT-009: adds a group of the site as a subgroup member', () => {
-        context.tag('testrail-case-2467338', 'manage-groups', 'add-subgroup')
+        context.tag('manage-groups', 'add-subgroup')
         const members = SiteSettingsGroups.visit(siteKey).openGroupByName(parentGroup)
         members.startAddUsers().switchToGroups().selectCandidate(childGroup).save()
 
@@ -117,7 +116,7 @@ describe('Manage Groups - group membership', () => {
     })
 
     it('FT-013: copies a group with every member of the original', () => {
-        context.tag('testrail-case-2467338', 'manage-groups', 'copy-keeps-members')
+        context.tag('manage-groups', 'copy-keeps-members')
         const groups = SiteSettingsGroups.visit(siteKey)
         groups.startGroupCopy(copySource).replaceGroupname(copyTarget).copy()
 
@@ -130,7 +129,7 @@ describe('Manage Groups - group membership', () => {
     })
 
     it('FT-014: empties a group by removing its users, then its subgroup', () => {
-        context.tag('testrail-case-2467338', 'manage-groups', 'remove-subgroup-member')
+        context.tag('manage-groups', 'remove-subgroup-member')
         const members = SiteSettingsGroups.visit(siteKey).openGroupByName(emptiedGroup)
         members.selectMember(globalUser).selectMember(globalUser2).removeSelectedMembers()
         members.verifyMemberNotListed(globalUser).verifyMemberListed(emptiedChild)
