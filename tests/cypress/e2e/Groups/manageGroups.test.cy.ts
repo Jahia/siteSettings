@@ -1,4 +1,4 @@
-import { createSite, deleteSite, createUser, deleteUser } from '@jahia/cypress'
+import { context, createSite, deleteSite, createUser, deleteUser } from '@jahia/cypress'
 import { generateRandomID } from '../../utils/utils'
 import { SiteSettingsGroups } from '../../page-object/siteSettingsGroups'
 
@@ -40,9 +40,12 @@ describe('Manage Groups - Create / Edit members / Delete Tests', () => {
     })
 
     it('should create a group', () => {
+        // FT-004 of the split of the legacy Selenium class ManageGroupsTest (Jahia/selenium#1636)
+        context.tag('testrail-case-2467338', 'manage-groups', 'create-valid')
         const siteSettingsGroups = SiteSettingsGroups.visit(siteKey)
         siteSettingsGroups.startGroupCreation().setGroupname(CREATE_GROUP).save()
 
+        siteSettingsGroups.verifySuccessMessage(`Group '${CREATE_GROUP}' successfully created`)
         siteSettingsGroups.verifyGroupNameDisplayed(CREATE_GROUP)
     })
 

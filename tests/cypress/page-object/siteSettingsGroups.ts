@@ -32,4 +32,29 @@ export class SiteSettingsGroups extends BasePage {
         cy.get('[name="_eventId_createGroup"]').click()
         return new GroupCreationPage()
     }
+
+    /* The Copy action of a group row, anchored on href + the group key held by the onclick. */
+    startGroupCopy(groupname: string) {
+        cy.get(`a[href="#copy"][onclick*="/${groupname}'"]`).click()
+        return new GroupCreationPage()
+    }
+
+    /* The group list is a DataTables table: its search box filters the rows client-side. */
+    filter(text: string) {
+        cy.get('input[aria-controls="manageGroups"]').clear()
+        if (text) {
+            cy.get('input[aria-controls="manageGroups"]').type(text)
+        }
+        return this
+    }
+
+    verifyGroupListed(groupname: string) {
+        cy.contains('td a', groupname).should('be.visible')
+        return this
+    }
+
+    verifySuccessMessage(text: string) {
+        cy.contains('.alert-success', text).should('be.visible')
+        return this
+    }
 }
