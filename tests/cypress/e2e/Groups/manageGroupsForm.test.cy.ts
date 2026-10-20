@@ -40,17 +40,17 @@ describe('Manage Groups - group list and group form', () => {
         deleteSite(otherSiteKey)
     })
 
-    it('FT-001: lists the built-in site-administrators group', () => {
+    it('lists the built-in site-administrators group', () => {
         context.tag('manage-groups', 'group-list')
         SiteSettingsGroups.visit(siteKey).verifyGroupListed('site-administrators')
     })
 
-    it('FT-002: refuses to create a group with an empty name', () => {
+    it('refuses to create a group with an empty name', () => {
         context.tag('manage-groups', 'create-empty-name')
         SiteSettingsGroups.visit(siteKey).startGroupCreation().save().verifyError('Please specify a group name')
     })
 
-    it('FT-003: refuses to create a group with forbidden characters', () => {
+    it('refuses to create a group with forbidden characters', () => {
         context.tag('manage-groups', 'create-invalid-name')
         const invalidName = 'invalid@' + uniq
         SiteSettingsGroups.visit(siteKey)
@@ -62,7 +62,7 @@ describe('Manage Groups - group list and group form', () => {
         SiteSettingsGroups.visit(siteKey).verifyGroupListed(existingGroup).verifyGroupNotListed(invalidName)
     })
 
-    it('FT-005: refuses to create a group whose name already exists', () => {
+    it('refuses to create a group whose name already exists', () => {
         context.tag('manage-groups', 'create-duplicate-name')
         SiteSettingsGroups.visit(siteKey)
             .startGroupCreation()
@@ -71,12 +71,12 @@ describe('Manage Groups - group list and group form', () => {
             .verifyError(uniqueError(existingGroup))
     })
 
-    it('FT-006: shows a new group with no member', () => {
+    it('shows a new group with no member', () => {
         context.tag('manage-groups', 'empty-group')
         SiteSettingsGroups.visit(siteKey).openGroupByName(emptyGroup).verifyNoMember()
     })
 
-    it('FT-011: refuses to copy a group to a name with forbidden characters', () => {
+    it('refuses to copy a group to a name with forbidden characters', () => {
         context.tag('manage-groups', 'copy-invalid-name')
         SiteSettingsGroups.visit(siteKey)
             .startGroupCopy(existingGroup)
@@ -85,7 +85,7 @@ describe('Manage Groups - group list and group form', () => {
             .verifyError(syntaxError)
     })
 
-    it('FT-012: refuses to copy a group to its own name', () => {
+    it('refuses to copy a group to its own name', () => {
         context.tag('manage-groups', 'copy-duplicate-name')
         SiteSettingsGroups.visit(siteKey)
             .startGroupCopy(existingGroup)
@@ -94,7 +94,7 @@ describe('Manage Groups - group list and group form', () => {
             .verifyError(uniqueError(existingGroup))
     })
 
-    it("FT-015: does not list a site's group in another site's group list", () => {
+    it("does not list a site's group in another site's group list", () => {
         context.tag('manage-groups', 'cross-site-list')
         SiteSettingsGroups.visit(siteKey).verifyGroupListed(existingGroup)
         // the other site's list is rendered, so the absence below is not an empty page
@@ -103,7 +103,7 @@ describe('Manage Groups - group list and group form', () => {
             .verifyGroupNotListed(existingGroup)
     })
 
-    it('FT-018: filters the group list on the search input', () => {
+    it('filters the group list on the search input', () => {
         context.tag('manage-groups', 'search-filter')
         const groups = SiteSettingsGroups.visit(siteKey)
         groups.verifyGroupListed(existingGroup).verifyGroupListed('site-administrators')

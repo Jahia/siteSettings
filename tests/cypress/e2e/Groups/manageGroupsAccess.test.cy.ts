@@ -24,7 +24,7 @@ describe('Manage Groups - access granted by group membership', () => {
     const siteAdmin = 'siteadmin' + uniq
     // a user who belongs to no group of the site
     const outsider = prefix + 'outsider' + uniq
-    // a group holding a role on the site, deleted by FT-017
+    // a group holding a role on the site, deleted by the deletion test
     const deletedGroup = 'deleted' + uniq
 
     const editFrame = (site: string) => `/cms/editframe/default/en/sites/${site}/home.html`
@@ -99,7 +99,7 @@ describe('Manage Groups - access granted by group membership', () => {
         deleteSite(otherSiteKey)
     })
 
-    it('FT-010: lets every member of a group edit the site the group holds a role on', () => {
+    it('lets every member of a group edit the site the group holds a role on', () => {
         context.tag('manage-groups', 'group-role-access')
         loginGlobalUser(outsider)
         statusOf(editFrame(siteKey)).should('eq', 404)
@@ -113,7 +113,7 @@ describe('Manage Groups - access granted by group membership', () => {
 
     // The Edit roles tab lists a role holder only while its group resolves, so the check reads the
     // group store of the site, where that resolution happens.
-    it('FT-017: removes a deleted group from the list and from the role holders of the site', () => {
+    it('removes a deleted group from the list and from the role holders of the site', () => {
         context.tag('manage-groups', 'delete-group-roles')
         siteGroupNames().should('include', deletedGroup)
 
@@ -127,7 +127,7 @@ describe('Manage Groups - access granted by group membership', () => {
         siteGroupNames().should('include', editorsGroup).and('not.include', deletedGroup)
     })
 
-    it('FT-019: grants site administration to the users added to site-administrators', () => {
+    it('grants site administration to the users added to site-administrators', () => {
         context.tag('manage-groups', 'site-admin-membership')
         loginGlobalUser(globalAdmin)
         statusOf(manageGroups(siteKey)).should('eq', 404)
@@ -149,7 +149,7 @@ describe('Manage Groups - access granted by group membership', () => {
         createAndDeleteGroup('bysiteadmin' + uniq)
     })
 
-    it('FT-020: refuses a user of one site the edit access to another site', () => {
+    it('refuses a user of one site the edit access to another site', () => {
         context.tag('manage-groups', 'site-user-cross-site-403')
         cy.login()
         statusOf(editFrame(otherSiteKey)).should('eq', 200)

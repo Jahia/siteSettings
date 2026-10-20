@@ -80,7 +80,7 @@ describe('Manage Groups - group membership', () => {
         deleteSite(siteKey)
     })
 
-    it('FT-007: adds a server-global user and a user of the site as members', () => {
+    it('adds a server-global user and a user of the site as members', () => {
         context.tag('manage-groups', 'add-user-members')
         const members = SiteSettingsGroups.visit(siteKey).openGroupByName(addUsersGroup)
         members.startAddUsers().selectCandidate(globalUser).selectCandidate(siteUser).save()
@@ -89,7 +89,7 @@ describe('Manage Groups - group membership', () => {
         members.verifyMemberListed(globalUser).verifyMemberListed(siteUser)
     })
 
-    it('FT-008: removes the selected members with the bulk remove action', () => {
+    it('removes the selected members with the bulk remove action', () => {
         context.tag('manage-groups', 'bulk-remove-members')
         const confirm = cy.stub().returns(true)
         cy.on('window:confirm', confirm)
@@ -106,7 +106,7 @@ describe('Manage Groups - group membership', () => {
         members.verifyMemberNotListed(globalUser).verifyMemberNotListed(globalUser2)
     })
 
-    it('FT-009: adds a group of the site as a subgroup member', () => {
+    it('adds a group of the site as a subgroup member', () => {
         context.tag('manage-groups', 'add-subgroup')
         const members = SiteSettingsGroups.visit(siteKey).openGroupByName(parentGroup)
         members.startAddUsers().switchToGroups().selectCandidate(childGroup).save()
@@ -115,7 +115,7 @@ describe('Manage Groups - group membership', () => {
         members.verifyMemberListed(childGroup)
     })
 
-    it('FT-013: copies a group with every member of the original', () => {
+    it('copies a group with every member of the original', () => {
         context.tag('manage-groups', 'copy-keeps-members')
         const groups = SiteSettingsGroups.visit(siteKey)
         groups.startGroupCopy(copySource).replaceGroupname(copyTarget).copy()
@@ -128,7 +128,7 @@ describe('Manage Groups - group membership', () => {
             .verifyMemberListed(copySourceChild)
     })
 
-    it('FT-014: empties a group by removing its users, then its subgroup', () => {
+    it('empties a group by removing its users, then its subgroup', () => {
         context.tag('manage-groups', 'remove-subgroup-member')
         const members = SiteSettingsGroups.visit(siteKey).openGroupByName(emptiedGroup)
         members.selectMember(globalUser).selectMember(globalUser2).removeSelectedMembers()
