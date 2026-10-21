@@ -3,7 +3,6 @@ import org.jahia.services.content.JCRSessionWrapper
 import org.jahia.services.content.JCRTemplate
 import org.jahia.services.sites.JahiaSitesService
 import org.jahia.services.usermanager.JahiaUserManagerService
-import org.jahia.services.usermanager.SearchCriteria
 import javax.jcr.RepositoryException
 
 // Delete the sites and the server-global users whose name starts with PREFIX, left over by a run

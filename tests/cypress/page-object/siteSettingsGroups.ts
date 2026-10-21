@@ -1,8 +1,8 @@
-import { BasePage } from '@jahia/cypress'
+import { SiteSettingsPage } from './siteSettingsPage'
 import { GroupCreationPage } from './groupCreationPage'
 import { GroupMembersPage } from './groupMembersPage'
 
-export class SiteSettingsGroups extends BasePage {
+export class SiteSettingsGroups extends SiteSettingsPage {
     static visit(siteKey: string): SiteSettingsGroups {
         cy.visit(`/cms/editframe/default/en/sites/${siteKey}.manageGroups.html`)
         return new SiteSettingsGroups()
@@ -50,11 +50,6 @@ export class SiteSettingsGroups extends BasePage {
 
     verifyGroupListed(groupname: string) {
         cy.contains('td a', groupname).should('be.visible')
-        return this
-    }
-
-    verifySuccessMessage(text: string) {
-        cy.contains('.alert-success', text).should('be.visible')
         return this
     }
 }

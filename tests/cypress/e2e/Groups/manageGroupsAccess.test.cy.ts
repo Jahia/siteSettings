@@ -1,5 +1,5 @@
 // What membership of a site group grants: the role of the group, the site administration of the
-// built-in site-administrators group, and nothing on another site.
+// built-in site-administrators group, and nothing on another site, even through a role granted there.
 //
 // The legacy class checked access by opening Page Composer, which Jahia 8 no longer ships. Edit
 // access is read here from the edit frame that jContent loads (/cms/editframe), which answers 200
@@ -112,9 +112,10 @@ describe('Manage Groups - access granted by group membership', () => {
     })
 
     // The Edit roles tab lists a role holder only while its group resolves, so the check reads the
-    // group store of the site, where that resolution happens.
-    it('removes a deleted group from the list and from the role holders of the site', () => {
-        context.tag('manage-groups', 'delete-group-roles')
+    // group store of the site, where that resolution happens. The ACE of the group stays in the ACL
+    // of the site after the deletion, so this test does not read the ACL.
+    it('removes a deleted group from the list and from the group store of the site', () => {
+        context.tag('manage-groups', 'delete-group')
         siteGroupNames().should('include', deletedGroup)
 
         cy.login()
@@ -130,6 +131,8 @@ describe('Manage Groups - access granted by group membership', () => {
     it('grants site administration to the users added to site-administrators', () => {
         context.tag('manage-groups', 'site-admin-membership')
         loginGlobalUser(globalAdmin)
+        statusOf(manageGroups(siteKey)).should('eq', 404)
+        loginSiteUser(siteAdmin, siteKey)
         statusOf(manageGroups(siteKey)).should('eq', 404)
 
         cy.login()
@@ -149,9 +152,19 @@ describe('Manage Groups - access granted by group membership', () => {
         createAndDeleteGroup('bysiteadmin' + uniq)
     })
 
-    it('refuses a user of one site the edit access to another site', () => {
-        context.tag('manage-groups', 'site-user-cross-site-403')
-        cy.login()
+    // Both users hold editor on the other site through the same kind of ACE, so the global user's
+    // 200 shows that the ACE grants access, and the site user's 404 comes from the site boundary.
+    it('refuses a user of one site the edit access to another site, even with a role there', () => {
+        context.tag('manage-groups', 'site-user-cross-site')
+        ;[globalEditor, siteEditor].forEach((user) =>
+            cy.executeGroovy('groovy/grantRoleToUser.groovy', {
+                NODE_PATH: `/sites/${otherSiteKey}`,
+                USER_NAME: user,
+                ROLE: 'editor',
+            }),
+        )
+
+        loginGlobalUser(globalEditor)
         statusOf(editFrame(otherSiteKey)).should('eq', 200)
 
         loginSiteUser(siteEditor, siteKey)

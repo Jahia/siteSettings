@@ -1,6 +1,6 @@
-import { BasePage } from '@jahia/cypress'
+import { SiteSettingsPage } from './siteSettingsPage'
 
-export class GroupMembersPage extends BasePage {
+export class GroupMembersPage extends SiteSettingsPage {
     startAddUsers() {
         cy.get('[name="_eventId_editGroupMembers"]').click()
         return this
@@ -51,11 +51,6 @@ export class GroupMembersPage extends BasePage {
 
     verifyNoMember() {
         cy.contains('td', 'No item found').should('be.visible')
-        return this
-    }
-
-    verifySuccessMessage(text: string) {
-        cy.contains('.alert-success', text).should('be.visible')
         return this
     }
 
