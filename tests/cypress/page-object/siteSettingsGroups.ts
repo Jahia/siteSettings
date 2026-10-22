@@ -1,8 +1,8 @@
-import { BasePage } from '@jahia/cypress'
+import { SiteSettingsPage } from './siteSettingsPage'
 import { GroupCreationPage } from './groupCreationPage'
 import { GroupMembersPage } from './groupMembersPage'
 
-export class SiteSettingsGroups extends BasePage {
+export class SiteSettingsGroups extends SiteSettingsPage {
     static visit(siteKey: string): SiteSettingsGroups {
         cy.visit(`/cms/editframe/default/en/sites/${siteKey}.manageGroups.html`)
         return new SiteSettingsGroups()
@@ -31,5 +31,25 @@ export class SiteSettingsGroups extends BasePage {
     startGroupCreation() {
         cy.get('[name="_eventId_createGroup"]').click()
         return new GroupCreationPage()
+    }
+
+    /* The Copy action of a group row, anchored on href + the group key held by the onclick. */
+    startGroupCopy(groupname: string) {
+        cy.get(`a[href="#copy"][onclick*="/${groupname}'"]`).click()
+        return new GroupCreationPage()
+    }
+
+    /* The group list is a DataTables table: its search box filters the rows client-side. */
+    filter(text: string) {
+        cy.get('input[aria-controls="manageGroups"]').clear()
+        if (text) {
+            cy.get('input[aria-controls="manageGroups"]').type(text)
+        }
+        return this
+    }
+
+    verifyGroupListed(groupname: string) {
+        cy.contains('td a', groupname).should('be.visible')
+        return this
     }
 }
