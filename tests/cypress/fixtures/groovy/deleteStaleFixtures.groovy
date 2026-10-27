@@ -5,7 +5,7 @@ import org.jahia.services.sites.JahiaSitesService
 import org.jahia.services.usermanager.JahiaUserManagerService
 import javax.jcr.RepositoryException
 
-// Delete the sites and the server-global users whose name starts with PREFIX, left over by a run
+// Delete the sites, the server-global users and the roles whose name starts with PREFIX, left over by a run
 // whose own cleanup failed. Tokens replaced by cy.executeGroovy.
 JCRTemplate.getInstance().doExecuteWithSystemSession(new JCRCallback() {
     @Override
@@ -21,6 +21,10 @@ JCRTemplate.getInstance().doExecuteWithSystemSession(new JCRCallback() {
         ums.searchUsers(criteria, session).findAll { it.name.startsWith("PREFIX") }.each {
             log.info("deleteStaleFixtures: user " + it.name)
             ums.deleteUser(it.path, session)
+        }
+        session.getNode("/roles").getNodes().findAll { it.name.startsWith("PREFIX") }.each {
+            log.info("deleteStaleFixtures: role " + it.name)
+            it.remove()
         }
         session.save()
         return null
