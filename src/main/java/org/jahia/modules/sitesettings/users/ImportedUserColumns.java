@@ -18,11 +18,13 @@ import java.util.Set;
  * namespace carries profile data of the deployment's own making, and the import writes it as it stands.
  * <p>
  * The set is written out here rather than derived from the node type, because "declared by {@code jnt:user}"
- * is not the predicate this class needs. The type declares 20 names, and seven of them stay out.
+ * is not the predicate this class needs. The type declares 22 names, and nine of them stay out.
  * {@code j:password}, {@code j:external}, {@code j:externalSource}, {@code j:accountLocked},
  * {@code j:invalidateSessionTime} and {@code j:publicProperties} carry account or session state rather than
  * profile data, and core draws the same line for its own generic write actions in
  * {@code SettingsBean.DEFAULT_RENDER_ACTION_RESTRICTED_PROPERTIES}, which names all six.
+ * {@code j:rememberMeTokens} and {@code j:cookieToken} store the remember-me tokens of the user, which only
+ * the platform writes, and {@code jnt:user} declares them from 8.2.4.0.
  * {@code j:picture} stays out for a different reason: it is a weakreference to a file, which a CSV cell
  * carries no sensible way to state.
  * <p>
