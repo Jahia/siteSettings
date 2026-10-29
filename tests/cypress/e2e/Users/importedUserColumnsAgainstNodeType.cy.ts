@@ -41,6 +41,12 @@ const KNOWN_NOT_IMPORTED = [
     'j:picture',
 ]
 
+/* Left out as well: they store the remember-me tokens of the user, and only the platform writes them.
+ *
+ * jnt:user declares them only from Jahia 8.2.4.0, so a name of this list counts as placed when the node type
+ * declares it, and the test does not require the node type to declare it. */
+const KNOWN_NOT_IMPORTED_FROM_8_2_4 = ['j:rememberMeTokens', 'j:cookieToken']
+
 describe('Bulk create users - the imported column set against jnt:user', () => {
     beforeEach(() => {
         cy.login()
@@ -61,7 +67,8 @@ describe('Bulk create users - the imported column set against jnt:user', () => {
 
             declared.forEach((name) => {
                 const imported = IMPORTED.includes(name)
-                const knownNotImported = KNOWN_NOT_IMPORTED.includes(name)
+                const knownNotImported =
+                    KNOWN_NOT_IMPORTED.includes(name) || KNOWN_NOT_IMPORTED_FROM_8_2_4.includes(name)
                 expect(
                     imported !== knownNotImported,
                     `${name} is declared by jnt:user and belongs in exactly one of IMPORTED / KNOWN_NOT_IMPORTED`,
