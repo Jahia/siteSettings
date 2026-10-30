@@ -47,8 +47,8 @@ describe('Manage Users - search field', () => {
         searchAndReadBack('root').should('have.value', 'root')
     })
 
-    it('shows a search text with quotes, an ampersand, angle brackets and accents as typed', () => {
-        const text = `zoé & <o'brien> "qa" l'été`
+    it('shows a search text with quotes, ampersands, angle brackets and accents as typed', () => {
+        const text = `zoé & <o'brien> "qa" l'été &lt;b&gt;`
         searchAndReadBack(text).should('have.value', text)
     })
 })
