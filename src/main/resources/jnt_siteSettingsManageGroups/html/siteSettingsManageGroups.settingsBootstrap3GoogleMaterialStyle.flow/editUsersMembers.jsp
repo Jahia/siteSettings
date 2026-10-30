@@ -47,7 +47,7 @@
                 </label>
                 <div class="input-group">
                     <input class="form-control" type="text" id="searchString" name="searchString"
-                           value='${memberSearchCriteria.searchString}'
+                           value='${fn:escapeXml(memberSearchCriteria.searchString)}'
                            onkeydown="if (event.keyCode == 13) submitForm('search');"/>
                     <span class="input-group-btn">
                         <button class="btn btn-primary btn-fab btn-fab-xs" type="submit" name="_eventId_search">
@@ -83,7 +83,7 @@
                     <div class="form-group form-group-sm">
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox" class="provCheck" name="providers" value="${curProvider}"
+                                <input type="checkbox" class="provCheck" name="providers" value="${fn:escapeXml(curProvider)}"
                                     ${memberSearchCriteria.storedOn != 'providers' ? 'disabled="disabled"' : ''}
                                     ${empty memberSearchCriteria.providers || functions:contains(memberSearchCriteria.providers, curProvider) ? 'checked="checked"' : ''}/>
                                     <fmt:message var="i18nProviderLabel" key="providers.${curProvider}.label"/>
