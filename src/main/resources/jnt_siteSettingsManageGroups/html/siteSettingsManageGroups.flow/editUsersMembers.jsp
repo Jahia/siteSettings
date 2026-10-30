@@ -55,7 +55,7 @@
                     key="label.providers"/>
 
                 <c:forEach items="${providers}" var="curProvider">
-                    <input type="checkbox" class="provCheck" name="providers" value="${curProvider}"
+                    <input type="checkbox" class="provCheck" name="providers" value="${fn:escapeXml(curProvider)}"
                         ${memberSearchCriteria.storedOn != 'providers' ? 'disabled="disabled"' : ''}
                         ${empty memberSearchCriteria.providers || functions:contains(memberSearchCriteria.providers, curProvider) ? 'checked="checked"' : ''}/>
                     <fmt:message var="i18nProviderLabel" key="providers.${curProvider}.label"/>
