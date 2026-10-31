@@ -114,7 +114,7 @@
                 </label>
                 <div class="input-group">
                     <input class="form-control" type="text" id="searchString" name="searchString"
-                           value='${searchCriteria.searchString}'
+                           value='${fn:escapeXml(searchCriteria.searchString)}'
                            onkeydown="if (event.keyCode == 13) submitForm('search');"/>
                     <span class="input-group-btn">
                         <button class="btn btn-fab btn-fab-xs btn-primary" type="submit"  name="_eventId_search">
