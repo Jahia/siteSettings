@@ -19,7 +19,8 @@ export class SiteSettingsRoles extends SiteSettingsPage {
     }
 
     /* A member row of the role, anchored on its revoke button. From default 8.11.0 the button carries
-     * data-principal '<u|g>:<principal name>' and data-role; before, only the id '<principal>_<role>'. */
+     * data-principal '<u|g>:<principal name>' and data-role; before, only the id '<u|g>:<principal name>_<role>'.
+     * Drop the id clause once the Release image carries default 8.11.0. */
     verifyUserMember(role: string, username: string) {
         cy.get(`table[data-sel-role="${role}-users"]`).find(getRevokeButtonSelector(role, username)).should('exist')
         return this
