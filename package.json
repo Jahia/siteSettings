@@ -36,7 +36,7 @@
   "dependencies": {
     "@apollo/client": "^3.7.17",
     "@jahia/data-helper": "^1.1.4",
-    "@jahia/moonstone": "^2.20.3",
+    "@jahia/moonstone": "^2.21.0",
     "@jahia/ui-extender": "^1.1.0",
     "clsx": "^2.0.0",
     "dayjs": "^1.11.9",
