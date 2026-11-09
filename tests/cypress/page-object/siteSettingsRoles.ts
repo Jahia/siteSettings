@@ -18,20 +18,28 @@ export class SiteSettingsRoles extends SiteSettingsPage {
         return new RoleMembersPage()
     }
 
-    /* A member row of the role, anchored on the id of its revoke button: '<u|g>:<principal name>_<role>'. */
+    /* A member row of the role, anchored on its revoke button. From default 8.11.0 the button carries
+     * data-principal '<u|g>:<principal name>' and data-role; before, only the id '<principal>_<role>'. */
     verifyUserMember(role: string, username: string) {
         cy.get(`table[data-sel-role="${role}-users"]`)
-            .find(`a.revokeRoleButton[id="u:${username}_${role}"]`)
+            .find(getRevokeButtonSelector(role, username))
             .should('exist')
         return this
     }
 
     verifyNotUserMember(role: string, username: string) {
         cy.get(`table[data-sel-role="${role}-users"]`)
-            .find(`a.revokeRoleButton[id="u:${username}_${role}"]`)
+            .find(getRevokeButtonSelector(role, username))
             .should('not.exist')
         return this
     }
+}
+
+function getRevokeButtonSelector(role: string, username: string): string {
+    return (
+        `a.revokeRoleButton[data-principal="u:${username}"][data-role="${role}"], ` +
+        `a.revokeRoleButton[id="u:${username}_${role}"]`
+    )
 }
 
 /* The member picker of a role. Saving ends the flow, which renders the role list again. */
