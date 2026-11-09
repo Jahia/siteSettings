@@ -21,16 +21,12 @@ export class SiteSettingsRoles extends SiteSettingsPage {
     /* A member row of the role, anchored on its revoke button. From default 8.11.0 the button carries
      * data-principal '<u|g>:<principal name>' and data-role; before, only the id '<principal>_<role>'. */
     verifyUserMember(role: string, username: string) {
-        cy.get(`table[data-sel-role="${role}-users"]`)
-            .find(getRevokeButtonSelector(role, username))
-            .should('exist')
+        cy.get(`table[data-sel-role="${role}-users"]`).find(getRevokeButtonSelector(role, username)).should('exist')
         return this
     }
 
     verifyNotUserMember(role: string, username: string) {
-        cy.get(`table[data-sel-role="${role}-users"]`)
-            .find(getRevokeButtonSelector(role, username))
-            .should('not.exist')
+        cy.get(`table[data-sel-role="${role}-users"]`).find(getRevokeButtonSelector(role, username)).should('not.exist')
         return this
     }
 }
