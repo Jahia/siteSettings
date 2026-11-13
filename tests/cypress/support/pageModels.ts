@@ -14,7 +14,8 @@
 // The visit passes jahia.ui.theme=default. Without it a logged-in session resolves the theme to
 // jahia-anthracite, and the theme override `<view>-jahia-anthracite` sends both views to the anthracite
 // template. With it, neither `<view>-default` exists, so each view falls back to its own template.
-export type PageModelsView = 'page-models' | 'page-models-jahia-anthracite'
+export const PAGE_MODELS_VIEWS = ['page-models', 'page-models-jahia-anthracite'] as const
+export type PageModelsView = typeof PAGE_MODELS_VIEWS[number]
 
 const MAX_ATTEMPTS = 10
 

@@ -8,7 +8,7 @@
 // regression in one does not imply the other. #244 and #245 (the fixes this line exists to verify) each
 // had to apply the same escaping by hand to both files.
 import { createSite, deleteSite } from '@jahia/cypress'
-import { openPageModelsUntilRow, PageModelsView } from '../support/pageModels'
+import { openPageModelsUntilRow, PAGE_MODELS_VIEWS } from '../support/pageModels'
 
 describe('Manage Page Models - path rendering', () => {
     const SITE = 'pageModelsEscapingSite'
@@ -38,8 +38,7 @@ describe('Manage Page Models - path rendering', () => {
         deleteSite(SITE)
     })
 
-    const views: PageModelsView[] = ['page-models', 'page-models-jahia-anthracite']
-    views.forEach((view) => {
+    PAGE_MODELS_VIEWS.forEach((view) => {
         // the default view keeps its original title, which TestRail and incident dedup key on
         const title =
             'renders a page-model path containing markup as literal text (no active element, no handler fires)'
