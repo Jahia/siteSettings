@@ -65,7 +65,7 @@ describe('Manage Page Models - empty-list alert', () => {
             cy.get('#pageModelsTable tbody', { timeout: 10000 }).should('exist')
             // only the anthracite template wraps the table in div.panel-body, which tells which template answered
             cy.get('.panel-body #pageModelsTable').should(view === 'page-models' ? 'not.exist' : 'exist')
-            cy.get('#pageModelsTable tbody tr').should('not.exist')
+            // no row count is asserted: DataTables draws its own "no data" row client-side on an empty table
             cy.get('.alert-info').should('be.visible')
         })
     })
