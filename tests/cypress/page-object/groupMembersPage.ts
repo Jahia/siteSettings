@@ -1,6 +1,6 @@
-import { BasePage } from '@jahia/cypress'
+import { SiteSettingsPage } from './siteSettingsPage'
 
-export class GroupMembersPage extends BasePage {
+export class GroupMembersPage extends SiteSettingsPage {
     startAddUsers() {
         cy.get('[name="_eventId_editGroupMembers"]').click()
         return this
@@ -13,6 +13,45 @@ export class GroupMembersPage extends BasePage {
 
     save() {
         cy.get('[id="saveButton"]').click()
+    }
+
+    switchToGroups() {
+        cy.get('[data-sel-role="switchToGroupsView"]').click()
+        return this
+    }
+
+    /* A candidate row of the member picker, identified by the end of the principal key it holds. The
+     * styled checkbox hides its input, so the click goes to the label that wraps it. */
+    selectCandidate(principalName: string) {
+        cy.get(`input.selectedMember[value$="/${principalName}"]`).closest('label').click()
+        return this
+    }
+
+    /* A member row of the group, identified by the end of the principal key it holds. */
+    selectMember(principalName: string) {
+        cy.get(`input[name="selectedMembers"][value$="/${principalName}"]`).closest('label').click()
+        return this
+    }
+
+    /* The bulk Remove action, guarded by a native confirm(), auto-accepted by Cypress. */
+    removeSelectedMembers() {
+        cy.get('button[name="_eventId_removeMembers"][onclick*="removeMultipleGroupMembers"]').click()
+        return this
+    }
+
+    verifyMemberListed(principalName: string) {
+        cy.get(`input[name="selectedMembers"][value$="/${principalName}"]`).should('exist')
+        return this
+    }
+
+    verifyMemberNotListed(principalName: string) {
+        cy.get(`input[name="selectedMembers"][value$="/${principalName}"]`).should('not.exist')
+        return this
+    }
+
+    verifyNoMember() {
+        cy.contains('td', 'No item found').should('be.visible')
+        return this
     }
 
     verifyUserNameDisplayed(text: string) {

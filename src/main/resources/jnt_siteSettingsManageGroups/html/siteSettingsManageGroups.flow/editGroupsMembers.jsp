@@ -80,7 +80,7 @@
             <c:otherwise>
                 <c:forEach items="${principals}" var="principal" varStatus="loopStatus">
                     <tr>
-                        <td><input onchange="selectMember(this)" class="selectedMember" type="checkbox" name="selectedMembers" value="${principal.key.groupKey}" ${principal.value ? 'checked="checked"' : ''}/> </td>
+                        <td><input onchange="selectMember(this)" class="selectedMember" type="checkbox" name="selectedMembers" value="${fn:escapeXml(principal.key.groupKey)}" ${principal.value ? 'checked="checked"' : ''}/> </td>
                         <td>
                                 ${fn:escapeXml(user:displayName(principal.key))}
                         </td>

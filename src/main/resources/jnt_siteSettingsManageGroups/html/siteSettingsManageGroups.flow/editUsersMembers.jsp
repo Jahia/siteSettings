@@ -34,7 +34,7 @@
             <div class="input-append">
                 <label style="display: none;" for="searchString"><fmt:message key="label.search"/></label>
                 <input class="span6" type="text" id="searchString" name="searchString"
-                       value='${memberSearchCriteria.searchString}'
+                       value='${fn:escapeXml(memberSearchCriteria.searchString)}'
                        onkeydown="if (event.keyCode == 13) submitForm('search');"/>
                 <button class="btn btn-primary" type="submit" name="_eventId_search">
                     <i class="icon-search icon-white"></i>
@@ -55,7 +55,7 @@
                     key="label.providers"/>
 
                 <c:forEach items="${providers}" var="curProvider">
-                    <input type="checkbox" class="provCheck" name="providers" value="${curProvider}"
+                    <input type="checkbox" class="provCheck" name="providers" value="${fn:escapeXml(curProvider)}"
                         ${memberSearchCriteria.storedOn != 'providers' ? 'disabled="disabled"' : ''}
                         ${empty memberSearchCriteria.providers || functions:contains(memberSearchCriteria.providers, curProvider) ? 'checked="checked"' : ''}/>
                     <fmt:message var="i18nProviderLabel" key="providers.${curProvider}.label"/>
@@ -102,7 +102,7 @@
             <c:otherwise>
                 <c:forEach items="${principals}" var="principal" end="${userDisplayLimit - 1}" varStatus="loopStatus">
                     <tr>
-                        <td><input onchange="selectMember(this)" class="selectedMember" type="checkbox" name="selectedMembers" value="${principal.key.userKey}" ${principal.value ? 'checked="checked"' : ''}/> </td>
+                        <td><input onchange="selectMember(this)" class="selectedMember" type="checkbox" name="selectedMembers" value="${fn:escapeXml(principal.key.userKey)}" ${principal.value ? 'checked="checked"' : ''}/> </td>
                         <td>
                             ${fn:escapeXml(user:displayName(principal.key))}
                         </td>

@@ -65,7 +65,7 @@
             <div class="input-append">
                 <label style="display: none;"  for="searchString"><fmt:message key="label.search"/></label>
                 <input class="span6" type="text" id="searchString" name="searchString"
-                       value='${searchCriteria.searchString}'
+                       value='${fn:escapeXml(searchCriteria.searchString)}'
                        onkeydown="if (event.keyCode == 13) submitForm('search');"/>
                 <button class="btn btn-primary" type="submit"  name="_eventId_search">
                     <i class="icon-search icon-white"></i>
@@ -176,6 +176,12 @@
             <button type="button" class="close" data-dismiss="alert">&times;</button>
                 ${message.text}
         </div>
+        </c:if>
+        <c:if test="${message.severity eq 'WARNING'}">
+            <div class="alert alert-warning">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    ${message.text}
+            </div>
         </c:if>
         <c:if test="${message.severity eq 'ERROR'}">
             <div class="alert alert-error">

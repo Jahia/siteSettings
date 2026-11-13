@@ -1,0 +1,11 @@
+query getNodeChildrenNames($path: String!) {
+    jcr {
+        nodeByPath(path: $path) {
+            children {
+                nodes {
+                    name
+                }
+            }
+        }
+    }
+}
