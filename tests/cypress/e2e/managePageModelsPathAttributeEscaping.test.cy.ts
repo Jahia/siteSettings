@@ -4,8 +4,13 @@
 // even when the underlying node name contains reserved markup characters including a double quote.
 // Self-contained (CI-ready): creates its own site + a template-model page whose node NAME carries the
 // markup in before(), tears the site down in after().
+//
+// Runs against both content-templates siteSettings registers for this screen (default and
+// settingsBootstrap3GoogleMaterialStyle): the two JSPs are maintained as separate files, so a fix or a
+// regression in one does not imply the other. #244 and #245 (the fixes this line exists to verify) each
+// had to apply the same escaping by hand to both files.
 import { createSite, deleteSite } from '@jahia/cypress'
-import { openPageModelsUntilRow } from '../support/pageModels'
+import { openPageModelsUntilRow, PAGE_MODELS_VIEWS } from '../support/pageModels'
 
 describe('Manage Page Models - path attribute rendering', () => {
     const SITE = 'pageModelsAttrEscapingSite'
@@ -37,23 +42,33 @@ describe('Manage Page Models - path attribute rendering', () => {
         deleteSite(SITE)
     })
 
-    it('keeps a page-model path containing markup inside its attribute (no active element, no handler fires)', () => {
-        cy.login()
-        openPageModelsUntilRow(SITE, '__pageModelsAttrHandlerFired')
+    PAGE_MODELS_VIEWS.forEach((view) => {
+        // the default view keeps its original title, which TestRail and incident dedup key on
+        const title =
+            'keeps a page-model path containing markup inside its attribute (no active element, no handler fires)'
+        it(view === 'page-models' ? title : `${title} [${view}]`, () => {
+            cy.login()
+            openPageModelsUntilRow(SITE, MARKUP, '__pageModelsAttrHandlerFired', view)
 
-        // the path renders as inert literal text in its link cell, quote and trailing markup included
-        cy.contains('#pageModelsTable a', MARKUP, { timeout: 10000 }).should('be.visible')
+            // the path renders as inert literal text in its link cell, quote and trailing markup included
+            cy.contains('#pageModelsTable a', MARKUP, { timeout: 10000 }).should('be.visible')
+            // the module hook's path attribute carries the whole path, quote included, as one value
+            cy.contains('#pageModelsTable tbody tr', MARKUP)
+                .find('div[jahiatype=module]')
+                .should('have.attr', 'path')
+                .and('include', MARKUP)
 
-        // the markup must remain confined to the attribute value — no standalone <img> element with a handler
-        cy.get('#pageModelsTable img[onerror]').should('not.exist')
+            // the markup must remain confined to the attribute value — no standalone <img> element with a handler
+            cy.get('#pageModelsTable img[onerror]').should('not.exist')
 
-        // definitive live check: the onerror handler must never have executed (by the time the row above
-        // has rendered, any element that had escaped the attribute would already have fired).
-        cy.window().then((win) => {
-            expect(
-                (win as unknown as Record<string, unknown>).__pageModelsAttrHandlerFired,
-                'the onerror handler must not fire',
-            ).to.be.undefined
+            // definitive live check: the onerror handler must never have executed (by the time the row above
+            // has rendered, any element that had escaped the attribute would already have fired).
+            cy.window().then((win) => {
+                expect(
+                    (win as unknown as Record<string, unknown>).__pageModelsAttrHandlerFired,
+                    'the onerror handler must not fire',
+                ).to.be.undefined
+            })
         })
     })
 })

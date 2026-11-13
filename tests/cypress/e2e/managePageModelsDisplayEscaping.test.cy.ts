@@ -2,8 +2,13 @@
 // stay text, not become live DOM/HTML), including when the underlying node name contains reserved markup
 // characters. Self-contained (CI-ready): creates its own site + a template-model page whose node NAME
 // carries markup in before(), tears the site down in after().
+//
+// Runs against both content-templates siteSettings registers for this screen (default and
+// settingsBootstrap3GoogleMaterialStyle): the two JSPs are maintained as separate files, so a fix or a
+// regression in one does not imply the other. #244 and #245 (the fixes this line exists to verify) each
+// had to apply the same escaping by hand to both files.
 import { createSite, deleteSite } from '@jahia/cypress'
-import { openPageModelsUntilRow } from '../support/pageModels'
+import { openPageModelsUntilRow, PAGE_MODELS_VIEWS } from '../support/pageModels'
 
 describe('Manage Page Models - path rendering', () => {
     const SITE = 'pageModelsEscapingSite'
@@ -33,22 +38,27 @@ describe('Manage Page Models - path rendering', () => {
         deleteSite(SITE)
     })
 
-    it('renders a page-model path containing markup as literal text (no active element, no handler fires)', () => {
-        cy.login()
-        openPageModelsUntilRow(SITE, '__pageModelsPathHandlerFired')
+    PAGE_MODELS_VIEWS.forEach((view) => {
+        // the default view keeps its original title, which TestRail and incident dedup key on
+        const title =
+            'renders a page-model path containing markup as literal text (no active element, no handler fires)'
+        it(view === 'page-models' ? title : `${title} [${view}]`, () => {
+            cy.login()
+            openPageModelsUntilRow(SITE, MARKUP, '__pageModelsPathHandlerFired', view)
 
-        // the path must appear as escaped literal text inside its link cell
-        cy.contains('a', MARKUP, { timeout: 10000 }).should('be.visible')
-        // and must stay text — no standalone <img> element carrying an onerror handler
-        cy.get('td img[onerror]').should('not.exist')
+            // the path must appear as escaped literal text inside its link cell
+            cy.contains('#pageModelsTable a', MARKUP, { timeout: 10000 }).should('be.visible')
+            // and must stay text — no standalone <img> element carrying an onerror handler
+            cy.get('#pageModelsTable img[onerror]').should('not.exist')
 
-        // definitive live check: the onerror handler must never have executed (by the time the link
-        // above has rendered as visible text, any onerror would already have fired).
-        cy.window().then((win) => {
-            expect(
-                (win as unknown as Record<string, unknown>).__pageModelsPathHandlerFired,
-                'the onerror handler must not fire',
-            ).to.be.undefined
+            // definitive live check: the onerror handler must never have executed (by the time the link
+            // above has rendered as visible text, any onerror would already have fired).
+            cy.window().then((win) => {
+                expect(
+                    (win as unknown as Record<string, unknown>).__pageModelsPathHandlerFired,
+                    'the onerror handler must not fire',
+                ).to.be.undefined
+            })
         })
     })
 })
