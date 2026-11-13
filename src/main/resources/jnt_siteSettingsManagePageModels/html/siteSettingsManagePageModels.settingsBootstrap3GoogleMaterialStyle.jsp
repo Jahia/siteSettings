@@ -14,7 +14,6 @@
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
 <c:set var="resourceReadOnly" value="${currentResource.moduleParams.readOnly}"/>
 <template:include view="hidden.header"/>
-<c:set var="isEmpty" value="true"/>
 <c:set var="site" value="${renderContext.mainResource.node.resolveSite}"/>
 <template:addResources type="javascript" resources="jquery.min.js"/>
 <template:addResources type="javascript" resources="datatables/jquery.dataTables.js,i18n/jquery.dataTables-${currentResource.locale}.js,datatables/dataTables.bootstrap-ext.js,settings/dataTables.initializer.js"/>
@@ -32,7 +31,8 @@
     <h2><fmt:message key="siteSettings.label.pageModelsLSettings"/> - ${fn:escapeXml(site.displayableName)}</h2>
 </div>
 
-<c:if test="${not empty moduleMap.emptyListMessage and (renderContext.editMode or moduleMap.forceEmptyListMessageDisplay) and isEmpty}">
+<%-- the list itself decides: this alert renders before the row loop below, so a flag the loop sets would still read true here (#323) --%>
+<c:if test="${not empty moduleMap.emptyListMessage and (renderContext.editMode or moduleMap.forceEmptyListMessageDisplay) and empty moduleMap.currentList}">
     <div class="alert alert-info">${moduleMap.emptyListMessage}</div>
 </c:if>
 
@@ -68,7 +68,6 @@
                         <a href="<c:url value='${url.base}${pageModelPathAttr}.html'/>"><c:out value='${pageModel.path}'/></a>
                     </td>
                 </tr>
-                <c:set var="isEmpty" value="false"/>
             </c:forEach>
             </tbody>
         </table>
