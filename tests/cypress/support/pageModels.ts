@@ -18,11 +18,16 @@ export type PageModelsView = 'page-models' | 'page-models-jahia-anthracite'
 
 const MAX_ATTEMPTS = 10
 
+// Only the anthracite template wraps the table in div.panel-body, which tells which template answered.
+const assertPageModelsView = (view: PageModelsView): void => {
+    cy.get('.panel-body #pageModelsTable').should(view === 'page-models' ? 'not.exist' : 'exist')
+}
+
 export const openPageModelsUntilRow = (
     siteKey: string,
     plantedName: string,
     handlerFlag: string,
-    view: PageModelsView = 'page-models',
+    view: PageModelsView,
     attempt = 0,
 ): Cypress.Chainable => {
     const plantedPath = `/sites/${siteKey}/${plantedName}`
@@ -34,6 +39,7 @@ export const openPageModelsUntilRow = (
     // return the chain so the caller's assertions are queued strictly after the retries
     return cy.get('#pageModelsTable tbody', { timeout: 10000 }).then(($tbody) => {
         if ($tbody.text().includes(plantedPath)) {
+            assertPageModelsView(view)
             return
         }
         if (attempt >= MAX_ATTEMPTS) {
@@ -47,9 +53,4 @@ export const openPageModelsUntilRow = (
         cy.wait(3000)
         return openPageModelsUntilRow(siteKey, plantedName, handlerFlag, view, attempt + 1)
     })
-}
-
-// Only the anthracite template wraps the table in div.panel-body, which tells which template answered.
-export const assertPageModelsView = (view: PageModelsView): void => {
-    cy.get('.panel-body #pageModelsTable').should(view === 'page-models' ? 'not.exist' : 'exist')
 }

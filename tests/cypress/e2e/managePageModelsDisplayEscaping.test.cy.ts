@@ -5,10 +5,10 @@
 //
 // Runs against both content-templates siteSettings registers for this screen (default and
 // settingsBootstrap3GoogleMaterialStyle): the two JSPs are maintained as separate files, so a fix or a
-// regression in one does not imply the other — #244/#245 (the fixes this line exists to verify) were
-// themselves shipped as separate patches per view for exactly that reason.
+// regression in one does not imply the other. #244 and #245 (the fixes this line exists to verify) each
+// had to apply the same escaping by hand to both files.
 import { createSite, deleteSite } from '@jahia/cypress'
-import { assertPageModelsView, openPageModelsUntilRow, PageModelsView } from '../support/pageModels'
+import { openPageModelsUntilRow, PageModelsView } from '../support/pageModels'
 
 describe('Manage Page Models - path rendering', () => {
     const SITE = 'pageModelsEscapingSite'
@@ -46,7 +46,6 @@ describe('Manage Page Models - path rendering', () => {
         it(view === 'page-models' ? title : `${title} [${view}]`, () => {
             cy.login()
             openPageModelsUntilRow(SITE, MARKUP, '__pageModelsPathHandlerFired', view)
-            assertPageModelsView(view)
 
             // the path must appear as escaped literal text inside its link cell
             cy.contains('#pageModelsTable a', MARKUP, { timeout: 10000 }).should('be.visible')
