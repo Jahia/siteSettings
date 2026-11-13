@@ -59,9 +59,7 @@ describe('Manage Page Models - empty-list alert', () => {
         it(view === 'page-models' ? alertTitle : `${alertTitle} [${view}]`, () => {
             cy.login()
             // no row can ever surface here, so a single load settles the screen
-            cy.visit(
-                `/cms/editframe/default/en/sites/${SITE_WITHOUT_MODEL}.${view}.html?jahia.ui.theme=default`,
-            )
+            cy.visit(`/cms/editframe/default/en/sites/${SITE_WITHOUT_MODEL}.${view}.html?jahia.ui.theme=default`)
             cy.get('#pageModelsTable tbody', { timeout: 10000 }).should('exist')
             // only the anthracite template wraps the table in div.panel-body, which tells which template answered
             cy.get('.panel-body #pageModelsTable').should(view === 'page-models' ? 'not.exist' : 'exist')
