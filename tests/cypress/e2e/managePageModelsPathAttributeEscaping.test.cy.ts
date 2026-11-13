@@ -10,7 +10,7 @@
 // regression in one does not imply the other — #244/#245 (the fixes this line exists to verify) were
 // themselves shipped as separate patches per view for exactly that reason.
 import { createSite, deleteSite } from '@jahia/cypress'
-import { openPageModelsUntilRow, PageModelsView } from '../support/pageModels'
+import { assertPageModelsView, openPageModelsUntilRow, PageModelsView } from '../support/pageModels'
 
 describe('Manage Page Models - path attribute rendering', () => {
     const SITE = 'pageModelsAttrEscapingSite'
@@ -44,12 +44,18 @@ describe('Manage Page Models - path attribute rendering', () => {
 
     const views: PageModelsView[] = ['page-models', 'page-models-jahia-anthracite']
     views.forEach((view) => {
-        it(`keeps a page-model path containing markup inside its attribute (no active element, no handler fires) [${view}]`, () => {
+        // the default view keeps its original title, which TestRail and incident dedup key on
+        const title =
+            'keeps a page-model path containing markup inside its attribute (no active element, no handler fires)'
+        it(view === 'page-models' ? title : `${title} [${view}]`, () => {
             cy.login()
-            openPageModelsUntilRow(SITE, '__pageModelsAttrHandlerFired', view)
+            openPageModelsUntilRow(SITE, MARKUP, '__pageModelsAttrHandlerFired', view)
+            assertPageModelsView(view)
 
             // the path renders as inert literal text in its link cell, quote and trailing markup included
             cy.contains('#pageModelsTable a', MARKUP, { timeout: 10000 }).should('be.visible')
+            // the module hook's path attribute carries the whole path, quote included, as one value
+            cy.get('#pageModelsTable div[jahiatype=module]').should('have.attr', 'path').and('include', MARKUP)
 
             // the markup must remain confined to the attribute value — no standalone <img> element with a handler
             cy.get('#pageModelsTable img[onerror]').should('not.exist')
