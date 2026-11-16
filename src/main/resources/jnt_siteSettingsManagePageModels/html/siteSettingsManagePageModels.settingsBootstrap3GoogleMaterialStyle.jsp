@@ -31,8 +31,8 @@
     <h2><fmt:message key="siteSettings.label.pageModelsLSettings"/> - ${fn:escapeXml(site.displayableName)}</h2>
 </div>
 
-<%-- the list itself decides: this alert renders before the row loop below, so a flag the loop sets would still read true here (#323) --%>
-<c:if test="${not empty moduleMap.emptyListMessage and (renderContext.editMode or moduleMap.forceEmptyListMessageDisplay) and empty moduleMap.currentList}">
+<%-- the size the list header computed decides: this alert renders before the row loop below, and currentList is a node iterator, which the EL "empty" operator never reads as empty (#323) --%>
+<c:if test="${not empty moduleMap.emptyListMessage and (renderContext.editMode or moduleMap.forceEmptyListMessageDisplay) and moduleMap.listTotalSize == 0}">
     <div class="alert alert-info">${moduleMap.emptyListMessage}</div>
 </c:if>
 
