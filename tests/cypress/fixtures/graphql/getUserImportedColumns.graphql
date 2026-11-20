@@ -7,6 +7,7 @@ query ($username: String!) {
                     uuid
                 }
                 firstName: property(name: "j:firstName")
+                lastName: property(name: "j:lastName")
                 employeeId: property(name: "employeeId")
                 accountLocked: property(name: "j:accountLocked")
                 title: property(name: "jcr:title")

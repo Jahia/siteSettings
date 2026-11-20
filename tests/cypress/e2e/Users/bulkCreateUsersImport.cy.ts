@@ -5,8 +5,8 @@ import { SiteSettingsUsers } from '../../page-object/siteSettingsUsers'
  *
  * A file of valid users creates each of them, names each one in its own success alert, writes the
  * profile columns the file states, and leaves an account that signs in with the password of the file.
- * A file without the password column creates no one, and the upload view names the two mandatory
- * columns. Migrated from ManageUsersTest#importCSVUsers of Jahia/selenium (FT-029, FT-030 of
+ * A file without the password column, or without the user name column, creates no one, and the upload
+ * view names the two mandatory columns. Migrated from ManageUsersTest#importCSVUsers of Jahia/selenium (FT-029, FT-030 of
  * Jahia/selenium#1604).
  *
  * The users and their values are read from the fixtures, so a fixture is the one place that lists them.
@@ -18,6 +18,7 @@ type CsvRow = Record<string, string>
 
 const VALID_USERS = 'csv/bulkCreateUsersValidUsers.csv'
 const NO_PASSWORD = 'csv/bulkCreateUsersNoPassword.csv'
+const NO_USERNAME = 'csv/bulkCreateUsersNoUsername.csv'
 
 /* The rows of a CSV fixture, each keyed by the column names of the header line. The fixtures hold
  * plain values, with no quoted separator, so a split on the comma reads them. */
@@ -101,7 +102,12 @@ describe('Bulk create users - CSV import', () => {
             })
 
         users.forEach((row) => {
-            readUser(row['j:nodename']).its('data.admin.userAdmin.user.firstName').should('eq', row['j:firstName'])
+            readUser(row['j:nodename'])
+                .its('data.admin.userAdmin.user')
+                .should((user) => {
+                    expect(user.firstName).to.eq(row['j:firstName'])
+                    expect(user.lastName).to.eq(row['j:lastName'])
+                })
         })
 
         // cy.login fails on a refused sign-in, so a password the import did not store fails here
@@ -112,27 +118,39 @@ describe('Bulk create users - CSV import', () => {
         cy.logout()
     })
 
-    it('creates no one from a file without the password column and names the mandatory columns', () => {
-        // the premise of this case, stated where a fixture that gains the column would break it
-        expect(noPasswordUsers).to.have.length.greaterThan(0)
-        expect(Object.keys(noPasswordUsers[0])).not.to.include('j:password')
-
-        importCsv(NO_PASSWORD)
-
-        // the error only the submit renders, which is also the wait for that render
-        frameBody()
-            .find('.alert-danger, .alert-error')
-            .should(($alerts) => {
-                const texts = [...$alerts].map((alert) => alert.textContent.replace(/\s+/g, ' '))
-                expect(texts.join(' ')).to.contain(
-                    'The uploaded file is missing either j:nodename or j:password mandatory columns',
-                )
+    /* Each file misses one of the two mandatory columns, so each case reaches its own half of the guard
+     * of the import. */
+    ;[
+        { fixture: NO_PASSWORD, missing: 'j:password' },
+        { fixture: NO_USERNAME, missing: 'j:nodename' },
+    ].forEach(({ fixture, missing }) => {
+        it(`creates no one from a file without ${missing} and names the mandatory columns`, () => {
+            readCsv(fixture).then((rows) => {
+                // the premise of this case, stated where a fixture that gains the column would break it
+                expect(rows).to.have.length.greaterThan(0)
+                expect(Object.keys(rows[0])).not.to.include(missing)
             })
-        // the file input belongs to the upload view alone, so the flow stayed on it
-        frameBody().find('#csvFile').should('exist')
 
-        noPasswordUsers.forEach((row) => {
-            readUser(row['j:nodename']).its('data.admin.userAdmin.user').should('eq', null)
+            importCsv(fixture)
+
+            // the error only the submit renders, which is also the wait for that render
+            frameBody()
+                .find('.alert-danger, .alert-error')
+                .should(($alerts) => {
+                    const texts = [...$alerts].map((alert) => alert.textContent.replace(/\s+/g, ' '))
+                    expect(texts.join(' ')).to.contain(
+                        'The uploaded file is missing either j:nodename or j:password mandatory columns',
+                    )
+                })
+            // the file input belongs to the upload view alone, so the flow stayed on it
+            frameBody().find('#csvFile').should('exist')
+
+            // a row that names a user did not create it
+            readCsv(fixture).then((rows) => {
+                rows.filter((row) => row['j:nodename']).forEach((row) => {
+                    readUser(row['j:nodename']).its('data.admin.userAdmin.user').should('eq', null)
+                })
+            })
         })
     })
 })
