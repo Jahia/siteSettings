@@ -45,23 +45,26 @@ describe('Bulk create users - CSV import', () => {
 
     const removeUsers = () => [...users, ...noPasswordUsers].forEach((row) => deleteUser(row['j:nodename']))
 
+    /* The body of the document the frame holds now. Each step of the chain is a query, so Cypress re-runs
+     * the whole chain on every retry and reads the document again: a body captured while the frame
+     * re-renders would stay empty, and an assertion on it would never pass. */
+    const frameBody = () => cy.get(IFRAME).its('0.contentDocument.body')
+
+    /* Upload a fixture and submit it. The caller waits for what the submit renders, which tells the
+     * page that answers the submit from the upload page it leaves. */
     const importCsv = (fixture: string) => {
         const usersPage = SiteSettingsUsers.visitGlobal()
         let bulkUserCreationPage
         cy.iframe(IFRAME).within(() => {
             bulkUserCreationPage = usersPage.startBulkUserCreation()
         })
-        //eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(500)
-        cy.iframe(IFRAME).within(() => {
+        // the file input belongs to the upload view alone
+        frameBody().find('#csvFile').should('exist')
+        frameBody().within(() => {
             bulkUserCreationPage.setCsvFile(fixture)
             bulkUserCreationPage.setSeparator(',')
             bulkUserCreationPage.save()
         })
-        /* The submit re-renders the frame, and a body captured while that render is in flight stays
-         * empty, so each assertion below queries the iframe again. */
-        //eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(1000)
     }
 
     before(() => {
@@ -71,9 +74,6 @@ describe('Bulk create users - CSV import', () => {
         readCsv(NO_PASSWORD).then((rows) => {
             noPasswordUsers = rows
         })
-        cy.login()
-        // queued after the two reads, so it removes the users they listed
-        cy.then(removeUsers)
     })
 
     beforeEach(() => {
@@ -91,7 +91,7 @@ describe('Bulk create users - CSV import', () => {
 
         importCsv(VALID_USERS)
 
-        cy.iframe(IFRAME)
+        frameBody()
             .find('.alert-success')
             .should(($alerts) => {
                 const texts = [...$alerts].map((alert) =>
@@ -119,9 +119,8 @@ describe('Bulk create users - CSV import', () => {
 
         importCsv(NO_PASSWORD)
 
-        // the file input belongs to the upload view alone, so the flow stayed on it
-        cy.iframe(IFRAME).find('#csvFile').should('exist')
-        cy.iframe(IFRAME)
+        // the error only the submit renders, which is also the wait for that render
+        frameBody()
             .find('.alert-danger, .alert-error')
             .should(($alerts) => {
                 const texts = [...$alerts].map((alert) => alert.textContent.replace(/\s+/g, ' '))
@@ -129,6 +128,8 @@ describe('Bulk create users - CSV import', () => {
                     'The uploaded file is missing either j:nodename or j:password mandatory columns',
                 )
             })
+        // the file input belongs to the upload view alone, so the flow stayed on it
+        frameBody().find('#csvFile').should('exist')
 
         noPasswordUsers.forEach((row) => {
             readUser(row['j:nodename']).its('data.admin.userAdmin.user').should('eq', null)
