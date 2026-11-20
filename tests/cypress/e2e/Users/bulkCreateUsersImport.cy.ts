@@ -44,6 +44,12 @@ describe('Bulk create users - CSV import', () => {
             variables: { username },
         })
 
+    const listUserUuids = () =>
+        cy
+            .apollo({ queryFile: 'graphql/getUsersQuery.graphql' })
+            .its('data.admin.userAdmin.users.nodes')
+            .then((nodes: { node: { uuid: string } }[]) => nodes.map(({ node }) => node.uuid))
+
     const removeUsers = () => [...users, ...noPasswordUsers].forEach((row) => deleteUser(row['j:nodename']))
 
     /* The body of the document the frame holds now. Each step of the chain is a query, so Cypress re-runs
@@ -138,6 +144,14 @@ describe('Bulk create users - CSV import', () => {
                 expect(Object.keys(rows[0])).not.to.include(missing)
             })
 
+            /* The users before the import, by uuid. A file without j:nodename names no user to look up, so
+             * only the whole list shows that it created no one, under whatever name the import would give. */
+            let uuidsBefore: string[] = []
+            listUserUuids().then((uuids) => {
+                expect(uuids).not.to.be.empty
+                uuidsBefore = uuids
+            })
+
             importCsv(fixture)
 
             // the error only the submit renders, which is also the wait for that render
@@ -158,6 +172,8 @@ describe('Bulk create users - CSV import', () => {
                     readUser(row['j:nodename']).its('data.admin.userAdmin.user').should('eq', null)
                 })
             })
+            // and no user appeared under any name
+            listUserUuids().then((uuids) => expect(uuids).to.have.members(uuidsBefore))
         })
     })
 })
