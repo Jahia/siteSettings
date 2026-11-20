@@ -75,6 +75,13 @@ describe('Bulk create users - CSV import', () => {
         readCsv(NO_PASSWORD).then((rows) => {
             noPasswordUsers = rows
         })
+        /* Remove the users of the fixtures before the run too, not only after it. The user names are
+         * fixed by the fixtures, so a user left by a run that never reached after(), such as a killed run
+         * or a failed cleanup, makes the import answer "User csv1 already exists" instead of creating it,
+         * and every later run fails until someone deletes the user by hand. The removal is queued after
+         * the two reads, so it removes the users they listed, and a user that does not exist is skipped. */
+        cy.login()
+        cy.then(removeUsers)
     })
 
     beforeEach(() => {
