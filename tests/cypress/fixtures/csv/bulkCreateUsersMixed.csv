@@ -1,0 +1,4 @@
+j:nodename,j:password,j:firstName,j:lastName
+csvmixed1,Csv-import-1234,Mixed,One
+root,Csv-import-1234,Root,Declined
+csvmixed2,Csv-import-1234,Mixed,Two

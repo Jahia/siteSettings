@@ -1,24 +1,15 @@
 import { deleteUser } from '@jahia/cypress'
 import { SiteSettingsUsers } from '../../page-object/siteSettingsUsers'
 
-/* The CSV import of the Manage Users screen, from the upload to the account it creates.
- *
- * A file of valid users creates each of them, names each one in its own success alert, writes the
- * profile columns the file states, and leaves an account that signs in with the password of the file.
- * A file without the password column, or without the user name column, creates no one, and the upload
- * view names the two mandatory columns. Migrated from ManageUsersTest#importCSVUsers of Jahia/selenium (FT-029, FT-030 of
- * Jahia/selenium#1604).
- *
- * The users and their values are read from the fixtures, so a fixture is the one place that lists them.
- *
- * The success alerts are compared whole, never as substrings: "Successfully created user csv1" is a
- * substring of the alert of csv19, so a substring match would pass with csv1 missing.
- */
+// Migrated from ManageUsersTest#importCSVUsers of Jahia/selenium (FT-029, FT-030 of Jahia/selenium#1604).
 type CsvRow = Record<string, string>
 
 const VALID_USERS = 'csv/bulkCreateUsersValidUsers.csv'
 const NO_PASSWORD = 'csv/bulkCreateUsersNoPassword.csv'
 const NO_USERNAME = 'csv/bulkCreateUsersNoUsername.csv'
+const MIXED = 'csv/bulkCreateUsersMixed.csv'
+// the row of MIXED the import declines, as a user every Jahia already holds
+const EXISTING_USER = 'root'
 
 /* The rows of a CSV fixture, each keyed by the column names of the header line. The fixtures hold
  * plain values, with no quoted separator, so a split on the comma reads them. */
@@ -37,6 +28,7 @@ describe('Bulk create users - CSV import', () => {
 
     let users: CsvRow[] = []
     let noPasswordUsers: CsvRow[] = []
+    let mixedNewUsers: CsvRow[] = []
 
     const readUser = (username: string) =>
         cy.apollo({
@@ -50,15 +42,19 @@ describe('Bulk create users - CSV import', () => {
             .its('data.admin.userAdmin.users.nodes')
             .then((nodes: { node: { uuid: string } }[]) => nodes.map(({ node }) => node.uuid))
 
-    const removeUsers = () => [...users, ...noPasswordUsers].forEach((row) => deleteUser(row['j:nodename']))
+    const removeUsers = () =>
+        [...users, ...noPasswordUsers, ...mixedNewUsers].forEach((row) => deleteUser(row['j:nodename']))
 
-    /* The body of the document the frame holds now. Each step of the chain is a query, so Cypress re-runs
-     * the whole chain on every retry and reads the document again: a body captured while the frame
-     * re-renders would stay empty, and an assertion on it would never pass. */
+    /* Each step of the chain is a query, so a retry reads the document again: a body captured while the
+     * submit re-renders the frame would stay empty. */
     const frameBody = () => cy.get(IFRAME).its('0.contentDocument.body')
 
-    /* Upload a fixture and submit it. The caller waits for what the submit renders, which tells the
-     * page that answers the submit from the upload page it leaves. */
+    /* The text of each alert of a kind, whole. A substring match would let "Successfully created user
+     * csv1" pass on the alert of csv19 with csv1 missing. */
+    const alertTexts = ($alerts: JQuery<HTMLElement>) =>
+        [...$alerts].map((alert) => alert.textContent.replace('×', '').replace(/\s+/g, ' ').trim())
+
+    // the caller waits for what the submit renders, which tells the answer from the upload view it leaves
     const importCsv = (fixture: string) => {
         const usersPage = SiteSettingsUsers.visitGlobal()
         let bulkUserCreationPage
@@ -81,11 +77,11 @@ describe('Bulk create users - CSV import', () => {
         readCsv(NO_PASSWORD).then((rows) => {
             noPasswordUsers = rows
         })
-        /* Remove the users of the fixtures before the run too, not only after it. The user names are
-         * fixed by the fixtures, so a user left by a run that never reached after(), such as a killed run
-         * or a failed cleanup, makes the import answer "User csv1 already exists" instead of creating it,
-         * and every later run fails until someone deletes the user by hand. The removal is queued after
-         * the two reads, so it removes the users they listed, and a user that does not exist is skipped. */
+        readCsv(MIXED).then((rows) => {
+            mixedNewUsers = rows.filter((row) => row['j:nodename'] !== EXISTING_USER)
+        })
+        /* A user left by a run that never reached after() makes the next import answer "already exists",
+         * so the cleanup runs before too, queued after the reads that list the users. */
         cy.login()
         cy.then(removeUsers)
     })
@@ -108,9 +104,7 @@ describe('Bulk create users - CSV import', () => {
         frameBody()
             .find('.alert-success')
             .should(($alerts) => {
-                const texts = [...$alerts].map((alert) =>
-                    alert.textContent.replace('×', '').replace(/\s+/g, ' ').trim(),
-                )
+                const texts = alertTexts($alerts)
                 users.forEach((row) => expect(texts).to.include(`Successfully created user ${row['j:nodename']}`))
             })
 
@@ -129,6 +123,41 @@ describe('Bulk create users - CSV import', () => {
             cy.login(row['j:nodename'], row['j:password'])
         })
         cy.logout()
+    })
+
+    it('creates the new users of a file whose one row is declined, and reports both on one screen', () => {
+        readCsv(MIXED).then((rows) => {
+            // the premise of this case: a declined row between rows the import creates
+            expect(rows.map((row) => row['j:nodename'])).to.include(EXISTING_USER)
+            expect(mixedNewUsers).to.have.length.greaterThan(1)
+        })
+
+        importCsv(MIXED)
+
+        frameBody()
+            .find('.alert-danger')
+            .should(($alerts) => expect(alertTexts($alerts)).to.include(`User ${EXISTING_USER} already exists.`))
+        frameBody()
+            .find('.alert-success')
+            .should(($alerts) => {
+                const texts = alertTexts($alerts)
+                mixedNewUsers.forEach((row) =>
+                    expect(texts).to.include(`Successfully created user ${row['j:nodename']}`),
+                )
+            })
+        // an import with errors answers on the upload view, which the file input belongs to alone
+        frameBody().find('#csvFile').should('exist')
+
+        mixedNewUsers.forEach((row) => {
+            readUser(row['j:nodename'])
+                .its('data.admin.userAdmin.user')
+                .should((user) => {
+                    expect(user.firstName).to.eq(row['j:firstName'])
+                    expect(user.lastName).to.eq(row['j:lastName'])
+                })
+        })
+        // the declined row left the existing user as it was
+        readUser(EXISTING_USER).its('data.admin.userAdmin.user.lastName').should('not.eq', 'Declined')
     })
 
     /* Each file misses one of the two mandatory columns, so each case reaches its own half of the guard
