@@ -8,6 +8,8 @@ const VALID_USERS = 'csv/bulkCreateUsersValidUsers.csv'
 const NO_PASSWORD = 'csv/bulkCreateUsersNoPassword.csv'
 const NO_USERNAME = 'csv/bulkCreateUsersNoUsername.csv'
 const MIXED = 'csv/bulkCreateUsersMixed.csv'
+const INVALID_NAME = 'csv/bulkCreateUsersInvalidName.csv'
+const INVALID_USER = 'csvname!bad'
 // a user every Jahia already holds, so its row of MIXED is declined
 const EXISTING_USER = 'root'
 // each declined row of MIXED, by user name, and the start of its alert; a row's line is its index plus 2
@@ -36,6 +38,7 @@ describe('Bulk create users - CSV import', () => {
     let noPasswordUsers: CsvRow[] = []
     let mixedNewUsers: CsvRow[] = []
     let mixedCleanup: CsvRow[] = []
+    let invalidNameRows: CsvRow[] = []
 
     const readUser = (username: string) =>
         cy.apollo({
@@ -50,7 +53,9 @@ describe('Bulk create users - CSV import', () => {
             .then((nodes: { node: { uuid: string } }[]) => nodes.map(({ node }) => node.uuid))
 
     const removeUsers = () =>
-        [...users, ...noPasswordUsers, ...mixedCleanup].forEach((row) => deleteUser(row['j:nodename']))
+        [...users, ...noPasswordUsers, ...mixedCleanup, ...invalidNameRows].forEach((row) =>
+            deleteUser(row['j:nodename']),
+        )
 
     /* Each step of the chain is a query, so a retry reads the document again: a body captured while the
      * submit re-renders the frame would stay empty. */
@@ -88,6 +93,9 @@ describe('Bulk create users - CSV import', () => {
             mixedNewUsers = rows.filter((row) => !(row['j:nodename'] in DECLINED))
             // a regression that creates a declined row leaves no user behind either
             mixedCleanup = rows.filter((row) => row['j:nodename'] !== EXISTING_USER)
+        })
+        readCsv(INVALID_NAME).then((rows) => {
+            invalidNameRows = rows
         })
         /* A user left by a run that never reached after() makes the next import answer "already exists",
          * so the cleanup runs before too, queued after the reads that list the users. */
@@ -185,6 +193,30 @@ describe('Bulk create users - CSV import', () => {
                 .forEach(({ name }) => readUser(name).its('data.admin.userAdmin.user').should('eq', null)),
         )
         readUser(EXISTING_USER).its('data.admin.userAdmin.user.lastName').should('not.eq', 'Declined')
+    })
+
+    // skipped until https://github.com/Jahia/siteSettings/issues/328: the invalid name fails the whole import
+    it.skip('skips a row with an invalid user name and creates the other rows', () => {
+        const validRows = invalidNameRows.filter((row) => row['j:nodename'] !== INVALID_USER)
+        expect(validRows).to.have.length(invalidNameRows.length - 1)
+
+        importCsv(INVALID_NAME)
+
+        frameBody()
+            .find('.alert-danger')
+            .should(($alerts) => {
+                const skipped = `Skipping user ${INVALID_USER} due to username not following the name syntax`
+                expect(alertTexts($alerts).some((text) => text.startsWith(skipped))).to.be.true
+            })
+        frameBody()
+            .find('.alert-success')
+            .should(($alerts) => {
+                const texts = alertTexts($alerts)
+                validRows.forEach((row) => expect(texts).to.include(`Successfully created user ${row['j:nodename']}`))
+            })
+
+        validRows.forEach((row) => readUser(row['j:nodename']).its('data.admin.userAdmin.user').should('not.eq', null))
+        readUser(INVALID_USER).its('data.admin.userAdmin.user').should('eq', null)
     })
 
     /* Each file misses one of the two mandatory columns, so each case reaches its own half of the guard
