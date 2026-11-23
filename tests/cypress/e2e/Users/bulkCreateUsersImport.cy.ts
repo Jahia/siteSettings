@@ -8,8 +8,14 @@ const VALID_USERS = 'csv/bulkCreateUsersValidUsers.csv'
 const NO_PASSWORD = 'csv/bulkCreateUsersNoPassword.csv'
 const NO_USERNAME = 'csv/bulkCreateUsersNoUsername.csv'
 const MIXED = 'csv/bulkCreateUsersMixed.csv'
-// the row of MIXED the import declines, as a user every Jahia already holds
+// a user every Jahia already holds, so its row of MIXED is declined
 const EXISTING_USER = 'root'
+// each declined row of MIXED, by user name, and the start of its alert; a row's line is its index plus 2
+const DECLINED: Record<string, (line: number) => string> = {
+    [EXISTING_USER]: () => `User ${EXISTING_USER} already exists.`,
+    csvmixedweak: () => 'Skipping user csvmixedweak due to error following password policy.',
+    csvmixedshort: (line) => `Line ${line} states fewer values than the header has columns`,
+}
 
 /* The rows of a CSV fixture, each keyed by the column names of the header line. The fixtures hold
  * plain values, with no quoted separator, so a split on the comma reads them. */
@@ -29,6 +35,7 @@ describe('Bulk create users - CSV import', () => {
     let users: CsvRow[] = []
     let noPasswordUsers: CsvRow[] = []
     let mixedNewUsers: CsvRow[] = []
+    let mixedCleanup: CsvRow[] = []
 
     const readUser = (username: string) =>
         cy.apollo({
@@ -43,7 +50,7 @@ describe('Bulk create users - CSV import', () => {
             .then((nodes: { node: { uuid: string } }[]) => nodes.map(({ node }) => node.uuid))
 
     const removeUsers = () =>
-        [...users, ...noPasswordUsers, ...mixedNewUsers].forEach((row) => deleteUser(row['j:nodename']))
+        [...users, ...noPasswordUsers, ...mixedCleanup].forEach((row) => deleteUser(row['j:nodename']))
 
     /* Each step of the chain is a query, so a retry reads the document again: a body captured while the
      * submit re-renders the frame would stay empty. */
@@ -78,7 +85,9 @@ describe('Bulk create users - CSV import', () => {
             noPasswordUsers = rows
         })
         readCsv(MIXED).then((rows) => {
-            mixedNewUsers = rows.filter((row) => row['j:nodename'] !== EXISTING_USER)
+            mixedNewUsers = rows.filter((row) => !(row['j:nodename'] in DECLINED))
+            // a regression that creates a declined row leaves no user behind either
+            mixedCleanup = rows.filter((row) => row['j:nodename'] !== EXISTING_USER)
         })
         /* A user left by a run that never reached after() makes the next import answer "already exists",
          * so the cleanup runs before too, queued after the reads that list the users. */
@@ -125,18 +134,31 @@ describe('Bulk create users - CSV import', () => {
         cy.logout()
     })
 
-    it('creates the new users of a file whose one row is declined, and reports both on one screen', () => {
+    it('creates the new users of a file with declined rows, and reports each row on one screen', () => {
+        let declinedRows: { name: string; line: number }[] = []
         readCsv(MIXED).then((rows) => {
-            // the premise of this case: a declined row between rows the import creates
-            expect(rows.map((row) => row['j:nodename'])).to.include(EXISTING_USER)
-            expect(mixedNewUsers).to.have.length.greaterThan(1)
+            const names = rows.map((row) => row['j:nodename'])
+            declinedRows = names.map((name, i) => ({ name, line: i + 2 })).filter(({ name }) => name in DECLINED)
+            // the premise of this case: every kind of decline, each between rows the import creates
+            expect(declinedRows.map(({ name }) => name)).to.have.members(Object.keys(DECLINED))
+            expect(names[0]).not.to.be.oneOf(Object.keys(DECLINED))
+            expect(names[names.length - 1]).not.to.be.oneOf(Object.keys(DECLINED))
         })
 
         importCsv(MIXED)
 
         frameBody()
             .find('.alert-danger')
-            .should(($alerts) => expect(alertTexts($alerts)).to.include(`User ${EXISTING_USER} already exists.`))
+            .should(($alerts) => {
+                const texts = alertTexts($alerts)
+                declinedRows.forEach(
+                    ({ name, line }) =>
+                        expect(
+                            texts.some((text) => text.startsWith(DECLINED[name](line))),
+                            name,
+                        ).to.be.true,
+                )
+            })
         frameBody()
             .find('.alert-success')
             .should(($alerts) => {
@@ -156,7 +178,12 @@ describe('Bulk create users - CSV import', () => {
                     expect(user.lastName).to.eq(row['j:lastName'])
                 })
         })
-        // the declined row left the existing user as it was
+        // a declined row created no one, and left the existing user as it was
+        cy.then(() =>
+            declinedRows
+                .filter(({ name }) => name !== EXISTING_USER)
+                .forEach(({ name }) => readUser(name).its('data.admin.userAdmin.user').should('eq', null)),
+        )
         readUser(EXISTING_USER).its('data.admin.userAdmin.user.lastName').should('not.eq', 'Declined')
     })
 
@@ -186,12 +213,11 @@ describe('Bulk create users - CSV import', () => {
             // the error only the submit renders, which is also the wait for that render
             frameBody()
                 .find('.alert-danger, .alert-error')
-                .should(($alerts) => {
-                    const texts = [...$alerts].map((alert) => alert.textContent.replace(/\s+/g, ' '))
-                    expect(texts.join(' ')).to.contain(
+                .should(($alerts) =>
+                    expect(alertTexts($alerts).join(' ')).to.contain(
                         'The uploaded file is missing either j:nodename or j:password mandatory columns',
-                    )
-                })
+                    ),
+                )
             // the file input belongs to the upload view alone, so the flow stayed on it
             frameBody().find('#csvFile').should('exist')
 
