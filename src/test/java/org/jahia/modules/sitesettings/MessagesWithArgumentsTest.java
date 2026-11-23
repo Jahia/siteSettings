@@ -1,36 +1,46 @@
 package org.jahia.modules.sitesettings;
 
+import org.jahia.utils.i18n.Messages;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertTrue;
 
 /**
- * Each message of the module that takes arguments formats as Jahia formats it.
+ * Each message with arguments that the Java code of the module resolves formats through {@link Messages#format}.
  * <p>
- * {@code org.jahia.utils.i18n.Messages.format} doubles every single quote before it hands a message with arguments
- * to {@link MessageFormat}, so a quote cannot escape a brace there, and a literal brace fails the whole call.
+ * That method doubles every single quote before {@link java.text.MessageFormat} reads the message, so a quote
+ * cannot escape a brace there. A key that only a JSP formats with {@code <fmt:param>} follows plain
+ * {@code MessageFormat} instead, and stays out of this check.
  */
 public class MessagesWithArgumentsTest {
 
-    private static final Path BUNDLES = Paths.get("src", "main", "resources", "resources");
-    private static final Pattern ARGUMENT = Pattern.compile("\\{(\\d+)}");
+    private static final Path MODULE = Paths.get(System.getProperty("basedir", ""));
+    private static final Path BUNDLES = MODULE.resolve(Paths.get("src", "main", "resources", "resources"));
+    private static final Path JAVA_SOURCES = MODULE.resolve(Paths.get("src", "main", "java"));
+    private static final Pattern PLACEHOLDER = Pattern.compile("\\{(\\d+)[,}]");
+    private static final Pattern STRING_LITERAL = Pattern.compile("\"([A-Za-z0-9_.-]+)\"");
 
     @Test
-    public void everyMessageWithArgumentsFormatsAndKeepsItsArguments() throws IOException {
+    public void everyMessageWithArgumentsOfTheJavaCodeFormatsAndKeepsItsArguments() throws IOException {
+        Set<String> javaLiterals = javaStringLiterals();
         List<String> failures = new ArrayList<>();
         int checked = 0;
         try (DirectoryStream<Path> bundles = Files.newDirectoryStream(BUNDLES, "JahiaSiteSettings*.properties")) {
@@ -42,7 +52,7 @@ public class MessagesWithArgumentsTest {
                 for (String key : messages.stringPropertyNames()) {
                     String message = messages.getProperty(key);
                     TreeSet<Integer> placeholders = placeholdersOf(message);
-                    if (placeholders.isEmpty()) {
+                    if (placeholders.isEmpty() || !javaLiterals.contains(key)) {
                         continue;
                     }
                     checked++;
@@ -53,13 +63,26 @@ public class MessagesWithArgumentsTest {
                 }
             }
         }
-        assertTrue("no message with arguments found under " + BUNDLES.toAbsolutePath(), checked > 0);
+        assertTrue("no message with arguments of the Java code found under " + BUNDLES.toAbsolutePath(), checked > 0);
         assertTrue(String.join("\n", failures), failures.isEmpty());
+    }
+
+    private static Set<String> javaStringLiterals() throws IOException {
+        Set<String> literals = new HashSet<>();
+        try (Stream<Path> sources = Files.walk(JAVA_SOURCES)) {
+            for (Path source : (Iterable<Path>) sources.filter(p -> p.toString().endsWith(".java"))::iterator) {
+                Matcher matcher = STRING_LITERAL.matcher(new String(Files.readAllBytes(source), StandardCharsets.UTF_8));
+                while (matcher.find()) {
+                    literals.add(matcher.group(1));
+                }
+            }
+        }
+        return literals;
     }
 
     private static TreeSet<Integer> placeholdersOf(String message) {
         TreeSet<Integer> placeholders = new TreeSet<>();
-        Matcher matcher = ARGUMENT.matcher(message);
+        Matcher matcher = PLACEHOLDER.matcher(message);
         while (matcher.find()) {
             placeholders.add(Integer.parseInt(matcher.group(1)));
         }
@@ -73,7 +96,7 @@ public class MessagesWithArgumentsTest {
         }
         String formatted;
         try {
-            formatted = MessageFormat.format(message.replace("'", "''"), arguments);
+            formatted = Messages.format(message, Locale.ENGLISH, arguments);
         } catch (IllegalArgumentException e) {
             return e.getMessage();
         }
