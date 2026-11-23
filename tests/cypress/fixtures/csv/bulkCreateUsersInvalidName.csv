@@ -1,0 +1,4 @@
+j:nodename,j:password,j:firstName,j:lastName
+csvname1,Csv-import-1234,Name,One
+csvname!bad,Csv-import-1234,Bad,Name
+csvname2,Csv-import-1234,Name,Two
