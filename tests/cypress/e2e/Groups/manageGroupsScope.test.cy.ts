@@ -16,6 +16,7 @@
 import { createSite, deleteSite, createUser, deleteUser, grantRoles } from '@jahia/cypress'
 import { generateRandomID } from '../../utils/utils'
 import { SiteSettingsGroups } from '../../page-object/siteSettingsGroups'
+import { jahiaOrigin } from '../../support/jahiaOrigin'
 
 describe('Manage Groups - administered-site scope', () => {
     const uniq = generateRandomID().replace(/[^a-z0-9]/gi, '')
@@ -89,8 +90,7 @@ describe('Manage Groups - administered-site scope', () => {
             .request({
                 method: 'POST',
                 url: '/modules/graphql',
-                // an Origin is a scheme and a host: the context path of baseUrl is not part of it
-                headers: { Origin: new URL(Cypress.config().baseUrl as string).origin },
+                headers: { Origin: jahiaOrigin() },
                 auth: { username: 'root', password: Cypress.env('SUPER_USER_PASSWORD') as string },
                 body: { query },
             })
@@ -124,8 +124,7 @@ describe('Manage Groups - administered-site scope', () => {
         cy.request({
             method: 'POST',
             url: '/modules/graphql',
-            // an Origin is a scheme and a host: the context path of baseUrl is not part of it
-            headers: { Origin: new URL(Cypress.config().baseUrl as string).origin },
+            headers: { Origin: jahiaOrigin() },
             body: { query: '{currentUser{name}}' },
         }).then((res) => {
             expect(

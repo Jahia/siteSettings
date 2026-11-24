@@ -8,6 +8,7 @@
 // "scoped to this module's components" from "refuses every marked component".
 import { createSite, deleteSite, createUser, deleteUser, grantRoles, publishAndWaitJobEnding } from '@jahia/cypress'
 import { generateRandomID } from '../utils/utils'
+import { jahiaOrigin } from '../support/jahiaOrigin'
 
 describe('Settings components render only from inside a module', () => {
     const uniq = generateRandomID().replace(/[^a-z0-9]/gi, '')
@@ -34,8 +35,7 @@ describe('Settings components render only from inside a module', () => {
             .request({
                 method: 'POST',
                 url: '/modules/graphql',
-                // an Origin is a scheme and a host: the context path of baseUrl is not part of it
-                headers: { Origin: new URL(Cypress.config().baseUrl as string).origin },
+                headers: { Origin: jahiaOrigin() },
                 auth: { username: 'root', password: Cypress.env('SUPER_USER_PASSWORD') as string },
                 body: { query },
             })

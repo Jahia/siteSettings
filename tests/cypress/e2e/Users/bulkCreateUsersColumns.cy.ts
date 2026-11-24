@@ -67,9 +67,7 @@ describe('Bulk create users - imported columns', () => {
         })
 
         // the screen names the columns it left out, so an administrator sees which ones carried no value
-        frameBody().within(() => {
-            cy.get('.alert-warning').should('contain', 'j:accountLocked').and('contain', 'jcr:title')
-        })
+        frameBody().find('.alert-warning').should('contain', 'j:accountLocked').and('contain', 'jcr:title')
     })
 
     /* A file the import cannot fully apply keeps the flow on the upload view, because the handler

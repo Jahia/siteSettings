@@ -7,6 +7,10 @@ const MANAGE_USERS_FRAME = '[src$="/cms/adminframe/default/en/settings.manageUse
 // The frame of the Manage Users screen, once it has loaded: the first open of the screen goes through it.
 export const manageUsersFrame = () => cy.iframe(MANAGE_USERS_FRAME)
 
-/* The body of the frame. Each step of the chain is a query, so a retry reads the document again: a body
- * captured while a submit re-renders the frame would stay empty. */
-export const frameBody = (selector: string = MANAGE_USERS_FRAME) => cy.get(selector).its('0.contentDocument.body')
+/* The body of the frame, once its document has loaded. The returned chain holds queries alone, so a retry
+ * reads the document again: a body captured while a submit re-renders the frame would stay empty. An
+ * assertion inside that chain would stop the requery, which is why the load waits in a chain of its own. */
+export const frameBody = () => {
+    cy.get(MANAGE_USERS_FRAME).its('0.contentDocument.readyState').should('eq', 'complete')
+    return cy.get(MANAGE_USERS_FRAME).its('0.contentDocument.body')
+}
