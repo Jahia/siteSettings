@@ -19,9 +19,8 @@
 // for that component reaches no flow, and the group still holds no member. The last of those is the
 // same read-back the two realm cases prove works.
 import { createSite, deleteSite, createUser, deleteUser } from '@jahia/cypress'
-import { generateRandomID } from '../../utils/utils'
+import { generateRandomID, jahiaOrigin } from '../../utils/utils'
 import { SiteSettingsGroups } from '../../page-object/siteSettingsGroups'
-import { jahiaOrigin } from '../../support/jahiaOrigin'
 
 describe('Manage Groups - realm resolution', () => {
     const uniq = generateRandomID().replace(/[^a-z0-9]/gi, '')

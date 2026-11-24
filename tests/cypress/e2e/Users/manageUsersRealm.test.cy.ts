@@ -19,9 +19,8 @@
 // no body, no flow, and no transition accepted. The two realm cases remain its positive controls,
 // because they prove the screen does render and does list when it is reached legitimately.
 import { createSite, deleteSite, createUser, deleteUser } from '@jahia/cypress'
-import { generateRandomID } from '../../utils/utils'
+import { generateRandomID, jahiaOrigin } from '../../utils/utils'
 import { SiteSettingsUsers } from '../../page-object/siteSettingsUsers'
-import { jahiaOrigin } from '../../support/jahiaOrigin'
 
 describe('Manage Users - realm resolution on the listing', () => {
     const uniq = generateRandomID().replace(/[^a-z0-9]/gi, '')

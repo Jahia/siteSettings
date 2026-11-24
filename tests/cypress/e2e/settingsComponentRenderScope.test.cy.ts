@@ -7,8 +7,7 @@
 // flow-backed control would be refused by core and prove nothing about this filter's scope. It separates
 // "scoped to this module's components" from "refuses every marked component".
 import { createSite, deleteSite, createUser, deleteUser, grantRoles, publishAndWaitJobEnding } from '@jahia/cypress'
-import { generateRandomID } from '../utils/utils'
-import { jahiaOrigin } from '../support/jahiaOrigin'
+import { generateRandomID, jahiaOrigin } from '../utils/utils'
 
 describe('Settings components render only from inside a module', () => {
     const uniq = generateRandomID().replace(/[^a-z0-9]/gi, '')
