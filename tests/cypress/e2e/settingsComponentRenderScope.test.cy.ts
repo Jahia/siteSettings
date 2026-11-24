@@ -34,7 +34,8 @@ describe('Settings components render only from inside a module', () => {
             .request({
                 method: 'POST',
                 url: '/modules/graphql',
-                headers: { Origin: Cypress.config().baseUrl as string },
+                // an Origin is a scheme and a host: the context path of baseUrl is not part of it
+                headers: { Origin: new URL(Cypress.config().baseUrl as string).origin },
                 auth: { username: 'root', password: Cypress.env('SUPER_USER_PASSWORD') as string },
                 body: { query },
             })
