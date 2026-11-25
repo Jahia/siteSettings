@@ -195,8 +195,7 @@ describe('Bulk create users - CSV import', () => {
         readUser(EXISTING_USER).its('data.admin.userAdmin.user.lastName').should('not.eq', 'Declined')
     })
 
-    // skipped until https://github.com/Jahia/siteSettings/issues/328: the invalid name fails the whole import
-    it.skip('skips a row with an invalid user name and creates the other rows', () => {
+    it('skips a row with an invalid user name and creates the other rows', () => {
         const validRows = invalidNameRows.filter((row) => row['j:nodename'] !== INVALID_USER)
         expect(validRows).to.have.length(invalidNameRows.length - 1)
 
