@@ -19,7 +19,7 @@
 // no body, no flow, and no transition accepted. The two realm cases remain its positive controls,
 // because they prove the screen does render and does list when it is reached legitimately.
 import { createSite, deleteSite, createUser, deleteUser } from '@jahia/cypress'
-import { generateRandomID } from '../../utils/utils'
+import { generateRandomID, jahiaOrigin } from '../../utils/utils'
 import { SiteSettingsUsers } from '../../page-object/siteSettingsUsers'
 
 describe('Manage Users - realm resolution on the listing', () => {
@@ -49,7 +49,7 @@ describe('Manage Users - realm resolution on the listing', () => {
             .request({
                 method: 'POST',
                 url: '/modules/graphql',
-                headers: { Origin: Cypress.config().baseUrl as string },
+                headers: { Origin: jahiaOrigin() },
                 auth: { username: 'root', password: Cypress.env('SUPER_USER_PASSWORD') as string },
                 body: { query },
             })

@@ -1,5 +1,6 @@
 import { deleteUser } from '@jahia/cypress'
 import { SiteSettingsUsers } from '../../page-object/siteSettingsUsers'
+import { frameBody, manageUsersFrame } from '../../support/manageUsersFrame'
 
 // Migrated from ManageUsersTest#importCSVUsers of Jahia/selenium (FT-029, FT-030 of Jahia/selenium#1604).
 type CsvRow = Record<string, string>
@@ -32,8 +33,6 @@ const readCsv = (fixture: string) =>
     })
 
 describe('Bulk create users - CSV import', () => {
-    const IFRAME = '[src="/cms/adminframe/default/en/settings.manageUsers.html"]'
-
     let users: CsvRow[] = []
     let noPasswordUsers: CsvRow[] = []
     let mixedNewUsers: CsvRow[] = []
@@ -57,10 +56,6 @@ describe('Bulk create users - CSV import', () => {
             deleteUser(row['j:nodename']),
         )
 
-    /* Each step of the chain is a query, so a retry reads the document again: a body captured while the
-     * submit re-renders the frame would stay empty. */
-    const frameBody = () => cy.get(IFRAME).its('0.contentDocument.body')
-
     /* The text of each alert of a kind, whole. A substring match would let "Successfully created user
      * csv1" pass on the alert of csv19 with csv1 missing. */
     const alertTexts = ($alerts: JQuery<HTMLElement>) =>
@@ -70,7 +65,7 @@ describe('Bulk create users - CSV import', () => {
     const importCsv = (fixture: string) => {
         const usersPage = SiteSettingsUsers.visitGlobal()
         let bulkUserCreationPage
-        cy.iframe(IFRAME).within(() => {
+        manageUsersFrame().within(() => {
             bulkUserCreationPage = usersPage.startBulkUserCreation()
         })
         // the file input belongs to the upload view alone

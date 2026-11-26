@@ -1,5 +1,6 @@
 import { deleteNode } from '@jahia/cypress'
 import { SiteSettingsUsers } from '../../page-object/siteSettingsUsers'
+import { frameBody, manageUsersFrame } from '../../support/manageUsersFrame'
 
 /* The columns a CSV bulk user import writes on the users it creates.
  *
@@ -12,7 +13,6 @@ import { SiteSettingsUsers } from '../../page-object/siteSettingsUsers'
  */
 describe('Bulk create users - imported columns', () => {
     const USERNAME = 'colonel'
-    const IFRAME = '[src="/cms/adminframe/default/en/settings.manageUsers.html"]'
 
     const readImportedColumns = () =>
         cy.apollo({
@@ -39,12 +39,12 @@ describe('Bulk create users - imported columns', () => {
     it('writes the profile columns and leaves the reserved ones out', () => {
         const usersPage = SiteSettingsUsers.visitGlobal()
         let bulkUserCreationPage
-        cy.iframe(IFRAME).within(() => {
+        manageUsersFrame().within(() => {
             bulkUserCreationPage = usersPage.startBulkUserCreation()
         })
-        //eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(500)
-        cy.iframe(IFRAME).within(() => {
+        // the file input belongs to the upload view alone
+        frameBody().find('#csvFile').should('exist')
+        frameBody().within(() => {
             bulkUserCreationPage.setCsvFile('csv/bulkCreateUsersColumns.csv')
             bulkUserCreationPage.setSeparator(',')
             bulkUserCreationPage.save()
@@ -67,9 +67,7 @@ describe('Bulk create users - imported columns', () => {
         })
 
         // the screen names the columns it left out, so an administrator sees which ones carried no value
-        cy.iframe(IFRAME).within(() => {
-            cy.get('.alert-warning').should('contain', 'j:accountLocked').and('contain', 'jcr:title')
-        })
+        frameBody().find('.alert-warning').should('contain', 'j:accountLocked').and('contain', 'jcr:title')
     })
 
     /* A file the import cannot fully apply keeps the flow on the upload view, because the handler
@@ -82,26 +80,24 @@ describe('Bulk create users - imported columns', () => {
     it('names the columns it left out on the upload view when a row cannot be created', () => {
         const usersPage = SiteSettingsUsers.visitGlobal()
         let bulkUserCreationPage
-        cy.iframe(IFRAME).within(() => {
+        manageUsersFrame().within(() => {
             bulkUserCreationPage = usersPage.startBulkUserCreation()
         })
-        //eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(500)
-        cy.iframe(IFRAME).within(() => {
+        // the file input belongs to the upload view alone
+        frameBody().find('#csvFile').should('exist')
+        frameBody().within(() => {
             bulkUserCreationPage.setCsvFile('csv/bulkCreateUsersColumnsDeclinedRow.csv')
             bulkUserCreationPage.setSeparator(',')
             bulkUserCreationPage.save()
         })
 
-        /* Re-query the iframe for each assertion rather than scoping one `within` around them. The
-         * submit re-renders the frame, and a body captured while that render is in flight stays
-         * empty for the whole scope. Each call here waits for a body of its own. */
-        //eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(1000)
+        /* Re-query the frame body for each assertion rather than scoping one `within` around them: a
+         * body captured while the submit re-renders the frame stays empty for the whole scope. */
+        // the row the import declines, and the column it left out, both on the same screen; neither shows
+        // before the submit, so they also wait for its render
+        frameBody().should('contain.text', 'already exists')
+        frameBody().should('contain.text', 'j:accountLocked')
         // the file input belongs to the upload view alone, so the flow never reached the results view
-        cy.iframe(IFRAME).find('#csvFile').should('exist')
-        // the row the import declines, and the column it left out, both on the same screen
-        cy.iframe(IFRAME).contains('already exists').should('exist')
-        cy.iframe(IFRAME).contains('j:accountLocked').should('exist')
+        frameBody().find('#csvFile').should('exist')
     })
 })

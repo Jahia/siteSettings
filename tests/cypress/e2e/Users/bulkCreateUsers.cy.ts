@@ -1,5 +1,6 @@
 import { deleteNode } from '@jahia/cypress'
 import { SiteSettingsUsers } from '../../page-object/siteSettingsUsers'
+import { frameBody, manageUsersFrame } from '../../support/manageUsersFrame'
 
 describe('Bulk Create Users XSS Prevention', () => {
     beforeEach(() => {
@@ -9,12 +10,12 @@ describe('Bulk Create Users XSS Prevention', () => {
     it('should prevent XSS via CSV separator input', () => {
         const usersPage = SiteSettingsUsers.visitGlobal()
         let bulkUserCreationPage
-        cy.iframe('[src="/cms/adminframe/default/en/settings.manageUsers.html"]').within(() => {
+        manageUsersFrame().within(() => {
             bulkUserCreationPage = usersPage.startBulkUserCreation()
         })
-        //eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(500)
-        cy.iframe('[src="/cms/adminframe/default/en/settings.manageUsers.html"]').within(() => {
+        // the file input belongs to the upload view alone
+        frameBody().find('#csvFile').should('exist')
+        frameBody().within(() => {
             bulkUserCreationPage.setSeparator(',<script>alert("XSS")</script>')
             bulkUserCreationPage.getSeparator().then((separator) => {
                 expect(separator).to.eq(',')
@@ -25,12 +26,12 @@ describe('Bulk Create Users XSS Prevention', () => {
     it('should create users with valid data', () => {
         const usersPage = SiteSettingsUsers.visitGlobal()
         let bulkUserCreationPage
-        cy.iframe('[src="/cms/adminframe/default/en/settings.manageUsers.html"]').within(() => {
+        manageUsersFrame().within(() => {
             bulkUserCreationPage = usersPage.startBulkUserCreation()
         })
-        //eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(500)
-        cy.iframe('[src="/cms/adminframe/default/en/settings.manageUsers.html"]').within(() => {
+        // the file input belongs to the upload view alone
+        frameBody().find('#csvFile').should('exist')
+        frameBody().within(() => {
             bulkUserCreationPage.setCsvFile('csv/bulkCreateUsersXSS.csv')
             bulkUserCreationPage.setSeparator(',')
             bulkUserCreationPage.save()

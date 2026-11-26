@@ -7,7 +7,7 @@
 // flow-backed control would be refused by core and prove nothing about this filter's scope. It separates
 // "scoped to this module's components" from "refuses every marked component".
 import { createSite, deleteSite, createUser, deleteUser, grantRoles, publishAndWaitJobEnding } from '@jahia/cypress'
-import { generateRandomID } from '../utils/utils'
+import { generateRandomID, jahiaOrigin } from '../utils/utils'
 
 describe('Settings components render only from inside a module', () => {
     const uniq = generateRandomID().replace(/[^a-z0-9]/gi, '')
@@ -34,7 +34,7 @@ describe('Settings components render only from inside a module', () => {
             .request({
                 method: 'POST',
                 url: '/modules/graphql',
-                headers: { Origin: Cypress.config().baseUrl as string },
+                headers: { Origin: jahiaOrigin() },
                 auth: { username: 'root', password: Cypress.env('SUPER_USER_PASSWORD') as string },
                 body: { query },
             })

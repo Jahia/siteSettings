@@ -14,7 +14,7 @@
 // Fully self-contained: creates its own administered site, a second (other) site, the site
 // administrator and the principals in before(); tears everything down in after().
 import { createSite, deleteSite, createUser, deleteUser, grantRoles } from '@jahia/cypress'
-import { generateRandomID } from '../../utils/utils'
+import { generateRandomID, jahiaOrigin } from '../../utils/utils'
 import { SiteSettingsGroups } from '../../page-object/siteSettingsGroups'
 
 describe('Manage Groups - administered-site scope', () => {
@@ -89,7 +89,7 @@ describe('Manage Groups - administered-site scope', () => {
             .request({
                 method: 'POST',
                 url: '/modules/graphql',
-                headers: { Origin: Cypress.config().baseUrl as string },
+                headers: { Origin: jahiaOrigin() },
                 auth: { username: 'root', password: Cypress.env('SUPER_USER_PASSWORD') as string },
                 body: { query },
             })
@@ -123,7 +123,7 @@ describe('Manage Groups - administered-site scope', () => {
         cy.request({
             method: 'POST',
             url: '/modules/graphql',
-            headers: { Origin: Cypress.config().baseUrl as string },
+            headers: { Origin: jahiaOrigin() },
             body: { query: '{currentUser{name}}' },
         }).then((res) => {
             expect(

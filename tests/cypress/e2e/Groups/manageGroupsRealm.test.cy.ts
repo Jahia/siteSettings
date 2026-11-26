@@ -19,7 +19,7 @@
 // for that component reaches no flow, and the group still holds no member. The last of those is the
 // same read-back the two realm cases prove works.
 import { createSite, deleteSite, createUser, deleteUser } from '@jahia/cypress'
-import { generateRandomID } from '../../utils/utils'
+import { generateRandomID, jahiaOrigin } from '../../utils/utils'
 import { SiteSettingsGroups } from '../../page-object/siteSettingsGroups'
 
 describe('Manage Groups - realm resolution', () => {
@@ -53,7 +53,7 @@ describe('Manage Groups - realm resolution', () => {
             .request({
                 method: 'POST',
                 url: '/modules/graphql',
-                headers: { Origin: Cypress.config().baseUrl as string },
+                headers: { Origin: jahiaOrigin() },
                 auth: { username: 'root', password: Cypress.env('SUPER_USER_PASSWORD') as string },
                 body: { query },
             })
